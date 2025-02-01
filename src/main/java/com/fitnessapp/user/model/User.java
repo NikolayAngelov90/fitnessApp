@@ -35,6 +35,10 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Lob
+    @Column
+    private byte[] profilePicture;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role;

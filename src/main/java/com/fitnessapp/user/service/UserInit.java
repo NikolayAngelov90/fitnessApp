@@ -6,12 +6,11 @@ import com.fitnessapp.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
-@Service
+@Component
 @Slf4j
 public class UserInit implements CommandLineRunner {
 

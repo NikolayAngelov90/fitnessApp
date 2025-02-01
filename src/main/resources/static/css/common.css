@@ -1,0 +1,46 @@
+/* Global Styles */
+body {
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* Hero Section Styles */
+.hero-section {
+    /* Dark overlay gradient + background image */
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+    url("../images/photo-1534438327276-14e5300c3a48.jpg") center/cover;
+    min-height: 600px;
+    background-attachment: fixed; /* Creates a parallax effect */
+    background-repeat: no-repeat;
+}
+
+/* Feature Card Animation */
+.feature-card {
+    transform: translateY(0);
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Gradient Text Effect */
+.gradient-text {
+    background: linear-gradient(90deg, #3B82F6, #2563EB);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.login-button {
+    background-color: #3B82F6;
+    color: white;
+    padding: 1rem 2.5rem; /* Adjusted padding to match register.html */
+    border-radius: 0.375rem;
+    font-size: 1.25rem; /* Adjusted font size to match register.html */
+    transition: background-color 0.3s ease;
+}
+
+.login-button:hover {
+    background-color: #2563EB;
+}
+

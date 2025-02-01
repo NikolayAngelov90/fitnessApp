@@ -13,4 +13,7 @@ public record RegisterRequest(
 
         UserRole userRole
 ) {
+        public static RegisterRequest empty() {
+                return new RegisterRequest("", " ",  null);
+        }
 }

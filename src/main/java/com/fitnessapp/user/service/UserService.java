@@ -1,6 +1,6 @@
 package com.fitnessapp.user.service;
 
-import com.fitnessapp.exception.DomainException;
+import com.fitnessapp.exception.*;
 import com.fitnessapp.user.model.User;
 import com.fitnessapp.user.model.UserRole;
 import com.fitnessapp.user.repository.UserRepository;
@@ -8,10 +8,12 @@ import com.fitnessapp.web.dto.LoginRequest;
 import com.fitnessapp.web.dto.RegisterRequest;
 import com.fitnessapp.web.dto.UserEditRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,8 +36,8 @@ public class UserService {
         Optional<User> userOptional = userRepository.findByEmail(registerRequest.email());
 
         if (userOptional.isPresent()) {
-            throw new DomainException("User with email [%s] already exist."
-                    .formatted(registerRequest.email()), HttpStatus.BAD_REQUEST);
+            throw new UserAlreadyExistsException("User with email [%s] already exist."
+                    .formatted(registerRequest.email()));
         }
 
         User user = userRepository.save(initializeNewUserAccount(registerRequest));
@@ -50,33 +52,62 @@ public class UserService {
 
         Optional<User> userOptional = userRepository.findByEmail(loginRequest.email());
         if (userOptional.isEmpty()) {
-            throw new DomainException("User with email [%s] does not exist."
-                    .formatted(loginRequest.email()), HttpStatus.BAD_REQUEST);
+            throw new AuthenticationException();
         }
 
         User user = userOptional.get();
         if (!passwordEncoder.matches(loginRequest.password(), user.getPassword())) {
-            throw new DomainException("Incorrect password.", HttpStatus.BAD_REQUEST);
+            throw new AuthenticationException();
         }
 
         return user;
     }
 
-    public User updateUser(UUID userId, UserEditRequest userEditRequest) {
+    public void updateUser(UUID userId, UserEditRequest userEditRequest) {
 
         User user = getById(userId);
 
         user.setFirstName(userEditRequest.firstName().trim());
         user.setLastName(userEditRequest.lastName().trim());
 
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
-    private User getById(UUID userId) {
+    public void uploadProfilePicture(UUID userId, MultipartFile profilePicture) {
+
+        User user = getById(userId);
+
+        validateImage(profilePicture);
+
+        try {
+            user.setProfilePicture(profilePicture.getBytes());
+            userRepository.save(user);
+        } catch (IOException e) {
+            throw new ImageUploadException("Error processing photo.");
+        }
+    }
+
+    private void validateImage(MultipartFile profilePicture) {
+
+        if (profilePicture.isEmpty()) {
+            throw new EmptyImageException();
+        }
+
+        if (profilePicture.getSize() > 5 * 1024 * 1024) {
+            throw new InvalidImageException("Size of profile picture must be less than 5MB.");
+        }
+
+        String contentType = profilePicture.getContentType();
+        if (contentType == null || contentType.startsWith("image/")) {
+            throw new InvalidImageException("Please upload a valid format of profile picture.");
+        }
+    }
+
+    public User getById(UUID userId) {
 
         return userRepository.findById(userId)
-                .orElseThrow(() -> new DomainException("User with id [%s] does not exist."
-                        .formatted(userId), HttpStatus.BAD_REQUEST));
+                .orElseThrow(() -> new UserNotFoundException("User with id [%s] does not exist."
+                        .formatted(userId)));
     }
 
     private User initializeNewUserAccount(RegisterRequest dto) {
@@ -88,10 +119,10 @@ public class UserService {
         }
 
         return User.builder()
-                .id(UUID.randomUUID())
                 .email(dto.email())
                 .password(passwordEncoder.encode(dto.password()))
                 .role(selectedRole)
+                .registeredOn(LocalDateTime.now())
                 .build();
     }
 }

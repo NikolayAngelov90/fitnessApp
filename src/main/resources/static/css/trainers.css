@@ -1,0 +1,41 @@
+/* Hero Section */
+.trainers-hero {
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+    url('../images/photo-1534438327276-14e5300c3a48.jpg') center/cover fixed;
+    min-height: 450px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+/* Trainer Card Animations */
+.trainer-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+}
+
+.trainer-image img {
+    transition: transform 0.3s ease;
+}
+
+.trainer-card:hover img {
+    transform: scale(1.05);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .trainers-hero {
+        min-height: 300px;
+    }
+
+    .trainer-card {
+        margin-bottom: 2rem;
+    }
+}
+
+@media (max-width: 640px) {
+    .trainers-hero h1 {
+        font-size: 2.5rem;
+    }
+}

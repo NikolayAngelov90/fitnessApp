@@ -6,12 +6,12 @@ import com.fitnessapp.membership.model.SubscriptionType;
 import com.fitnessapp.membership.repository.SubscriptionRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-@Service
+@Component
 @Slf4j
 public class SubscriptionDataInit implements CommandLineRunner {
 

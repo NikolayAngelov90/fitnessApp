@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - FitnessPro</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="/css/common.css" rel="stylesheet">
+    <link href="/css/home.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+<!-- Navigation -->
+<nav class="bg-white shadow-lg fixed w-full z-50">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex justify-between h-16">
+            <div class="flex items-center">
+                <a href="index.html" class="text-2xl font-bold text-blue-600">FitnessPro</a>
+            </div>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="home.html" class="text-blue-600 font-semibold">Home</a>
+                <a href="workouts.html" class="text-gray-600 hover:text-blue-600">Workouts</a>
+                <a href="trainers.html" class="text-gray-600 hover:text-blue-600">Trainers</a>
+                <a href="plans.html" class="text-gray-600 hover:text-blue-600">Plans</a>
+                <div class="relative">
+                    <button class="flex items-center space-x-2 text-gray-600 hover:text-blue-600">
+                        <img src="/static/images/Basic_Ui_(186).jpg" alt="Profile" class="w-8 h-8 rounded-full">
+                        <span>John Doe</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<main class="pt-16">
+    <!-- Hero Section -->
+    <section class="profile-hero-container">
+        <!-- Profile Info Container -->
+        <div class="filter-container">
+            <div class="bg-white rounded-lg shadow-md p-6 mx-4 mb-8">
+                <div class="flex flex-col md:flex-row items-center justify-between">
+                    <div class="flex items-center space-x-4 mb-4 md:mb-0">
+                        <div th:if="${message}" class="message success" th:text="${message}"></div>
+                        <div th:if="${error}" class="message error" th:text="${error}"></div>
+                        <a href="#upload-modal">
+                            <img src="/static/images/Basic_Ui_(186).jpg" alt="Profile"
+                                 class="w-20 h-20 rounded-full profile-image border-4 border-blue-100">
+                        </a>
+                        <div id="upload-modal" class="modal">
+                            <div class="modal-content">
+                                <a href="#" class="close-modal">&times;</a>
+                                <h3>Upload new image</h3>
+
+                                <form th:action="@{/user/upload-image}"
+                                      method="post"
+                                      enctype="multipart/form-data">
+                                    <input type="file"
+                                           name="image"
+                                           accept="image/*"
+                                           required>
+                                    <button type="submit" class="upload-button">
+                                        Upload Image
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-bold text-gray-800">John Doe</h1>
+                            <div class="flex items-center space-x-2">
+                                <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm">Premium Member</span>
+                                <span class="text-gray-600 text-sm">Joined Jan 2025</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <button class="edit-profile-btn bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                            Edit Profile
+                        </button>
+                        <a href="workouts.html"
+                           class="bg-gray-100 text-gray-800 px-6 py-2 rounded-lg hover:bg-gray-200 transition-colors text-center">
+                            My Workouts
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="pt-8 pb-6">
+        <div class="max-w-7xl mx-auto px-4">
+            <!-- Main Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Left Column -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Current Subscription and history -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <h2 class="text-xl font-bold">Current Plan</h2>
+                            <div class="status-container">
+                                <span class="status-badge active">Active</span>
+                                <button class="toggle-button" onclick="toggleStatus(this)">Stop</button>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-blue-600">Premium Plan</h3>
+                                    <p class="text-gray-600">Next billing: Feb 27, 2025</p>
+                                </div>
+                                <span class="text-2xl font-bold">$49.99<span class="text-lg text-gray-500">/month</span></span>
+                            </div>
+                            <div class="border-t pt-4">
+                                <h4 class="font-semibold mb-2">Plan Benefits:</h4>
+                                <ul class="space-y-2">
+                                    <li class="flex items-center text-gray-600">
+                                        <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor"
+                                             viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                        Unlimited gym access
+                                    </li>
+                                    <li class="flex items-center text-gray-600">
+                                        <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor"
+                                             viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                  d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                        4 Personal Training sessions
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Past Payments -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold">Payments History</h2>
+                            <a href="#" class="text-blue-600 hover:text-blue-700">View All →</a>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="font-semibold">Last payment</span>
+                                    <span class="text-gray-500 text-sm">31.01.2025</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-gray-600">$29.99</span>
+                                    <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-sm">Workout</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="space-y-6">
+                    <!-- Quick Stats -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Activity Overview</h2>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-gray-600">This Month's Classes</p>
+                                    <p class="text-2xl font-bold">8/12</p>
+                                </div>
+                                <div class="w-20 h-20">
+                                    <div class="radial-progress text-blue-600"
+                                         style="--value:66; --thickness: 8px;">66%
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Upcoming Sessions -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Scheduled Sessions</h2>
+                        <div class="space-y-4">
+                            <div class="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <h3 class="font-semibold">HIIT Training</h3>
+                                        <p class="text-gray-600 text-sm">with Sarah Johnson</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-sm font-semibold">Tomorrow</p>
+                                        <p class="text-gray-600 text-sm">10:00 AM</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <h3 class="text-xl font-bold mb-2">FitnessPro</h3>
+                    <p class="text-gray-400 text-sm">Your ultimate fitness destination</p>
+                </div>
+                <div>
+                    <h4 class="text-base font-semibold mb-2">Contact Us</h4>
+                    <ul class="space-y-1 text-gray-400 text-sm">
+                        <li>123 Fitness Street</li>
+                        <li>Burgas, Bulgaria</li>
+                        <li>Phone: (056) 456-7890</li>
+                        <li>Email: info@fitnesspro.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-6 pt-6 text-center text-gray-400 text-sm">
+                <p>&copy; 2025 FitnessPro. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</main>
+</body>
+</html>

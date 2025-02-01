@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - FitnessPro</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="/css/common.css" rel="stylesheet">
+    <link href="/css/form.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+<!-- Navigation -->
+<nav class="bg-white shadow-lg fixed w-full z-50">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex justify-between h-16">
+            <div class="flex items-center">
+                <a href="index.html" class="text-2xl font-bold text-blue-600">FitnessPro</a>
+            </div>
+
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="index.html" class="text-gray-600 hover:text-blue-600">Home</a>
+                <a href="workouts.html" class="text-gray-600 hover:text-blue-600">Workouts</a>
+                <a href="trainers.html" class="text-gray-600 hover:text-blue-600">Trainers</a>
+                <a href="plans.html" class="text-gray-600 hover:text-blue-600">Plans</a>
+                <button onclick="location.href='login.html'"
+                        class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
+                    Login
+                </button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Register Section -->
+<section class="register-section min-h-screen flex items-center justify-center py-20">
+    <div class="container mx-auto px-4">
+        <div class="max-w-md mx-auto bg-white rounded-lg shadow-xl overflow-hidden">
+            <div class="py-8 px-6">
+                <h2 class="text-3xl font-bold text-center mb-6 gradient-text">Join FitnessPro</h2>
+
+                <form class="register-form space-y-6" th:action="@{/register}" method="post"
+                      th:object="${registerRequest}">
+                    <div class="form-group">
+                        <label for="email" class="block text-gray-700 mb-2">Email Address</label>
+                        <input type="email" id="email" class="form-input" placeholder="john@example.com"
+                               th:field="*{email}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password" class="block text-gray-700 mb-2">Password</label>
+                        <input type="password" id="password" class="form-input" placeholder="••••••••"
+                               th:field="*{password}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="role" class="block text-gray-700 mb-2">Role</label>
+                        <select id="role" class="form-input" th:field="*{userRole}" required>
+                            <option th:each="userRole : ${T(com.fitnessapp.user.model.UserRole).getRegistrableRoles()}"
+                                    th:value="${userRole}"
+                                    th:text="${#strings.capitalize(#strings.toLowerCase(userRole))}">
+                            </option>
+                        </select>
+                    </div>
+
+                    <button type="submit"
+                            class="w-full bg-blue-600 text-white py-3 rounded-md text-lg font-semibold hover:bg-blue-700 transition-colors">
+                        Create Account
+                    </button>
+                </form>
+
+                <p class="text-center mt-6 text-gray-600">
+                    Already have an account?
+                    <a href="login.html" class="text-blue-600 hover:text-blue-700">Login here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-gray-800 text-white py-8">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+                <h3 class="text-xl font-bold mb-2">FitnessPro</h3>
+                <p class="text-gray-400 text-sm">Your ultimate fitness destination for a healthier lifestyle.</p>
+            </div>
+            <div>
+                <h4 class="text-base font-semibold mb-2">Contact Us</h4>
+                <ul class="space-y-1 text-gray-400 text-sm">
+                    <li>123 Fitness Street</li>
+                    <li>Burgas, Bulgaria</li>
+                    <li>Phone: (056) 456-7890</li>
+                    <li>Email: info@fitnesspro.com</li>
+                </ul>
+            </div>
+        </div>
+        <div class="border-t border-gray-700 mt-6 pt-6 text-center text-gray-400 text-sm">
+            <p>&copy; 2025 FitnessPro. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Trainers - FitnessPro</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="/css/common.css" rel="stylesheet">
+    <link href="/css/trainers.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+<!-- Navigation -->
+<nav class="bg-white shadow-lg fixed w-full z-50">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex justify-between h-16">
+            <div class="flex items-center">
+                <a href="index.html" class="text-2xl font-bold text-blue-600">FitnessPro</a>
+            </div>
+
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="home.html" class="text-gray-600 hover:text-blue-600">Home</a>
+                <a href="workouts.html" class="text-gray-600 hover:text-blue-600">Workouts</a>
+                <a href="trainers.html" class="text-blue-600 font-semibold">Trainers</a>
+                <a href="plans.html" class="text-gray-600 hover:text-blue-600">Plans</a>
+                <button onclick="location.href='login.html'"
+                        class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
+                    Login
+                </button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="trainers-hero">
+    <div class="text-center">
+        <h1 class="text-5xl font-bold mb-4 text-white">Meet Our Expert Trainers</h1>
+        <p class="text-xl text-gray-200">Professional guidance from certified fitness experts with years of
+            experience</p>
+    </div>
+</section>
+
+<!-- Trainers Grid -->
+<main class="pt-6 py-6">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Trainer Card 1 -->
+            <div class="trainer-card bg-white rounded-xl shadow-lg hover:scale-105 transition-transform">
+                <div class="trainer-image">
+                    <img src="/static/images/Basic_Ui_(186).jpg" alt="Sarah Johnson"
+                         class="w-full h-64 object-cover rounded-t-xl">
+                </div>
+                <div class="p-6">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-2xl font-bold">Sarah Johnson</h3>
+                            <span class="text-blue-600">CrossFit Specialist</span>
+                        </div>
+                        <div class="flex space-x-2">
+                            <a href="#" class="text-blue-600 hover:text-blue-700">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="flex items-center text-gray-600 text-sm mb-4">
+                        <svg class="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <span>8+ Years Experience</span>
+                    </div>
+                    <p class="text-gray-600 mb-4">Certified CrossFit Level 3 trainer with multiple competition wins.
+                        Specializes in functional training and mobility.</p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm">Weightlifting</span>
+                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm">HIIT</span>
+                    </div>
+                    <button class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                        Book Session
+                    </button>
+                </div>
+            </div>
+
+            <!-- Trainer Card 2 -->
+            <div class="trainer-card bg-white rounded-xl shadow-lg hover:scale-105 transition-transform">
+                <div class="trainer-image">
+                    <img src="/static/images/Basic_Ui_(186).jpg" alt="Mike Thompson"
+                         class="w-full h-64 object-cover rounded-t-xl">
+                </div>
+                <div class="p-6">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-2xl font-bold">Mike Thompson</h3>
+                            <span class="text-blue-600">Strength & Conditioning</span>
+                        </div>
+                        <!-- Social icons -->
+                    </div>
+                    <div class="flex items-center text-gray-600 text-sm mb-4">
+                        <svg class="w-4 h-4 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        <span>10+ Years Experience</span>
+                    </div>
+                    <p class="text-gray-600 mb-4">NSCA certified strength coach with background in professional
+                        athletics. Focus on power development and injury prevention.</p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm">Powerlifting</span>
+                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm">Mobility</span>
+                    </div>
+                    <button class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                        Book Session
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer class="bg-gray-800 text-white py-8">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div>
+                <h3 class="text-xl font-bold mb-2">FitnessPro</h3>
+                <p class="text-gray-400 text-sm">Your ultimate fitness destination</p>
+            </div>
+            <div>
+                <h4 class="text-base font-semibold mb-2">Contact Us</h4>
+                <ul class="space-y-1 text-gray-400 text-sm">
+                    <li>123 Fitness Street</li>
+                    <li>Burgas, Bulgaria</li>
+                    <li>Phone: (056) 456-7890</li>
+                    <li>Email: info@fitnesspro.com</li>
+                </ul>
+            </div>
+        </div>
+        <div class="border-t border-gray-700 mt-6 pt-6 text-center text-gray-400 text-sm">
+            <p>&copy; 2025 FitnessPro. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

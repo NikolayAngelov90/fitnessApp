@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workouts - FitnessPro</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="/css/common.css" rel="stylesheet">
+    <link href="/css/workouts.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+<!-- Navigation -->
+<nav class="bg-white shadow-lg fixed w-full z-50">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex justify-between h-16">
+            <div class="flex items-center">
+                <a href="index.html" class="text-2xl font-bold text-blue-600">FitnessPro</a>
+            </div>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="index.html" class="text-gray-600 hover:text-blue-600">Home</a>
+                <a href="workouts.html" class="text-blue-600 font-semibold">Workouts</a>
+                <a href="trainers.html" class="text-gray-600 hover:text-blue-600">Trainers</a>
+                <a href="plans.html" class="text-gray-600 hover:text-blue-600">Plans</a>
+                <div class="relative">
+                    <button class="flex items-center space-x-2 text-gray-600 hover:text-blue-600">
+                        <img src="/static/images/Basic_Ui_(186).jpg" alt="Profile" class="w-8 h-8 rounded-full">
+                        <span>John Doe</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<main class="pt-16">
+    <!-- Hero & Filters Container -->
+    <section class="workouts-hero-container">
+        <!-- Hero Section -->
+        <div class="workouts-hero">
+            <div class="text-center">
+                <h1 class="text-5xl font-bold mb-4 text-white">Available Workouts</h1>
+                <p class="text-xl text-gray-200">Find the perfect workout for your goals</p>
+            </div>
+        </div>
+
+        <!-- Filters Section -->
+        <div class="filter-container">
+            <div class="bg-white rounded-lg shadow-md p-6 mx-4 mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Workout Type</label>
+                        <label>
+                            <select class="form-select w-full">
+                                <option value="">All Types</option>
+                                <option value="hiit">CrossFit</option>
+                                <option value="strength">Tabata</option>
+                                <option value="yoga">Yoga</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Trainer</label>
+                        <label>
+                            <select class="form-select w-full">
+                                <option value="">All Trainers</option>
+                                <option value="sarah">Sarah Johnson</option>
+                                <option value="mike">Mike Thompson</option>
+                                <option value="anna">Anna Williams</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                        <label>
+                            <input type="date" class="form-input w-full">
+                        </label>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Time</label>
+                        <label>
+                            <select class="form-select w-full">
+                                <option value="">Any Time</option>
+                                <option value="morning">Morning (6AM - 12PM)</option>
+                                <option value="afternoon">Afternoon (12PM - 5PM)</option>
+                                <option value="evening">Evening (5PM - 10PM)</option>
+                            </select>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Workouts Grid -->
+    <div class="pt-8 pb-8">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Workout Card 1 -->
+                <div class="workout-card bg-white rounded-xl shadow-lg hover:scale-105 overflow-hidden">
+                    <div class="card-image">
+                        <img src="/static/images/2024-Crossfit-Double-Under-Workout-Workout-Of-The-Day-768x432.jpg"
+                             alt="Crossfit training"
+                             class="w-full h-48 object-cover">
+                        <div class="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm">
+                            8 spots left
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-xl font-bold">CrossFit</h3>
+                            <span class="text-blue-600 font-semibold">$25</span>
+                        </div>
+                        <div class="flex items-center text-gray-600 text-sm mb-4">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span>Tomorrow, 10:00 AM</span>
+                        </div>
+                        <div class="flex items-center text-gray-600 text-sm mb-4">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                            <span>with Sarah Johnson</span>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-4">CrossFit is a high-intensity fitness program combining
+                            strength, cardio, and functional movements to improve overall fitness. Workouts are short,
+                            intense, and adaptable for all levels.</p>
+                        <button class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">
+                            Book Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Workout Card 2 -->
+                <div class="workout-card bg-white rounded-xl shadow-lg hover:scale-105 overflow-hidden">
+                    <div class="card-image">
+                        <img src="/static/images/metodo-tabata.jpg"
+                             alt="Tabata Training"
+                             class="w-full h-48 object-cover">
+                        <div class="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm">
+                            5 spots left
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-xl font-bold">Tabata</h3>
+                            <span class="text-blue-600 font-semibold">$30</span>
+                        </div>
+                        <div class="flex items-center text-gray-600 text-sm mb-4">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span>Thursday, 2:00 PM</span>
+                        </div>
+                        <div class="flex items-center text-gray-600 text-sm mb-4">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                            <span>with Mike Thompson</span>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-4">Tabata is a high-intensity interval training (HIIT) method
+                            involving 20 seconds of intense exercise followed by 10 seconds of rest, repeated for 4
+                            minutes. It boosts endurance and burns calories quickly.</p>
+                        <button class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">
+                            Book Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Workout Card 3 -->
+                <div class="workout-card bg-white rounded-xl shadow-lg hover:scale-105 overflow-hidden">
+                    <div class="card-image">
+                        <img src="/static/images/asanas-banner-image66a7733537998.webp"
+                             alt="Yoga"
+                             class="w-full h-48 object-cover">
+                        <div class="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm">
+                            12 spots left
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-xl font-bold">Yoga</h3>
+                            <span class="text-blue-600 font-semibold">$20</span>
+                        </div>
+                        <div class="flex items-center text-gray-600 text-sm mb-4">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span>Friday, 9:00 AM</span>
+                        </div>
+                        <div class="flex items-center text-gray-600 text-sm mb-4">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                            <span>with Anna Williams</span>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-4">Yoga is a mind-body practice combining physical poses,
+                            breathing exercises, and meditation. It improves flexibility, strength, and mental
+                            well-being, suitable for all fitness levels.</p>
+                        <button class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">
+                            Book Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <h3 class="text-xl font-bold mb-2">FitnessPro</h3>
+                    <p class="text-gray-400 text-sm">Your ultimate fitness destination for a healthier lifestyle.</p>
+                </div>
+                <div>
+                    <h4 class="text-base font-semibold mb-2">Contact Us</h4>
+                    <ul class="space-y-1 text-gray-400 text-sm">
+                        <li>123 Fitness Street</li>
+                        <li>Burgas, Bulgaria</li>
+                        <li>Phone: (056) 456-7890</li>
+                        <li>Email: info@fitnesspro.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-6 pt-6 text-center text-gray-400 text-sm">
+                <p>&copy; 2025 FitnessPro. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</main>
+</body>
+</html>
