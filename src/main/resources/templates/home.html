@@ -14,18 +14,18 @@
     <div class="max-w-7xl mx-auto px-4">
         <div class="flex justify-between h-16">
             <div class="flex items-center">
-                <a href="index.html" class="text-2xl font-bold text-blue-600">FitnessPro</a>
+                <a th:href="@{/home}" class="text-2xl font-bold text-blue-600">FitnessPro</a>
             </div>
             <div class="hidden md:flex items-center space-x-8">
-                <a href="home.html" class="text-blue-600 font-semibold">Home</a>
-                <a href="workouts.html" class="text-gray-600 hover:text-blue-600">Workouts</a>
-                <a href="trainers.html" class="text-gray-600 hover:text-blue-600">Trainers</a>
-                <a href="plans.html" class="text-gray-600 hover:text-blue-600">Plans</a>
-                <div class="relative">
-                    <button class="flex items-center space-x-2 text-gray-600 hover:text-blue-600">
-                        <img src="/static/images/Basic_Ui_(186).jpg" alt="Profile" class="w-8 h-8 rounded-full">
-                        <span>John Doe</span>
-                    </button>
+                <a th:href="@{home}" class="text-gray-600 hover:text-blue-600">Home</a>
+                <a th:href="@{/workouts}" class="text-gray-600 hover:text-blue-600">Workouts</a>
+                <a th:href="@{/trainers}" class="text-gray-600 hover:text-blue-600">Trainers</a>
+                <a th:href="@{/plans}" class="text-gray-600 hover:text-blue-600">Plans</a>
+                <div class="relative flex items-center space-x-2 text-gray-600 hover:text-blue-600">
+                    <img th:src="${profilePicture}" alt="Profile" class="w-8 h-8 rounded-full">
+                    <span th:if="${not #strings.isEmpty(user.firstName) and not #strings.isEmpty(user.lastName)}">
+                        <span th:text="${user.firstName + ' ' + user.lastName}"></span>
+                    </span>
                 </div>
             </div>
         </div>
@@ -43,7 +43,7 @@
                         <div th:if="${message}" class="message success" th:text="${message}"></div>
                         <div th:if="${error}" class="message error" th:text="${error}"></div>
                         <a href="#upload-modal">
-                            <img src="/static/images/Basic_Ui_(186).jpg" alt="Profile"
+                            <img th:src="${profilePicture}" alt="Profile Image"
                                  class="w-20 h-20 rounded-full profile-image border-4 border-blue-100">
                         </a>
                         <div id="upload-modal" class="modal">
@@ -51,7 +51,7 @@
                                 <a href="#" class="close-modal">&times;</a>
                                 <h3>Upload new image</h3>
 
-                                <form th:action="@{/user/upload-image}"
+                                <form th:action="@{/home/upload-image}"
                                       method="post"
                                       enctype="multipart/form-data">
                                     <input type="file"
@@ -65,10 +65,14 @@
                             </div>
                         </div>
                         <div>
-                            <h1 class="text-2xl font-bold text-gray-800">John Doe</h1>
+                            <h1 th:text="${not #strings.isEmpty(user.firstName) and not #strings.isEmpty(user.lastName) ?
+                                user.firstName + ' ' + user.lastName :
+                                (not #strings.isEmpty(user.firstName) ? user.firstName :
+                                (not #strings.isEmpty(user.lastName) ? user.lastName : 'Edit your profile'))}"
+                                class="text-2xl font-bold text-gray-800"></h1>
                             <div class="flex items-center space-x-2">
-                                <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-sm">Premium Member</span>
-                                <span class="text-gray-600 text-sm">Joined Jan 2025</span>
+                                <span th:text="|Member form ${#temporals.format(user.registeredOn, 'MMMM yyyy')}|"
+                                      class="text-gray-800 text-sm"></span>
                             </div>
                         </div>
                     </div>

@@ -17,14 +17,19 @@
             </div>
 
             <div class="hidden md:flex items-center space-x-8">
-                <a href="index.html" class="text-gray-600 hover:text-blue-600">Home</a>
-                <a href="workouts.html" class="text-gray-600 hover:text-blue-600">Workouts</a>
-                <a href="trainers.html" class="text-gray-600 hover:text-blue-600">Trainers</a>
-                <a href="plans.html" class="text-gray-600 hover:text-blue-600">Plans</a>
-                <button onclick="location.href='login.html'"
-                        class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
+                <div th:if="${#authentication.isAuthenticated()}">
+                    <a th:href="@{/home}" class="text-gray-600 hover:text-blue-600">Home</a>
+                </div>
+                <div th:unless="${#authentication.isAuthenticated()}">
+                    <a th:href="@{/index}" class="text-gray-600 hover:text-blue-600">Home</a>
+                </div>
+                <a th:href="@{/workouts}" class="text-gray-600 hover:text-blue-600">Workouts</a>
+                <a th:href="@{/trainers}" class="text-gray-600 hover:text-blue-600">Trainers</a>
+                <a th:href="@{/plans}" class="text-gray-600 hover:text-blue-600">Plans</a>
+                <a th:href="@{/login}"
+                   class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
                     Login
-                </button>
+                </a>
             </div>
         </div>
     </div>

@@ -4,7 +4,6 @@ import com.fitnessapp.exception.*;
 import com.fitnessapp.user.model.User;
 import com.fitnessapp.user.model.UserRole;
 import com.fitnessapp.user.repository.UserRepository;
-import com.fitnessapp.web.dto.LoginRequest;
 import com.fitnessapp.web.dto.RegisterRequest;
 import com.fitnessapp.web.dto.UserEditRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -31,12 +30,12 @@ public class UserService {
     }
 
     @SuppressWarnings("StringConcatenationArgumentToLogCall")
-    public User register(RegisterRequest registerRequest) {
+    public void register(RegisterRequest registerRequest) {
 
         Optional<User> userOptional = userRepository.findByEmail(registerRequest.email());
 
         if (userOptional.isPresent()) {
-            throw new UserAlreadyExistsException("User with email [%s] already exist."
+            throw new UserAlreadyExistsException("User with email (%s) already exist."
                     .formatted(registerRequest.email()));
         }
 
@@ -45,22 +44,6 @@ public class UserService {
         log.info("Successfully created new user for email [%s] with id [%s]."
                 .formatted(user.getEmail(), user.getId()));
 
-        return user;
-    }
-
-    public User login(LoginRequest loginRequest) {
-
-        Optional<User> userOptional = userRepository.findByEmail(loginRequest.email());
-        if (userOptional.isEmpty()) {
-            throw new AuthenticationException();
-        }
-
-        User user = userOptional.get();
-        if (!passwordEncoder.matches(loginRequest.password(), user.getPassword())) {
-            throw new AuthenticationException();
-        }
-
-        return user;
     }
 
     public void updateUser(UUID userId, UserEditRequest userEditRequest) {
@@ -98,7 +81,7 @@ public class UserService {
         }
 
         String contentType = profilePicture.getContentType();
-        if (contentType == null || contentType.startsWith("image/")) {
+        if (contentType == null || !contentType.startsWith("image/")) {
             throw new InvalidImageException("Please upload a valid format of profile picture.");
         }
     }
@@ -106,8 +89,15 @@ public class UserService {
     public User getById(UUID userId) {
 
         return userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User with id [%s] does not exist."
+                .orElseThrow(() -> new UserNotFoundException("User with id (%s) does not exist."
                         .formatted(userId)));
+    }
+
+
+    public User findByEmail(String email) {
+
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User with email (%s) does not exist."));
     }
 
     private User initializeNewUserAccount(RegisterRequest dto) {

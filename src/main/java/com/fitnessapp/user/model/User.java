@@ -36,7 +36,7 @@ public class User {
     private String password;
 
     @Lob
-    @Column
+    @Column(columnDefinition = "MEDIUMBLOB")
     private byte[] profilePicture;
 
     @Enumerated(EnumType.STRING)
@@ -51,5 +51,4 @@ public class User {
 
     @OneToMany(mappedBy = "trainer")
     private List<Workout> trainerWorkouts = new ArrayList<>();
-
 }

@@ -14,18 +14,18 @@
     <div class="max-w-7xl mx-auto px-4">
         <div class="flex justify-between h-16">
             <div class="flex items-center">
-                <a href="index.html" class="text-2xl font-bold text-blue-600">FitnessPro</a>
+                <a th:href="@{/}" class="text-2xl font-bold text-blue-600">FitnessPro</a>
             </div>
 
             <div class="hidden md:flex items-center space-x-8">
-                <a href="index.html" class="text-gray-600 hover:text-blue-600">Home</a>
-                <a href="workouts.html" class="text-gray-600 hover:text-blue-600">Workouts</a>
-                <a href="trainers.html" class="text-gray-600 hover:text-blue-600">Trainers</a>
-                <a href="plans.html" class="text-gray-600 hover:text-blue-600">Plans</a>
-                <button onclick="location.href='login.html'"
-                        class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
+                <a th:href="@{/}" class="text-gray-600 hover:text-blue-600">Home</a>
+                <a th:href="@{/workouts}" class="text-gray-600 hover:text-blue-600">Workouts</a>
+                <a th:href="@{/trainers}" class="text-gray-600 hover:text-blue-600">Trainers</a>
+                <a th:href="@{/plans}" class="text-gray-600 hover:text-blue-600">Plans</a>
+                <a th:href="@{/login}"
+                   class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
                     Login
-                </button>
+                </a>
             </div>
         </div>
     </div>
@@ -37,19 +37,27 @@
         <div class="max-w-md mx-auto bg-white rounded-lg shadow-xl overflow-hidden">
             <div class="py-8 px-6">
                 <h2 class="text-3xl font-bold text-center mb-6 gradient-text">Join FitnessPro</h2>
-
                 <form class="register-form space-y-6" th:action="@{/register}" method="post"
                       th:object="${registerRequest}">
+                    <div th:if="${message}"
+                         class="bg-red-100 border border-red-300 text-red-700 text-sm px-2 py-2 rounded-md">
+                        <p th:text="${message}"></p>
+                    </div>
                     <div class="form-group">
                         <label for="email" class="block text-gray-700 mb-2">Email Address</label>
                         <input type="email" id="email" class="form-input" placeholder="john@example.com"
                                th:field="*{email}" required>
+                        <p class="bg-red-100 border border-red-300 text-red-700 text-sm px-2 py-2 rounded-md"
+                           th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
                     </div>
 
                     <div class="form-group">
                         <label for="password" class="block text-gray-700 mb-2">Password</label>
                         <input type="password" id="password" class="form-input" placeholder="••••••••"
                                th:field="*{password}" required>
+                        <p class="bg-red-100 border border-red-300 text-red-700 text-sm px-2 py-2 rounded-md"
+                           th:if="${#fields.hasErrors('password')}"
+                           th:errors="*{password}"></p>
                     </div>
 
                     <div class="form-group">
@@ -70,7 +78,7 @@
 
                 <p class="text-center mt-6 text-gray-600">
                     Already have an account?
-                    <a href="login.html" class="text-blue-600 hover:text-blue-700">Login here</a>
+                    <a th:href="@{login}" class="text-blue-600 hover:text-blue-700">Login here</a>
                 </p>
             </div>
         </div>
