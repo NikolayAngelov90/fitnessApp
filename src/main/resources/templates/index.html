@@ -17,12 +17,7 @@
             </div>
 
             <div class="hidden md:flex items-center space-x-8">
-                <div th:if="${#authentication.isAuthenticated()}">
-                    <a th:href="@{/home}" class="text-gray-600 hover:text-blue-600">Home</a>
-                </div>
-                <div th:unless="${#authentication.isAuthenticated()}">
-                    <a th:href="@{/index}" class="text-gray-600 hover:text-blue-600">Home</a>
-                </div>
+                <a th:href="@{/}" class="text-gray-600 hover:text-blue-600">Home</a>
                 <a th:href="@{/workouts}" class="text-gray-600 hover:text-blue-600">Workouts</a>
                 <a th:href="@{/trainers}" class="text-gray-600 hover:text-blue-600">Trainers</a>
                 <a th:href="@{/plans}" class="text-gray-600 hover:text-blue-600">Plans</a>

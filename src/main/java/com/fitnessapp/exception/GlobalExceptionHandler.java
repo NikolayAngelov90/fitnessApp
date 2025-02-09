@@ -3,6 +3,7 @@ package com.fitnessapp.exception;
 import com.fitnessapp.user.model.User;
 import com.fitnessapp.user.model.UserRole;
 import com.fitnessapp.user.service.UserService;
+import com.fitnessapp.utils.ProfilePictureHelper;
 import com.fitnessapp.web.dto.RegisterRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -11,15 +12,17 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.security.Principal;
-import java.util.Base64;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
     private final UserService userService;
+    private final ProfilePictureHelper profilePictureHelper;
 
-    public GlobalExceptionHandler(UserService userService) {
+    public GlobalExceptionHandler(UserService userService,
+                                  ProfilePictureHelper profilePictureHelper) {
         this.userService = userService;
+        this.profilePictureHelper = profilePictureHelper;
     }
 
     @ExceptionHandler(UserAlreadyExistsException.class)
@@ -67,13 +70,7 @@ public class GlobalExceptionHandler {
         String email = principal.getName();
         User user = userService.findByEmail(email);
         modelAndView.addObject("user", user);
-
-        if (user.getProfilePicture() != null) {
-            String base64Image = "data:image/jpeg;base64," +
-                    Base64.getEncoder().encodeToString(user.getProfilePicture());
-            modelAndView.addObject("profilePicture", base64Image);
-        } else {
-            modelAndView.addObject("profilePicture", "/images/Basic_Ui_(186).jpg");
-        }
+        modelAndView.addObject("profilePicture",
+                profilePictureHelper.resolveProfilePicture(user));
     }
 }

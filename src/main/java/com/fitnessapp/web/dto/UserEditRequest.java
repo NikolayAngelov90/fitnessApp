@@ -6,4 +6,7 @@ public record UserEditRequest(
         @Size(max = 50) String firstName,
         @Size(max = 50) String lastName
 ) {
+    public static UserEditRequest empty() {
+        return new UserEditRequest("", "");
+    }
 }

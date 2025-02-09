@@ -2,7 +2,9 @@ package com.fitnessapp.web;
 
 import com.fitnessapp.user.model.User;
 import com.fitnessapp.user.service.UserService;
+import com.fitnessapp.utils.ProfilePictureHelper;
 import com.fitnessapp.web.dto.RegisterRequest;
+import com.fitnessapp.web.dto.UserEditRequest;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -12,25 +14,37 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.Base64;
+import java.security.Principal;
 
 @Controller
 public class IndexController {
 
     private final UserService userService;
+    private final ProfilePictureHelper profilePictureHelper;
 
-    public IndexController(UserService userService) {
+    public IndexController(UserService userService,
+                           ProfilePictureHelper profilePictureHelper) {
         this.userService = userService;
+        this.profilePictureHelper = profilePictureHelper;
     }
 
     @GetMapping("/")
-    public String getIndexPage() {
+    public String getIndexPage(Principal principal) {
+
+        if (principal != null) {
+            return "redirect:/home";
+        }
 
         return "index";
     }
 
     @GetMapping("/register")
-    public ModelAndView getRegisterPage() {
+    public ModelAndView getRegisterPage(Principal principal) {
+
+        if (principal != null) {
+            return new ModelAndView("redirect:/home");
+        }
+
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("register");
@@ -52,7 +66,11 @@ public class IndexController {
     }
 
     @GetMapping("/login")
-    public String Login() {
+    public String Login(Principal principal) {
+
+        if (principal != null) {
+            return "redirect:/home";
+        }
 
         return "login";
     }
@@ -65,14 +83,10 @@ public class IndexController {
         User user = userService.findByEmail(email);
 
         ModelAndView modelAndView = new ModelAndView("home");
-
-        if (user.getProfilePicture() != null) {
-            String base64Image = "data:image/jpeg;base64," +
-                    Base64.getEncoder().encodeToString(user.getProfilePicture());
-            modelAndView.addObject("profilePicture", base64Image);
-        } else {
-            modelAndView.addObject("profilePicture", "/images/Basic_Ui_(186).jpg");
-        }
+        modelAndView.addObject("userEditRequest",
+                new UserEditRequest(user.getFirstName(), user.getLastName()));
+        modelAndView.addObject("profilePicture",
+                profilePictureHelper.resolveProfilePicture(user));
 
         modelAndView.addObject("user", user);
         return modelAndView;
