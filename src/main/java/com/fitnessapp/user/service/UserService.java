@@ -4,8 +4,10 @@ import com.fitnessapp.exception.*;
 import com.fitnessapp.user.model.User;
 import com.fitnessapp.user.model.UserRole;
 import com.fitnessapp.user.repository.UserRepository;
+import com.fitnessapp.utils.services.PhoneNumberService;
 import com.fitnessapp.web.dto.RegisterRequest;
 import com.fitnessapp.web.dto.UserEditRequest;
+import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,11 +24,14 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final PhoneNumberService phoneNumberService;
 
     public UserService(UserRepository userRepository,
-                       PasswordEncoder passwordEncoder) {
+                       PasswordEncoder passwordEncoder,
+                       PhoneNumberService phoneNumberService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.phoneNumberService = phoneNumberService;
     }
 
     @SuppressWarnings("StringConcatenationArgumentToLogCall")
@@ -52,6 +57,11 @@ public class UserService {
 
         user.setFirstName(userEditRequest.firstName().trim());
         user.setLastName(userEditRequest.lastName().trim());
+
+        PhoneNumber parsedNumber = phoneNumberService.parsePhoneNumber(
+                userEditRequest.phoneNumber(), "BG");
+        String e164Number = phoneNumberService.formatE164(parsedNumber);
+        user.setPhoneNumber(e164Number);
 
         userRepository.save(user);
     }

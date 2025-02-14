@@ -1,4 +1,4 @@
-package com.fitnessapp.utils;
+package com.fitnessapp.utils.services;
 
 import com.fitnessapp.user.model.User;
 import org.springframework.stereotype.Component;

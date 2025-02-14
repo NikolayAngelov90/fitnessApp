@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - FitnessPro</title>
+    <title>Edit Profile - FitnessPro</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link href="/css/common.css" rel="stylesheet">
     <link href="/css/form.css" rel="stylesheet">
@@ -14,71 +14,73 @@
     <div class="max-w-7xl mx-auto px-4">
         <div class="flex justify-between h-16">
             <div class="flex items-center">
-                <a th:href="@{/}" class="text-2xl font-bold text-blue-600">FitnessPro</a>
+                <a th:href="@{/home}" class="text-2xl font-bold text-blue-600">FitnessPro</a>
             </div>
-
             <div class="hidden md:flex items-center space-x-8">
-                <a th:href="@{/}" class="text-gray-600 hover:text-blue-600">Home</a>
+                <a th:href="@{/home}" class="text-gray-600 hover:text-blue-600">Home</a>
                 <a th:href="@{/workouts}" class="text-gray-600 hover:text-blue-600">Workouts</a>
                 <a th:href="@{/trainers}" class="text-gray-600 hover:text-blue-600">Trainers</a>
                 <a th:href="@{/plans}" class="text-gray-600 hover:text-blue-600">Plans</a>
-                <a th:href="@{/login}"
-                   class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
-                    Login
-                </a>
+                <div class="relative flex items-center space-x-2 text-gray-600 hover:text-blue-600">
+                    <img th:src="${profilePicture}" alt="Profile" class="w-8 h-8 rounded-full">
+                </div>
             </div>
         </div>
     </div>
 </nav>
 
-<!-- Register Section -->
+<!-- Edit Profile Section -->
 <section class="register-section min-h-screen flex items-center justify-center py-20">
     <div class="container mx-auto px-4">
         <div class="max-w-md mx-auto bg-white rounded-lg shadow-xl overflow-hidden">
             <div class="py-8 px-6">
-                <h2 class="text-3xl font-bold text-center mb-6 gradient-text">Join FitnessPro</h2>
-                <form class="register-form space-y-6" th:action="@{/register}" method="post" novalidate
-                      th:object="${registerRequest}">
+                <h2 class="text-3xl font-bold text-center mb-6 gradient-text">Edit Profile</h2>
+                <form class="register-form space-y-6" th:action="@{/user/edit}" method="POST" novalidate
+                      th:object="${userEditRequest}">
+                    <div th:if="${message}"
+                         class="bg-green-100 border border-green-300 text-green-700 px-2 py-2 rounded-md">
+                        <p th:text="${message}"></p>
+                    </div>
                     <div th:if="${error}"
-                         class="bg-red-100 border border-red-300 text-red-700 text-sm px-2 py-2 rounded-md">
+                         class="bg-red-100 border border-red-300 text-red-700 px-2 py-2 rounded-md">
                         <p th:text="${error}"></p>
                     </div>
+
+                    <!-- First Name -->
                     <div class="form-group">
-                        <label for="email" class="block text-gray-700 mb-2">Email Address</label>
-                        <input type="email" id="email" class="form-input" placeholder="john@example.com"
-                               th:field="*{email}" required>
-                        <p class="bg-red-100 border border-red-300 text-red-700 text-sm px-2 py-2 rounded-md"
-                           th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
+                        <label for="firstName" class="block text-gray-700 mb-2">First Name</label>
+                        <input type="text" id="firstName" class="form-input"
+                               th:field="*{firstName}">
+                        <p class="text-red-500 text-sm mt-1" th:if="${#fields.hasErrors('firstName')}"
+                           th:errors="*{firstName}"></p>
                     </div>
 
+                    <!-- Last Name -->
                     <div class="form-group">
-                        <label for="password" class="block text-gray-700 mb-2">Password</label>
-                        <input type="password" id="password" class="form-input" placeholder="••••••••"
-                               th:field="*{password}" required>
-                        <p class="bg-red-100 border border-red-300 text-red-700 text-sm px-2 py-2 rounded-md"
-                           th:if="${#fields.hasErrors('password')}"
-                           th:errors="*{password}"></p>
+                        <label for="lastName" class="block text-gray-700 mb-2">Last Name</label>
+                        <input type="text" id="lastName" class="form-input"
+                               th:field="*{lastName}">
+                        <p class="text-red-500 text-sm mt-1" th:if="${#fields.hasErrors('lastName')}"
+                           th:errors="*{lastName}"></p>
                     </div>
 
+                    <!-- Phone Number -->
                     <div class="form-group">
-                        <label for="role" class="block text-gray-700 mb-2">Role</label>
-                        <select id="role" class="form-input" th:field="*{userRole}" required>
-                            <option th:each="userRole : ${T(com.fitnessapp.user.model.UserRole).getRegistrableRoles()}"
-                                    th:value="${userRole}"
-                                    th:text="${#strings.capitalize(#strings.toLowerCase(userRole))}">
-                            </option>
-                        </select>
+                        <label for="phone" class="block text-gray-700 mb-2">Phone Number</label>
+                        <input type="tel" id="phone" class="form-input"
+                               th:field="*{phoneNumber}">
+                        <p class="text-red-500 text-sm mt-1" th:if="${#fields.hasErrors('phoneNumber')}"
+                           th:errors="*{phoneNumber}"></p>
                     </div>
 
                     <button type="submit"
                             class="w-full bg-blue-600 text-white py-3 rounded-md text-lg font-semibold hover:bg-blue-700 transition-colors">
-                        Create Account
+                        Save Changes
                     </button>
                 </form>
 
                 <p class="text-center mt-6 text-gray-600">
-                    Already have an account?
-                    <a th:href="@{login}" class="text-blue-600 hover:text-blue-700">Login here</a>
+                    <a th:href="@{/home}" class="text-blue-600 hover:text-blue-700">Back to Profile</a>
                 </p>
             </div>
         </div>
@@ -91,7 +93,7 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
                 <h3 class="text-xl font-bold mb-2">FitnessPro</h3>
-                <p class="text-gray-400 text-sm">Your ultimate fitness destination for a healthier lifestyle.</p>
+                <p class="text-gray-400 text-sm">Your ultimate fitness destination</p>
             </div>
             <div>
                 <h4 class="text-base font-semibold mb-2">Contact Us</h4>

@@ -39,6 +39,9 @@ public class User {
     @Column(columnDefinition = "MEDIUMBLOB")
     private byte[] profilePicture;
 
+    @Column(unique = true)
+    private String phoneNumber;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role;

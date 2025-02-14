@@ -1,15 +1,17 @@
-package com.fitnessapp.exception;
+package com.fitnessapp.web;
 
+import com.fitnessapp.exception.ImageUploadException;
+import com.fitnessapp.exception.InvalidPhoneNumberException;
+import com.fitnessapp.exception.UserAlreadyExistsException;
 import com.fitnessapp.user.model.User;
-import com.fitnessapp.user.model.UserRole;
 import com.fitnessapp.user.service.UserService;
-import com.fitnessapp.utils.ProfilePictureHelper;
-import com.fitnessapp.web.dto.RegisterRequest;
+import com.fitnessapp.utils.services.ProfilePictureHelper;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 
@@ -26,20 +28,12 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UserAlreadyExistsException.class)
-    public ModelAndView handleUserAlreadyExistsException(UserAlreadyExistsException e,
-                                                         HttpServletRequest request) {
+    public String handleUserAlreadyExistsException(UserAlreadyExistsException e,
+                                                   RedirectAttributes redirectAttributes) {
 
-        ModelAndView modelAndView = new ModelAndView("register");
+        redirectAttributes.addFlashAttribute("error", e.getMessage());
 
-        UserRole userRole = UserRole.valueOf(request.getParameter("userRole"));
-        RegisterRequest registerRequest = new RegisterRequest(
-                request.getParameter("email"), request.getParameter("password"),
-                userRole);
-
-        modelAndView.addObject("registerRequest", registerRequest);
-        modelAndView.addObject("message", e.getMessage());
-
-        return modelAndView;
+        return "redirect:/register";
     }
 
     @ExceptionHandler(ImageUploadException.class)
@@ -64,6 +58,16 @@ public class GlobalExceptionHandler {
         return modelAndView;
     }
 
+    @ExceptionHandler(InvalidPhoneNumberException.class)
+    public String handleInvalidPhoneNumber(InvalidPhoneNumberException e,
+                                           RedirectAttributes redirectAttributes) {
+
+        redirectAttributes.addFlashAttribute("error", e.getMessage());
+
+        return "redirect:/edit#edit-profile-modal";
+    }
+
+
     private void getUser(HttpServletRequest request, ModelAndView modelAndView) {
         Principal principal = request.getUserPrincipal();
 
@@ -73,4 +77,5 @@ public class GlobalExceptionHandler {
         modelAndView.addObject("profilePicture",
                 profilePictureHelper.resolveProfilePicture(user));
     }
+
 }

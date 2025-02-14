@@ -2,7 +2,7 @@ package com.fitnessapp.web;
 
 import com.fitnessapp.user.model.User;
 import com.fitnessapp.user.service.UserService;
-import com.fitnessapp.utils.ProfilePictureHelper;
+import com.fitnessapp.utils.services.ProfilePictureHelper;
 import com.fitnessapp.web.dto.UserEditRequest;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -47,7 +47,7 @@ public class UserController {
 
         User user = getUser(principal);
 
-        ModelAndView modelAndView = new ModelAndView("home");
+        ModelAndView modelAndView = new ModelAndView("edit-menu");
         modelAndView.addObject("user", user);
         modelAndView.addObject("profilePicture",
                 profilePictureHelper.resolveProfilePicture(user));
@@ -56,30 +56,37 @@ public class UserController {
             modelAndView.addObject("userEditRequest", UserEditRequest.empty());
         } else {
             modelAndView.addObject("userEditRequest",
-                    new UserEditRequest(user.getFirstName(), user.getLastName()));
+                    new UserEditRequest(
+                            user.getFirstName(),
+                            user.getLastName(),
+                            user.getPhoneNumber()));
         }
 
         return modelAndView;
     }
 
     @PostMapping("/edit")
-    public String updateProfile(@Valid UserEditRequest userEditRequest, BindingResult bindingResult,
-                                Principal principal, RedirectAttributes redirectAttributes) {
+    public ModelAndView updateProfile(@Valid UserEditRequest userEditRequest,
+                                      BindingResult bindingResult,
+                                      Principal principal) {
 
         if (principal == null) {
-            return "redirect:/login";
-        }
-
-        if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("error", "Please fix the errors in the form.");
-            return "redirect:/edit#edit-profile-modal";
+            return new ModelAndView("redirect:/login");
         }
 
         User user = getUser(principal);
+
+        if (bindingResult.hasErrors()) {
+            ModelAndView modelAndView = new ModelAndView();
+            modelAndView.addObject("user", user);
+            modelAndView.setViewName("edit-menu");
+
+            return modelAndView;
+        }
+
         userService.updateUser(user.getId(), userEditRequest);
 
-        redirectAttributes.addFlashAttribute("message", "Profile updated successfully!");
-        return "redirect:/home";
+        return new ModelAndView("redirect:/home");
     }
 
     private User getUser(Principal principal) {

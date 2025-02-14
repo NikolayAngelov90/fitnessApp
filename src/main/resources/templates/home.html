@@ -17,7 +17,7 @@
                 <a th:href="@{/home}" class="text-2xl font-bold text-blue-600">FitnessPro</a>
             </div>
             <div class="hidden md:flex items-center space-x-8">
-                <a th:href="@{home}" class="text-gray-600 hover:text-blue-600">Home</a>
+                <a th:href="@{/home}" class="text-gray-600 hover:text-blue-600">Home</a>
                 <a th:href="@{/workouts}" class="text-gray-600 hover:text-blue-600">Workouts</a>
                 <a th:href="@{/trainers}" class="text-gray-600 hover:text-blue-600">Trainers</a>
                 <a th:href="@{/plans}" class="text-gray-600 hover:text-blue-600">Plans</a>
@@ -98,46 +98,15 @@
                         </div>
                     </div>
                     <div class="flex flex-col md:flex-row gap-4">
-                        <a href="/user/edit#edit-profile-modal"
+                        <a th:href="@{/user/edit}"
                            class="edit-profile-btn bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
                             Edit Profile
                         </a>
-                        <div id="edit-profile-modal" class="modal" th:if="${userEditRequest}">
-                            <div class="modal-content">
-                                <a href="#" class="close-modal">&times;</a>
-                                <h3>Edit your profile</h3>
-
-                                <form th:action="@{/user/edit}"
-                                      th:object="${userEditRequest}" method="post">
-                                    <div class="mb-4">
-                                        <label for="firstName" class="block text-gray-700">First Name</label>
-                                        <input type="text" id="firstName" th:field="*{firstName}"
-                                               class="border rounded w-full p-2" placeholder="Enter your first name"
-                                               required>
-                                        <p class="text-red-500 text-sm" th:if="${#fields.hasErrors('firstName')}"
-                                           th:errors="*{firstName}"></p>
-                                    </div>
-                                    <div class="mb-4">
-                                        <label for="lastName" class="block text-gray-700">Last Name</label>
-                                        <input type="text" id="lastName" th:field="*{lastName}"
-                                               class="border rounded w-full p-2" placeholder="Enter your last name"
-                                               required>
-                                        <p class="text-red-500 text-sm" th:if="${#fields.hasErrors('lastName')}"
-                                           th:errors="*{lastName}"></p>
-                                    </div>
-                                    <div class="flex justify-end">
-                                        <a href="#" class="bg-gray-500 text-white px-4 py-2 rounded mr-2">Cancel</a>
-                                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Save
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
+                        <a th:href="workouts"
+                           class="bg-gray-100 text-gray-800 px-6 py-2 rounded-lg hover:bg-gray-200 transition-colors text-center">
+                            My Workouts
+                        </a>
                     </div>
-                    <a href="workouts.html"
-                       class="bg-gray-100 text-gray-800 px-6 py-2 rounded-lg hover:bg-gray-200 transition-colors text-center">
-                        My Workouts
-                    </a>
                 </div>
             </div>
         </div>

@@ -2,7 +2,7 @@ package com.fitnessapp.web;
 
 import com.fitnessapp.user.model.User;
 import com.fitnessapp.user.service.UserService;
-import com.fitnessapp.utils.ProfilePictureHelper;
+import com.fitnessapp.utils.services.ProfilePictureHelper;
 import com.fitnessapp.web.dto.RegisterRequest;
 import com.fitnessapp.web.dto.UserEditRequest;
 import jakarta.validation.Valid;
@@ -84,7 +84,10 @@ public class IndexController {
 
         ModelAndView modelAndView = new ModelAndView("home");
         modelAndView.addObject("userEditRequest",
-                new UserEditRequest(user.getFirstName(), user.getLastName()));
+                new UserEditRequest(
+                        user.getFirstName(),
+                        user.getLastName(),
+                        user.getPhoneNumber()));
         modelAndView.addObject("profilePicture",
                 profilePictureHelper.resolveProfilePicture(user));
 
