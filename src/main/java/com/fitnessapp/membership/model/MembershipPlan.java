@@ -1,5 +1,6 @@
 package com.fitnessapp.membership.model;
 
+import com.fitnessapp.subscription.model.Subscription;
 import com.fitnessapp.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -35,7 +36,7 @@ public class MembershipPlan {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private MembershipStatus status;
+    private MembershipPlanStatus status;
 
     @Column(nullable = false)
     private BigDecimal price;

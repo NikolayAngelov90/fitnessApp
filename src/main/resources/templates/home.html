@@ -10,37 +10,7 @@
 </head>
 <body class="bg-gray-100">
 <!-- Navigation -->
-<nav class="bg-white shadow-lg fixed w-full z-50">
-    <div class="max-w-7xl mx-auto px-4">
-        <div class="flex justify-between h-16">
-            <div class="flex items-center">
-                <a th:href="@{/home}" class="text-2xl font-bold text-blue-600">FitnessPro</a>
-            </div>
-            <div class="hidden md:flex items-center space-x-8">
-                <a th:href="@{/home}" class="text-gray-600 hover:text-blue-600">Home</a>
-                <a th:href="@{/workouts}" class="text-gray-600 hover:text-blue-600">Workouts</a>
-                <a th:href="@{/trainers}" class="text-gray-600 hover:text-blue-600">Trainers</a>
-                <a th:href="@{/plans}" class="text-gray-600 hover:text-blue-600">Plans</a>
-                <div class="relative flex items-center space-x-2 text-gray-600 hover:text-blue-600">
-                    <img th:src="${profilePicture}" alt="Profile" class="w-8 h-8 rounded-full">
-                    <span th:if="${user != null and not #strings.isEmpty(user?.firstName) and not #strings.isEmpty(user?.lastName)}">
-                        <span th:text="${user.firstName + ' ' + user.lastName}"></span>
-                    </span>
-                </div>
-                <form th:action="@{/logout}" method="post"
-                      class="bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-1">
-                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                         stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                    </svg>
-                    <button type="submit">Logout</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</nav>
+<div th:insert="~{fragments/navigation-bar :: navbar}"></div>
 
 <main class="pt-16">
     <!-- Hero Section -->
@@ -60,7 +30,8 @@
                         </div>
                         <div class="flex items-center space-x-4">
                             <a href="#upload-modal">
-                                <img th:src="${profilePicture}" alt="Profile Image"
+                                <img th:src="${@profilePictureHelper.resolveProfilePicture(user)}"
+                                     alt="Profile Image"
                                      class="w-20 h-20 rounded-full profile-image border-4 border-blue-100">
                             </a>
                             <div id="upload-modal" class="modal">
@@ -68,13 +39,12 @@
                                     <a href="#" class="close-modal">&times;</a>
                                     <h3>Upload new image</h3>
 
-                                    <form th:action="@{/user/upload-image}"
+                                    <form th:action="@{/users/upload-image}"
                                           method="post"
                                           enctype="multipart/form-data">
                                         <input type="file"
                                                name="image"
-                                               accept="image/*"
-                                               required>
+                                               accept="image/*">
                                         <button type="submit" class="upload-button">
                                             Upload Image
                                         </button>
@@ -98,7 +68,7 @@
                         </div>
                     </div>
                     <div class="flex flex-col md:flex-row gap-4">
-                        <a th:href="@{/user/edit}"
+                        <a th:href="@{/users/edit}"
                            class="edit-profile-btn bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
                             Edit Profile
                         </a>
@@ -223,30 +193,9 @@
             </div>
         </div>
     </div>
-
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-8">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                    <h3 class="text-xl font-bold mb-2">FitnessPro</h3>
-                    <p class="text-gray-400 text-sm">Your ultimate fitness destination</p>
-                </div>
-                <div>
-                    <h4 class="text-base font-semibold mb-2">Contact Us</h4>
-                    <ul class="space-y-1 text-gray-400 text-sm">
-                        <li>123 Fitness Street</li>
-                        <li>Burgas, Bulgaria</li>
-                        <li>Phone: (056) 456-7890</li>
-                        <li>Email: info@fitnesspro.com</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="border-t border-gray-700 mt-6 pt-6 text-center text-gray-400 text-sm">
-                <p>&copy; 2025 FitnessPro. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
 </main>
+
+<!-- Footer -->
+<div th:insert="~{fragments/footer :: footer}"></div>
 </body>
 </html>

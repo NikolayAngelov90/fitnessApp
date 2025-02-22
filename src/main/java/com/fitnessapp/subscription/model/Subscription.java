@@ -1,5 +1,6 @@
-package com.fitnessapp.membership.model;
+package com.fitnessapp.subscription.model;
 
+import com.fitnessapp.membership.model.MembershipPlan;
 import jakarta.persistence.*;
 import lombok.*;
 

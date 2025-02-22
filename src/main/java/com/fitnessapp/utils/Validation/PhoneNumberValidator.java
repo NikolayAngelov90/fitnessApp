@@ -1,7 +1,7 @@
 package com.fitnessapp.utils.Validation;
 
 import com.fitnessapp.exception.InvalidPhoneNumberException;
-import com.fitnessapp.utils.services.PhoneNumberService;
+import com.fitnessapp.user.service.PhoneNumberService;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -30,18 +30,18 @@ public class PhoneNumberValidator implements ConstraintValidator<ValidPhoneNumbe
         try {
             PhoneNumber number = phoneNumberService.parsePhoneNumber(value, regionCode);
             if (!phoneNumberService.isValidNumber(number)) {
-                serErrorMessage(context, "Invalid phone number");
+                setErrorMessage(context, "Invalid phone number");
                 return false;
             }
 
             return true;
         } catch (InvalidPhoneNumberException e) {
-            serErrorMessage(context, e.getMessage());
+            setErrorMessage(context, e.getMessage());
             return false;
         }
     }
 
-    private void serErrorMessage(ConstraintValidatorContext context, String message) {
+    private void setErrorMessage(ConstraintValidatorContext context, String message) {
         context.disableDefaultConstraintViolation();
         context.buildConstraintViolationWithTemplate(message)
                 .addConstraintViolation();

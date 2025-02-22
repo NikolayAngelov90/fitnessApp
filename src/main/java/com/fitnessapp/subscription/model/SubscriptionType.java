@@ -1,4 +1,4 @@
-package com.fitnessapp.membership.model;
+package com.fitnessapp.subscription.model;
 
 public enum SubscriptionType {
 

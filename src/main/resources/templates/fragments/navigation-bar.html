@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Top-bar</title>
+</head>
+<body>
+<nav th:fragment="navbar" class="bg-white shadow-lg fixed w-full z-50">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="flex justify-between h-16">
+            <div class="flex items-center">
+                <a th:href="@{/}" class="text-2xl font-bold text-blue-600">FitnessPro</a>
+            </div>
+
+            <div class="hidden md:flex items-center space-x-8">
+                <a th:href="@{/}" class="text-gray-600 hover:text-blue-600">Home</a>
+                <a th:href="@{/workouts}" class="text-gray-600 hover:text-blue-600">Workouts</a>
+                <a th:href="@{/trainers}" class="text-gray-600 hover:text-blue-600">Trainers</a>
+                <a th:href="@{/plans}" class="text-gray-600 hover:text-blue-600">Plans</a>
+
+                <div th:if="${user != null}"
+                     class="relative flex items-center space-x-4 text-gray-600 hover:text-blue-600">
+                    <img th:src="${@profilePictureHelper.resolveProfilePicture(user)}"
+                         alt="Profile"
+                         class="w-8 h-8 rounded-full">
+                    <span th:if="${user != null and not #strings.isEmpty(user?.firstName) and not #strings.isEmpty(user?.lastName)}">
+                        <span th:text="${user.firstName + ' ' + user.lastName}"></span>
+                    </span>
+                    <a href="/logout"
+                       class="bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                             stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
+                        <p>Logout</p>
+                    </a>
+                </div>
+
+
+                <a th:unless="${user != null}"
+                   th:href="@{/login}"
+                   class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
+                    Login
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+</body>
+</html>

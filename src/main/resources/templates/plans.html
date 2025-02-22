@@ -10,125 +10,65 @@
 </head>
 <body class="bg-gray-100">
 <!-- Navigation -->
-<nav class="bg-white shadow-lg fixed w-full z-50">
-    <div class="max-w-7xl mx-auto px-4">
-        <div class="flex justify-between h-16">
-            <div class="flex items-center">
-                <a th:href="@{/}" class="text-2xl font-bold text-blue-600">FitnessPro</a>
-            </div>
-            <div class="hidden md:flex items-center space-x-8">
-                <a th:href="@{/}" class="text-gray-600 hover:text-blue-600">Home</a>
-                <a th:href="@{/workouts}" class="text-gray-600 hover:text-blue-600">Workouts</a>
-                <a th:href="@{/trainers}" class="text-gray-600 hover:text-blue-600">Trainers</a>
-                <a th:href="@{/plans}" class="text-gray-600 hover:text-blue-600">Plans</a>
-                <a th:href="@{/login}"
-                   class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
-                    Login
-                </a>
-            </div>
-        </div>
-    </div>
-</nav>
+<div th:insert="~{fragments/navigation-bar :: navbar}"></div>
 
 <!-- Plans Section -->
 <section class="plans-hero pt-24 pb-12">
     <div class="max-w-7xl mx-auto px-4">
         <!-- Gym Plans -->
-        <div class="text-center mb-16">
+        <div class="text-center mb-10">
             <h2 class="text-3xl font-bold mb-4 text-white">Gym Membership</h2>
             <p class="text-white">Choose your preferred duration for full access</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-20">
-            <!-- 1 Month -->
-            <div class="plan-card bg-white rounded-xl shadow-lg hover:scale-105">
-                <div class="card-illustration">
-                    <img src="/static/images/gym-1month..svg" alt="1 Month Gym Access">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-200">
+            <div th:each="subscription : ${gymOnly}" class="plan-card bg-white rounded-xl shadow-lg hover:scale-105">
+                <div th:switch="${subscription.duration}" class="card-illustration">
+                    <img th:case="${subscription.duration.ONE_MONTH}" th:src="@{../images/gym-1month..svg}"
+                         alt="1 Month Gym Access">
+                    <img th:case="${subscription.duration.THREE_MONTHS}" th:src="@{../images/gym-3month.svg}"
+                         alt="3 Month Gym Access">
+                    <img th:case="${subscription.duration.SIX_MONTHS}" th:src="@{../images/gym-6month.svg}"
+                         alt="6 Month Gym Access">
+                    <img th:case="${subscription.duration.ONE_YEAR}" th:src="@{../images/gym-1year.svg}"
+                         alt="1 Year Gym Access">
                 </div>
                 <div class="p-6">
-                    <h3 class="text-2xl font-bold mb-4">1 Month</h3>
-                    <p class="text-4xl font-bold text-blue-600 mb-6">$29</p>
-                    <button class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">
-                        Select
-                    </button>
-                </div>
-            </div>
-
-            <!-- 3 Months -->
-            <div class="plan-card bg-white rounded-xl shadow-lg hover:scale-105">
-                <div class="card-illustration">
-                    <img src="/static/images/gym-3month.svg" alt="3 Months Gym Access">
-                </div>
-                <div class="p-6">
-                    <h3 class="text-2xl font-bold mb-4">3 Months</h3>
-                    <p class="text-4xl font-bold text-blue-600 mb-6">$79</p>
-                    <button class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">
-                        Select
-                    </button>
-                </div>
-            </div>
-
-            <!-- 6 Months -->
-            <div class="plan-card bg-white rounded-xl shadow-lg hover:scale-105">
-                <div class="card-illustration">
-                    <img src="/static/images/gym-6month.svg" alt="6 Months Gym Access">
-                </div>
-                <div class="p-6">
-                    <h3 class="text-2xl font-bold mb-4">6 Months</h3>
-                    <p class="text-4xl font-bold text-blue-600 mb-6">$149</p>
-                    <button class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">
-                        Select
-                    </button>
-                </div>
-            </div>
-
-            <!-- 1 Year -->
-            <div class="plan-card bg-white rounded-xl shadow-lg hover:scale-105">
-                <div class="card-illustration">
-                    <img src="/static/images/gym-1year.svg" alt="1 Year Gym Access">
-                </div>
-                <div class="p-6">
-                    <h3 class="text-2xl font-bold mb-4">1 Year</h3>
-                    <p class="text-4xl font-bold text-blue-600 mb-6">$279</p>
-                    <button class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">
-                        Select
-                    </button>
+                    <h3 class="text-2xl font-bold mb-4"
+                        th:text="${#strings.replace(subscription.duration.name(), '_', ' ')}"></h3>
+                    <p class="text-4xl font-bold text-blue-600 mb-6"
+                       th:text="${'€' + #numbers.formatDecimal(subscription.price, 1, 'COMMA', 2, 'POINT')}"></p>
+                    <a th:href="'/memberships/' + ${subscription.id} + '/payment'" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">
+                        Buy Subscription
+                    </a>
                 </div>
             </div>
         </div>
 
         <!-- Trainer Plans -->
-        <div class="text-center mb-16">
-            <h2 class="text-3xl font-bold mb-4 text-white">Personal Trainer</h2>
+        <div class="text-center mb-10 mt-16">
+            <h2 class="text-3xl font-bold mb-4 text-white">Access to gym with Personal Trainer</h2>
             <p class="text-white">Expert guidance for faster results</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- PT 1 Month -->
-            <div class="plan-card bg-white rounded-xl shadow-lg hover:scale-105">
-                <div class="card-illustration">
-                    <img src="/static/images/pt-1month.svg" alt="1 Month + Personal Trainer">
-                </div>
-                <div class="p-6">
-                    <h3 class="text-2xl font-bold mb-4">1 Month + PT</h3>
-                    <p class="text-4xl font-bold text-blue-600 mb-6">$99</p>
-                    <button class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">
-                        Select
-                    </button>
-                </div>
-            </div>
 
-            <!-- PT 3 Months -->
-            <div class="plan-card bg-white rounded-xl shadow-lg hover:scale-105">
-                <div class="card-illustration">
-                    <img src="/static/images/pt-3month.svg" alt="3 Months + Personal Trainer">
+            <div th:each="subscription : ${gymPlusTrainer}"
+                 class="plan-card bg-white rounded-xl shadow-lg hover:scale-105">
+                <div th:switch="${subscription.duration}" class="card-illustration">
+                    <img th:case="${subscription.duration.ONE_MONTH}" th:src="@{../images/pt-1month.svg}"
+                         alt="1 Month + Personal Trainer">
+                    <img th:case="${subscription.duration.THREE_MONTHS}" th:src="@{../images/pt-3month.svg}"
+                         alt="3 Month + Personal Trainer">
                 </div>
                 <div class="p-6">
-                    <h3 class="text-2xl font-bold mb-4">3 Months + PT</h3>
-                    <p class="text-4xl font-bold text-blue-600 mb-6">$269</p>
-                    <button class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">
-                        Select
-                    </button>
+                    <h3 class="text-2xl font-bold mb-4"
+                        th:text="${#strings.replace(subscription.duration.name(), '_', ' ')}"></h3>
+                    <p class="text-4xl font-bold text-blue-600 mb-6"
+                       th:text="${'€' + #numbers.formatDecimal(subscription.price, 1, 'COMMA', 2, 'POINT')}"></p>
+                    <a th:href="'/memberships/' + ${subscription.id} + '/payment'" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">
+                        Buy Subscription
+                    </a>
                 </div>
             </div>
         </div>
@@ -136,27 +76,6 @@
 </section>
 
 <!-- Footer -->
-<footer class="bg-gray-800 text-white py-8">
-    <div class="max-w-7xl mx-auto px-4">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
-                <h3 class="text-xl font-bold mb-2">FitnessPro</h3>
-                <p class="text-gray-400 text-sm">Your ultimate fitness destination</p>
-            </div>
-            <div>
-                <h4 class="text-base font-semibold mb-2">Contact Us</h4>
-                <ul class="space-y-1 text-gray-400 text-sm">
-                    <li>123 Fitness Street</li>
-                    <li>Burgas, Bulgaria</li>
-                    <li>Phone: (056) 456-7890</li>
-                    <li>Email: info@fitnesspro.com</li>
-                </ul>
-            </div>
-        </div>
-        <div class="border-t border-gray-700 mt-6 pt-6 text-center text-gray-400 text-sm">
-            <p>&copy; 2025 FitnessPro. All rights reserved.</p>
-        </div>
-    </div>
-</footer>
+<div th:insert="~{fragments/footer :: footer}"></div>
 </body>
 </html>

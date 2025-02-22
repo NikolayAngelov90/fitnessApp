@@ -1,14 +1,18 @@
 package com.fitnessapp.user.service;
 
 import com.fitnessapp.exception.*;
+import com.fitnessapp.security.CustomUserDetails;
 import com.fitnessapp.user.model.User;
 import com.fitnessapp.user.model.UserRole;
 import com.fitnessapp.user.repository.UserRepository;
-import com.fitnessapp.utils.services.PhoneNumberService;
 import com.fitnessapp.web.dto.RegisterRequest;
 import com.fitnessapp.web.dto.UserEditRequest;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -20,7 +24,7 @@ import java.util.UUID;
 
 @Service
 @Slf4j
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -34,23 +38,22 @@ public class UserService {
         this.phoneNumberService = phoneNumberService;
     }
 
-    @SuppressWarnings("StringConcatenationArgumentToLogCall")
     public void register(RegisterRequest registerRequest) {
 
         Optional<User> userOptional = userRepository.findByEmail(registerRequest.email());
 
         if (userOptional.isPresent()) {
-            throw new UserAlreadyExistsException("User with email (%s) already exist."
+            throw new UserAlreadyExistsException("User with email [%s] already exist."
                     .formatted(registerRequest.email()));
         }
 
         User user = userRepository.save(initializeNewUserAccount(registerRequest));
 
-        log.info("Successfully created new user for email [%s] with id [%s]."
-                .formatted(user.getEmail(), user.getId()));
-
+        log.info("Successfully created new user for email [{}] with id [{}].",
+                user.getEmail(), user.getId());
     }
 
+    @Transactional
     public void updateUser(UUID userId, UserEditRequest userEditRequest) {
 
         User user = getById(userId);
@@ -58,12 +61,15 @@ public class UserService {
         user.setFirstName(userEditRequest.firstName().trim());
         user.setLastName(userEditRequest.lastName().trim());
 
-        PhoneNumber parsedNumber = phoneNumberService.parsePhoneNumber(
-                userEditRequest.phoneNumber(), "BG");
-        String e164Number = phoneNumberService.formatE164(parsedNumber);
-        user.setPhoneNumber(e164Number);
+        String e164Number = getE164Number(userEditRequest);
 
-        userRepository.save(user);
+        Optional<User> phoneNumberOptional = userRepository.findByPhoneNumber(e164Number);
+        if (phoneNumberOptional.isPresent() && !phoneNumberOptional.get().getId().equals(user.getId())) {
+            throw new PhoneNumberAlreadyExistsException("User with number [%s] already exist."
+                    .formatted(e164Number));
+        }
+
+        user.setPhoneNumber(e164Number);
     }
 
     public void uploadProfilePicture(UUID userId, MultipartFile profilePicture) {
@@ -80,10 +86,40 @@ public class UserService {
         }
     }
 
+    public User findByEmail(String email) {
+
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User with email [%s] does not exist."
+                        .formatted(email)));
+    }
+
+    public User getById(UUID userId) {
+
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User with id [%s] does not exist."
+                        .formatted(userId)));
+    }
+
+    private User initializeNewUserAccount(RegisterRequest dto) {
+
+        UserRole selectedRole = UserRole.valueOf(dto.userRole().name());
+
+        if (!UserRole.getRegistrableRoles().contains(selectedRole)) {
+            throw new IllegalArgumentException("Invalid role selected for registration.");
+        }
+
+        return User.builder()
+                .email(dto.email())
+                .password(passwordEncoder.encode(dto.password()))
+                .role(selectedRole)
+                .registeredOn(LocalDateTime.now())
+                .build();
+    }
+
     private void validateImage(MultipartFile profilePicture) {
 
         if (profilePicture.isEmpty()) {
-            throw new EmptyImageException();
+            throw new EmptyImageException("Please choice profile picture.");
         }
 
         if (profilePicture.getSize() > 5 * 1024 * 1024) {
@@ -96,33 +132,24 @@ public class UserService {
         }
     }
 
-    public User getById(UUID userId) {
+    private String getE164Number(UserEditRequest userEditRequest) {
 
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User with id (%s) does not exist."
-                        .formatted(userId)));
-    }
-
-
-    public User findByEmail(String email) {
-
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("User with email (%s) does not exist."));
-    }
-
-    private User initializeNewUserAccount(RegisterRequest dto) {
-
-        UserRole selectedRole = UserRole.valueOf(dto.userRole().name());
-
-        if (!UserRole.getRegistrableRoles().contains(selectedRole)) {
-            throw new IllegalArgumentException("Invalid role selected for registration");
+        if (userEditRequest.phoneNumber().trim().isEmpty()) {
+            return userEditRequest.phoneNumber();
         }
 
-        return User.builder()
-                .email(dto.email())
-                .password(passwordEncoder.encode(dto.password()))
-                .role(selectedRole)
-                .registeredOn(LocalDateTime.now())
-                .build();
+        PhoneNumber parsedNumber = phoneNumberService.parsePhoneNumber(
+                userEditRequest.phoneNumber(), "BG");
+        return phoneNumberService.formatE164(parsedNumber);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
+        User user = findByEmail(email);
+
+        log.info("Attempting to load user by email [{}].", email);
+
+        return new CustomUserDetails(user.getId(), email, user.getPassword(), user.getRole());
     }
 }

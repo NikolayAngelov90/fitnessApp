@@ -10,24 +10,7 @@
 </head>
 <body class="bg-gray-100">
 <!-- Navigation -->
-<nav class="bg-white shadow-lg fixed w-full z-50">
-    <div class="max-w-7xl mx-auto px-4">
-        <div class="flex justify-between h-16">
-            <div class="flex items-center">
-                <a th:href="@{/home}" class="text-2xl font-bold text-blue-600">FitnessPro</a>
-            </div>
-            <div class="hidden md:flex items-center space-x-8">
-                <a th:href="@{/home}" class="text-gray-600 hover:text-blue-600">Home</a>
-                <a th:href="@{/workouts}" class="text-gray-600 hover:text-blue-600">Workouts</a>
-                <a th:href="@{/trainers}" class="text-gray-600 hover:text-blue-600">Trainers</a>
-                <a th:href="@{/plans}" class="text-gray-600 hover:text-blue-600">Plans</a>
-                <div class="relative flex items-center space-x-2 text-gray-600 hover:text-blue-600">
-                    <img th:src="${profilePicture}" alt="Profile" class="w-8 h-8 rounded-full">
-                </div>
-            </div>
-        </div>
-    </div>
-</nav>
+<div th:insert="~{fragments/navigation-bar :: navbar}"></div>
 
 <!-- Edit Profile Section -->
 <section class="register-section min-h-screen flex items-center justify-center py-20">
@@ -35,17 +18,8 @@
         <div class="max-w-md mx-auto bg-white rounded-lg shadow-xl overflow-hidden">
             <div class="py-8 px-6">
                 <h2 class="text-3xl font-bold text-center mb-6 gradient-text">Edit Profile</h2>
-                <form class="register-form space-y-6" th:action="@{/user/edit}" method="POST" novalidate
+                <form class="register-form space-y-6" th:action="@{/users/edit}" method="POST" novalidate
                       th:object="${userEditRequest}">
-                    <div th:if="${message}"
-                         class="bg-green-100 border border-green-300 text-green-700 px-2 py-2 rounded-md">
-                        <p th:text="${message}"></p>
-                    </div>
-                    <div th:if="${error}"
-                         class="bg-red-100 border border-red-300 text-red-700 px-2 py-2 rounded-md">
-                        <p th:text="${error}"></p>
-                    </div>
-
                     <!-- First Name -->
                     <div class="form-group">
                         <label for="firstName" class="block text-gray-700 mb-2">First Name</label>
@@ -54,7 +28,6 @@
                         <p class="text-red-500 text-sm mt-1" th:if="${#fields.hasErrors('firstName')}"
                            th:errors="*{firstName}"></p>
                     </div>
-
                     <!-- Last Name -->
                     <div class="form-group">
                         <label for="lastName" class="block text-gray-700 mb-2">Last Name</label>
@@ -63,7 +36,6 @@
                         <p class="text-red-500 text-sm mt-1" th:if="${#fields.hasErrors('lastName')}"
                            th:errors="*{lastName}"></p>
                     </div>
-
                     <!-- Phone Number -->
                     <div class="form-group">
                         <label for="phone" class="block text-gray-700 mb-2">Phone Number</label>
@@ -71,9 +43,16 @@
                                th:field="*{phoneNumber}">
                         <p class="text-red-500 text-sm mt-1" th:if="${#fields.hasErrors('phoneNumber')}"
                            th:errors="*{phoneNumber}"></p>
+                        <div th:if="${error}"
+                             class="text-red-500 text-sm mt-1">
+                            <p th:text="${error}"></p>
+                        </div>
                     </div>
-
-                    <button type="submit"
+                    <div th:if="${message}"
+                         class="bg-green-100 border border-green-300 text-green-700 px-2 py-2 rounded-md">
+                        <p th:text="${message}"></p>
+                    </div>
+                    <button th:unless="${message}" type="submit"
                             class="w-full bg-blue-600 text-white py-3 rounded-md text-lg font-semibold hover:bg-blue-700 transition-colors">
                         Save Changes
                     </button>
@@ -88,27 +67,6 @@
 </section>
 
 <!-- Footer -->
-<footer class="bg-gray-800 text-white py-8">
-    <div class="max-w-7xl mx-auto px-4">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
-                <h3 class="text-xl font-bold mb-2">FitnessPro</h3>
-                <p class="text-gray-400 text-sm">Your ultimate fitness destination</p>
-            </div>
-            <div>
-                <h4 class="text-base font-semibold mb-2">Contact Us</h4>
-                <ul class="space-y-1 text-gray-400 text-sm">
-                    <li>123 Fitness Street</li>
-                    <li>Burgas, Bulgaria</li>
-                    <li>Phone: (056) 456-7890</li>
-                    <li>Email: info@fitnesspro.com</li>
-                </ul>
-            </div>
-        </div>
-        <div class="border-t border-gray-700 mt-6 pt-6 text-center text-gray-400 text-sm">
-            <p>&copy; 2025 FitnessPro. All rights reserved.</p>
-        </div>
-    </div>
-</footer>
+<div th:insert="~{fragments/footer :: footer}"></div>
 </body>
 </html>

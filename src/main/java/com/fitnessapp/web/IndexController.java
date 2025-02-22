@@ -1,13 +1,11 @@
 package com.fitnessapp.web;
 
+import com.fitnessapp.security.CustomUserDetails;
 import com.fitnessapp.user.model.User;
 import com.fitnessapp.user.service.UserService;
-import com.fitnessapp.utils.services.ProfilePictureHelper;
 import com.fitnessapp.web.dto.RegisterRequest;
-import com.fitnessapp.web.dto.UserEditRequest;
 import jakarta.validation.Valid;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,12 +18,9 @@ import java.security.Principal;
 public class IndexController {
 
     private final UserService userService;
-    private final ProfilePictureHelper profilePictureHelper;
 
-    public IndexController(UserService userService,
-                           ProfilePictureHelper profilePictureHelper) {
+    public IndexController(UserService userService) {
         this.userService = userService;
-        this.profilePictureHelper = profilePictureHelper;
     }
 
     @GetMapping("/")
@@ -44,7 +39,6 @@ public class IndexController {
         if (principal != null) {
             return new ModelAndView("redirect:/home");
         }
-
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("register");
@@ -76,20 +70,11 @@ public class IndexController {
     }
 
     @GetMapping("/home")
-    @PreAuthorize("isAuthenticated()")
-    public ModelAndView getHomePage(Authentication authentication) {
+    public ModelAndView getHomePage(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
 
-        String email = authentication.getName();
-        User user = userService.findByEmail(email);
+        User user = userService.getById(customUserDetails.getUserId());
 
         ModelAndView modelAndView = new ModelAndView("home");
-        modelAndView.addObject("userEditRequest",
-                new UserEditRequest(
-                        user.getFirstName(),
-                        user.getLastName(),
-                        user.getPhoneNumber()));
-        modelAndView.addObject("profilePicture",
-                profilePictureHelper.resolveProfilePicture(user));
 
         modelAndView.addObject("user", user);
         return modelAndView;

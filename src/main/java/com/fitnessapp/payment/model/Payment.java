@@ -1,6 +1,6 @@
 package com.fitnessapp.payment.model;
 
-import com.fitnessapp.membership.model.Subscription;
+import com.fitnessapp.subscription.model.Subscription;
 import com.fitnessapp.user.model.User;
 import com.fitnessapp.workout.model.Workout;
 import jakarta.persistence.*;

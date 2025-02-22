@@ -4,6 +4,7 @@ import com.fitnessapp.membership.model.MembershipPlan;
 import com.fitnessapp.workout.model.Workout;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Entity
 @Table(name = "users")
+@DynamicUpdate
 public class User {
 
     @Id

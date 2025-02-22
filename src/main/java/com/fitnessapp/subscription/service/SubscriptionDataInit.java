@@ -1,9 +1,9 @@
-package com.fitnessapp.membership.service;
+package com.fitnessapp.subscription.service;
 
-import com.fitnessapp.membership.model.Subscription;
-import com.fitnessapp.membership.model.SubscriptionDuration;
-import com.fitnessapp.membership.model.SubscriptionType;
-import com.fitnessapp.membership.repository.SubscriptionRepository;
+import com.fitnessapp.subscription.model.Subscription;
+import com.fitnessapp.subscription.model.SubscriptionDuration;
+import com.fitnessapp.subscription.model.SubscriptionType;
+import com.fitnessapp.subscription.repository.SubscriptionRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;

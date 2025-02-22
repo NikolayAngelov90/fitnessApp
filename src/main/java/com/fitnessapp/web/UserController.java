@@ -1,10 +1,12 @@
 package com.fitnessapp.web;
 
+import com.fitnessapp.security.CustomUserDetails;
 import com.fitnessapp.user.model.User;
 import com.fitnessapp.user.service.UserService;
-import com.fitnessapp.utils.services.ProfilePictureHelper;
 import com.fitnessapp.web.dto.UserEditRequest;
+import com.fitnessapp.web.mapper.DtoMapper;
 import jakarta.validation.Valid;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -12,30 +14,23 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.security.Principal;
-
 @Controller
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
-    private final ProfilePictureHelper profilePictureHelper;
 
-    public UserController(UserService userService,
-                          ProfilePictureHelper profilePictureHelper) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.profilePictureHelper = profilePictureHelper;
     }
 
     @PostMapping("/upload-image")
-    public String uploadPicture(@RequestParam("image") MultipartFile profilePicture, Principal principal,
+    public String uploadPicture(@RequestParam("image") MultipartFile profilePicture,
+                                @AuthenticationPrincipal CustomUserDetails customUserDetails,
                                 RedirectAttributes redirectAttributes) {
 
-        if (principal == null) {
-            return "redirect:/login";
-        }
+        User user = userService.getById(customUserDetails.getUserId());
 
-        User user = getUser(principal);
         userService.uploadProfilePicture(user.getId(), profilePicture);
 
         redirectAttributes.addFlashAttribute("message", "Profile picture uploaded successfully!");
@@ -43,55 +38,32 @@ public class UserController {
     }
 
     @GetMapping("/edit")
-    public ModelAndView getEditProfilePage(Principal principal) {
+    public ModelAndView getEditProfilePage(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
 
-        User user = getUser(principal);
+        User user = userService.getById(customUserDetails.getUserId());
 
         ModelAndView modelAndView = new ModelAndView("edit-menu");
+        modelAndView.addObject("userEditRequest", DtoMapper.mapUserToUserEditRequest(user));
         modelAndView.addObject("user", user);
-        modelAndView.addObject("profilePicture",
-                profilePictureHelper.resolveProfilePicture(user));
-
-        if (user.getFirstName() == null || user.getLastName() == null) {
-            modelAndView.addObject("userEditRequest", UserEditRequest.empty());
-        } else {
-            modelAndView.addObject("userEditRequest",
-                    new UserEditRequest(
-                            user.getFirstName(),
-                            user.getLastName(),
-                            user.getPhoneNumber()));
-        }
 
         return modelAndView;
     }
 
     @PostMapping("/edit")
-    public ModelAndView updateProfile(@Valid UserEditRequest userEditRequest,
-                                      BindingResult bindingResult,
-                                      Principal principal) {
+    public ModelAndView updateProfile(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                      @Valid UserEditRequest userEditRequest,
+                                      BindingResult bindingResult) {
 
-        if (principal == null) {
-            return new ModelAndView("redirect:/login");
-        }
-
-        User user = getUser(principal);
+        User user = userService.getById(customUserDetails.getUserId());
 
         if (bindingResult.hasErrors()) {
-            ModelAndView modelAndView = new ModelAndView();
-            modelAndView.addObject("user", user);
-            modelAndView.setViewName("edit-menu");
-
-            return modelAndView;
+            return new ModelAndView("edit-menu");
         }
 
         userService.updateUser(user.getId(), userEditRequest);
+        ModelAndView modelAndView = new ModelAndView("edit-menu");
+        modelAndView.addObject("message", "Profile updated successfully!");
 
-        return new ModelAndView("redirect:/home");
+        return modelAndView;
     }
-
-    private User getUser(Principal principal) {
-        String email = principal.getName();
-        return userService.findByEmail(email);
-    }
-
 }

@@ -1,6 +1,6 @@
 package com.fitnessapp.membership.model;
 
-public enum MembershipStatus {
+public enum MembershipPlanStatus {
 
     ACTIVE,
     EXPIRED,

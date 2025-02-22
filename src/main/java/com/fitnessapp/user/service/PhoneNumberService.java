@@ -1,12 +1,12 @@
-package com.fitnessapp.utils.services;
+package com.fitnessapp.user.service;
 
 import com.fitnessapp.exception.InvalidPhoneNumberException;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class PhoneNumberService {
 
     private final PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();

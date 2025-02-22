@@ -2,18 +2,19 @@ package com.fitnessapp.web.dto;
 
 import com.fitnessapp.user.model.UserRole;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record RegisterRequest(
-        @Email(message = "Invalid email format.")
+        @NotBlank @Email(message = "Invalid email format.")
         String email,
 
-        @Size(min = 6, message = "Password must be at least 6 character.")
+        @NotBlank @Size(min = 6, message = "Password must be at least 6 character.")
         String password,
 
         UserRole userRole
 ) {
-        public static RegisterRequest empty() {
-                return new RegisterRequest("", "",  null);
-        }
+    public static RegisterRequest empty() {
+        return new RegisterRequest("", "", null);
+    }
 }
