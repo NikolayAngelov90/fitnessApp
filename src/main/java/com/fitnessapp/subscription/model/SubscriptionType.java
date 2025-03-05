@@ -2,6 +2,6 @@ package com.fitnessapp.subscription.model;
 
 public enum SubscriptionType {
 
-    GymOnly,
-    GymPlusTrainer,
+    GYM,
+    GYM_PLUS_TRAINER,
 }

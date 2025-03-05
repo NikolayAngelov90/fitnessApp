@@ -40,4 +40,20 @@ public class Payment {
     @ManyToOne
     @JoinColumn
     private Workout workout;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PaymentProductType type;
+
+    @Column(nullable = false)
+    private String status;
+
+    @Column
+    private String transactionId;
+
+    @Column
+    private String errorCode;
+
+    @Column
+    private String errorMessage;
 }

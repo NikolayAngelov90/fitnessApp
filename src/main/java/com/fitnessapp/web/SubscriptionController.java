@@ -22,11 +22,11 @@ public class SubscriptionController {
     @GetMapping
     public ModelAndView getSubscriptionsPage() {
 
-        List<Subscription> allGymOnly = subscriptionService.getAllGymOnly();
+        List<Subscription> allGym = subscriptionService.getAllGym();
         List<Subscription> allGymPlusTrainer = subscriptionService.getAllGymPlusTrainer();
 
         ModelAndView modelAndView = new ModelAndView("plans");
-        modelAndView.addObject("gymOnly", allGymOnly);
+        modelAndView.addObject("gym", allGym);
         modelAndView.addObject("gymPlusTrainer", allGymPlusTrainer);
 
         return modelAndView;

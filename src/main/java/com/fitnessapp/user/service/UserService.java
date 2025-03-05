@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -100,6 +101,17 @@ public class UserService implements UserDetailsService {
                         .formatted(userId)));
     }
 
+    public List<User> getAllTrainers() {
+
+        List<User> trainers = userRepository.findByRole(UserRole.TRAINER);
+
+        if (trainers.isEmpty()) {
+            throw new TrainerNotFoundException("Trainer not found!");
+        }
+
+        return trainers;
+    }
+
     private User initializeNewUserAccount(RegisterRequest dto) {
 
         UserRole selectedRole = UserRole.valueOf(dto.userRole().name());
@@ -132,6 +144,16 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
+        User user = findByEmail(email);
+
+        log.info("Attempting to load user by email [{}].", email);
+
+        return new CustomUserDetails(user.getId(), email, user.getPassword(), user.getRole());
+    }
+
     private String getE164Number(UserEditRequest userEditRequest) {
 
         if (userEditRequest.phoneNumber().trim().isEmpty()) {
@@ -141,15 +163,5 @@ public class UserService implements UserDetailsService {
         PhoneNumber parsedNumber = phoneNumberService.parsePhoneNumber(
                 userEditRequest.phoneNumber(), "BG");
         return phoneNumberService.formatE164(parsedNumber);
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-
-        User user = findByEmail(email);
-
-        log.info("Attempting to load user by email [{}].", email);
-
-        return new CustomUserDetails(user.getId(), email, user.getPassword(), user.getRole());
     }
 }

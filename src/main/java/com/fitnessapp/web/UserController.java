@@ -3,6 +3,7 @@ package com.fitnessapp.web;
 import com.fitnessapp.security.CustomUserDetails;
 import com.fitnessapp.user.model.User;
 import com.fitnessapp.user.service.UserService;
+import com.fitnessapp.web.dto.TrainerInfoRequest;
 import com.fitnessapp.web.dto.UserEditRequest;
 import com.fitnessapp.web.mapper.DtoMapper;
 import jakarta.validation.Valid;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/users")
@@ -44,7 +47,6 @@ public class UserController {
 
         ModelAndView modelAndView = new ModelAndView("edit-menu");
         modelAndView.addObject("userEditRequest", DtoMapper.mapUserToUserEditRequest(user));
-        modelAndView.addObject("user", user);
 
         return modelAndView;
     }
@@ -54,15 +56,36 @@ public class UserController {
                                       @Valid UserEditRequest userEditRequest,
                                       BindingResult bindingResult) {
 
-        User user = userService.getById(customUserDetails.getUserId());
-
         if (bindingResult.hasErrors()) {
             return new ModelAndView("edit-menu");
         }
 
+        User user = userService.getById(customUserDetails.getUserId());
         userService.updateUser(user.getId(), userEditRequest);
+
         ModelAndView modelAndView = new ModelAndView("edit-menu");
         modelAndView.addObject("message", "Profile updated successfully!");
+
+        return modelAndView;
+    }
+
+    @GetMapping("/trainers")
+    public ModelAndView getTrainerPage() {
+
+        ModelAndView modelAndView = new ModelAndView("trainers");
+
+        List<User> trainers = userService.getAllTrainers();
+
+        modelAndView.addObject("trainers", trainers);
+
+        return modelAndView;
+    }
+
+    @GetMapping("/trainer-info")
+    public ModelAndView getTrainerInfoPage() {
+
+        ModelAndView modelAndView = new ModelAndView("trainer-info");
+        modelAndView.addObject("trainerInfoRequest", TrainerInfoRequest.empty());
 
         return modelAndView;
     }

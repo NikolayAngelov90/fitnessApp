@@ -27,32 +27,32 @@ public class SubscriptionDataInit implements CommandLineRunner {
         if (subscriptionRepository.count() == 0) {
             List<Subscription> subscriptions = List.of(
                     Subscription.builder()
-                            .type(SubscriptionType.GymOnly)
+                            .type(SubscriptionType.GYM)
                             .price(new BigDecimal("70.00"))
                             .duration(SubscriptionDuration.ONE_MONTH)
                             .build(),
                     Subscription.builder()
-                            .type(SubscriptionType.GymOnly)
+                            .type(SubscriptionType.GYM)
                             .price(new BigDecimal("140.00"))
                             .duration(SubscriptionDuration.THREE_MONTHS)
                             .build(),
                     Subscription.builder()
-                            .type(SubscriptionType.GymOnly)
+                            .type(SubscriptionType.GYM)
                             .price(new BigDecimal("280.00"))
                             .duration(SubscriptionDuration.SIX_MONTHS)
                             .build(),
                     Subscription.builder()
-                            .type(SubscriptionType.GymOnly)
+                            .type(SubscriptionType.GYM)
                             .price(new BigDecimal("560.00"))
                             .duration(SubscriptionDuration.ONE_YEAR)
                             .build(),
                     Subscription.builder()
-                            .type(SubscriptionType.GymPlusTrainer)
+                            .type(SubscriptionType.GYM_PLUS_TRAINER)
                             .price(new BigDecimal("150.00"))
                             .duration(SubscriptionDuration.ONE_MONTH)
                             .build(),
                     Subscription.builder()
-                            .type(SubscriptionType.GymPlusTrainer)
+                            .type(SubscriptionType.GYM_PLUS_TRAINER)
                             .price(new BigDecimal("350.00"))
                             .duration(SubscriptionDuration.THREE_MONTHS)
                             .build());

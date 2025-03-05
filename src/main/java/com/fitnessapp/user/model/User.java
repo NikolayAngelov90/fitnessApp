@@ -1,6 +1,7 @@
 package com.fitnessapp.user.model;
 
 import com.fitnessapp.membership.model.MembershipPlan;
+import com.fitnessapp.payment.model.Payment;
 import com.fitnessapp.workout.model.Workout;
 import jakarta.persistence.*;
 import lombok.*;
@@ -51,9 +52,20 @@ public class User {
     @Column(nullable = false)
     private LocalDateTime registeredOn;
 
+    @Column
+    private String specialization;
+
+    @Column
+    private String description;
+
     @OneToMany(mappedBy = "client")
-    private List<MembershipPlan> subscriptions = new ArrayList<>();
+    @OrderBy("startDate DESC")
+    private List<MembershipPlan> memberships = new ArrayList<>();
 
     @OneToMany(mappedBy = "trainer")
     private List<Workout> trainerWorkouts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "client")
+    @OrderBy("dateTime DESC")
+    private List<Payment> payments = new ArrayList<>();
 }

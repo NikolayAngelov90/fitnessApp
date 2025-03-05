@@ -2,7 +2,7 @@
 .trainers-hero {
     background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
     url('../images/photo-1534438327276-14e5300c3a48.jpg') center/cover fixed;
-    min-height: 450px;
+    min-height: 300px;
     display: flex;
     align-items: center;
     justify-content: center;

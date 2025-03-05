@@ -7,6 +7,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.UUID;
 
 @Builder
@@ -33,6 +34,12 @@ public class MembershipPlan {
 
     @Column(nullable = false)
     private LocalDate endDate;
+
+    @Column
+    private LocalDate pausedDate;
+
+    @Column
+    private Period remainingPeriod;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

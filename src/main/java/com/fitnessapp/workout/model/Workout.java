@@ -23,8 +23,9 @@ public class Workout {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String name;
+    private WorkoutType type;
 
     @Column(nullable = false)
     private int duration;
@@ -43,10 +44,16 @@ public class Workout {
     private User trainer;
 
     @Column(nullable = false)
+    private String description;
+
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
     private int maxParticipants;
+
+    @Column(nullable = false)
+    private int availableSpots;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

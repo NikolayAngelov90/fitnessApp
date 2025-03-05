@@ -18,23 +18,25 @@
             <div class="py-6 px-6">
                 <h2 class="text-3xl font-bold text-center mb-6 gradient-text">Payment Details</h2>
                 <div class="border-b">
-                    <div class="flex justify-between mb-3"><span class="text-gray-600">Subscription Type:</span> <span
-                            class="font-semibold" th:text="${#strings.replace(subscription.type, '_', ' ')}"></span>
+                    <div class="flex justify-between mb-3"><span class="text-gray-600">Workout Type:</span> <span
+                            class="font-semibold" th:text="${#strings.replace(workout.type, '_', ' ')}"></span>
                     </div>
                     <div class="flex justify-between mb-3"><span class="text-gray-600">Duration:</span> <span
                             class="font-semibold"
-                            th:text="${#strings.replace(subscription.duration, '_', ' ')}"></span></div>
+                            th:text="${workout.duration} + 'min'"></span></div>
+                    <div class="flex justify-between mb-3"><span class="text-gray-600">Trainer:</span> <span
+                            class="font-semibold"
+                            th:text="${workout.trainer.firstName} + ' ' + ${workout.trainer.lastName}"></span></div>
                     <div class="flex justify-between text-lg font-bold text-blue-600"><span>Total:</span> <span
-                            th:text="${'€' + #numbers.formatDecimal(subscription.price, 1, 'COMMA', 2, 'POINT')}"></span>
+                            th:text="${'€' + #numbers.formatDecimal(workout.price, 1, 'COMMA', 2, 'POINT')}"></span>
                     </div>
                 </div>
-                <form th:action="@{'/memberships/' + ${subscription.id} + '/payment'}" th:method="POST"
+                <form th:action="@{'/workouts/' + ${workout.id} + '/book'}" th:method="POST"
                       class="space-y-6" id="payment-form">
-                    <input type="hidden" name="subscriptionId" th:value="${subscription.id}"/>
+                    <input type="hidden" name="subscriptionId" th:value="${workout.id}"/>
                     <div th:unless="${message}">
-                        <p class="bg-green-100 border border-green-300 text-green-700 px-2 py-2 rounded-md mb-2">This is
-                            a
-                            test payment system powered by Stripe. Test tokens for demo purposes can be
+                        <p class="bg-green-100 border border-green-300 text-green-700 px-2 py-2 rounded-md mb-2">
+                            This is a test payment system powered by Stripe. Test tokens for demo purposes can be
                             configured via application.properties. Enter random data on a card.</p>
                         <div class="form-group">
                             <label class="block text-gray-700 mb-2">Cardholder Name</label>

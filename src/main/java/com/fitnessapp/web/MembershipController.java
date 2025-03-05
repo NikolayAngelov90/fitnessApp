@@ -7,15 +7,9 @@ import com.fitnessapp.subscription.service.SubscriptionService;
 import com.fitnessapp.payment.service.PaymentService;
 import com.fitnessapp.user.model.User;
 import com.fitnessapp.user.service.UserService;
-import com.fitnessapp.web.dto.PaymentRequest;
-import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.UUID;
@@ -48,15 +42,12 @@ public class MembershipController {
 
         ModelAndView modelAndView = new ModelAndView("subscription-payment");
         modelAndView.addObject("subscription", subscription);
-        modelAndView.addObject("paymentRequest", PaymentRequest.empty());
 
         return modelAndView;
     }
 
     @PostMapping("/{id}/payment")
-    public ModelAndView processPayment(@Valid PaymentRequest paymentRequest,
-                                       BindingResult bindingResult,
-                                       @PathVariable UUID id,
+    public ModelAndView processPayment(@PathVariable UUID id,
                                        @AuthenticationPrincipal CustomUserDetails customUserDetails) {
 
         Subscription subscription = subscriptionService.getById(id);
@@ -64,14 +55,20 @@ public class MembershipController {
         ModelAndView modelAndView = new ModelAndView("subscription-payment");
         modelAndView.addObject("subscription", subscription);
 
-        if (bindingResult.hasErrors()) {
-            return modelAndView;
-        }
-
         User user = userService.getById(customUserDetails.getUserId());
-        paymentService.processMembershipPayment(subscription, user, paymentRequest);
+        paymentService.processMembershipPayment(subscription, user);
+
+        modelAndView.addObject("message", "Payment Successful");
 
         return modelAndView;
+    }
+
+    @PutMapping("/{id}/status")
+    public String switchMembershipStatus(@PathVariable UUID id) {
+
+        membershipPlanService.changeStatus(id);
+
+        return "redirect:/home";
     }
 
 }

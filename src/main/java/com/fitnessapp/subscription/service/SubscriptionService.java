@@ -18,12 +18,12 @@ public class SubscriptionService {
         this.subscriptionRepository = subscriptionRepository;
     }
 
-    public List<Subscription> getAllGymOnly() {
-        return subscriptionRepository.findAllByTypeOrderByPriceAsc(SubscriptionType.GymOnly);
+    public List<Subscription> getAllGym() {
+        return subscriptionRepository.findAllByTypeOrderByPriceAsc(SubscriptionType.GYM);
     }
 
     public List<Subscription> getAllGymPlusTrainer() {
-        return subscriptionRepository.findAllByTypeOrderByPriceAsc(SubscriptionType.GymPlusTrainer);
+        return subscriptionRepository.findAllByTypeOrderByPriceAsc(SubscriptionType.GYM_PLUS_TRAINER);
     }
 
     public Subscription getById(UUID id) {

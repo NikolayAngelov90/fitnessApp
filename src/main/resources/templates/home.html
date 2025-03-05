@@ -89,44 +89,66 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Left Column -->
                 <div class="lg:col-span-2 space-y-6">
-                    <!-- Current Subscription and history -->
+                    <!-- Current Subscription -->
                     <div class="bg-white rounded-xl shadow-md p-6">
-                        <div class="flex justify-between items-start mb-4">
-                            <h2 class="text-xl font-bold">Current Plan</h2>
-                            <div class="status-container">
-                                <span class="status-badge active">Active</span>
-                                <button class="toggle-button" onclick="toggleStatus(this)">Stop</button>
+                        <div th:if="${!#lists.isEmpty(user.memberships)}" class="space-y-4">
+                            <!-- Съществуващ абонамент -->
+                            <div class="flex justify-between items-start mb-4">
+                                <h2 class="text-xl font-bold">Current Plan</h2>
+                                <div class="status-container">
+                                <span class="status-badge active"
+                                      th:text="${#strings.capitalize(#strings.toLowerCase(user.memberships[0].status))}"></span>
+                                    <form th:if="${user.memberships[0].status.name() != 'EXPIRED'}"
+                                          th:action="@{'/memberships/' + ${user.memberships[0].id} + '/status'}"
+                                          method="post" style="display: inline;">
+                                        <input type="hidden" name="_method" value="PUT"/>
+                                        <button type="submit"
+                                                th:class="${user.memberships[0].status.name() == 'STOPPED'} ?
+                                            'px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors' :
+                                            'px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors'">
+                                            <span th:text="${user.memberships[0].status.name() == 'STOPPED'} ? 'Resume' : 'Stop'"></span>
+                                        </button>
+                                    </form>
+                                    <a th:if="${user.memberships[0].status.name() == 'EXPIRED'}" th:href="@{/plans}"
+                                       class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+                                        Browse Plans
+                                    </a>
+                                    <div th:if="${stopMembershipError}"
+                                         class="px-2 py-1 rounded-lg border border-red-400 bg-red-100 text-red-700 shadow-sm"
+                                         th:text="${stopMembershipError}"></div>
+                                </div>
+                            </div>
+                            <!-- Детайли за абонамента -->
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <h3 th:if="${user.memberships[0].subscription.type.name() == 'GYM'}"
+                                            class="text-lg font-semibold text-blue-600">Gym access</h3>
+                                        <h3 th:if="${user.memberships[0].subscription.type.name() == 'GYM_PLUS_TRAINER'}"
+                                            class="text-lg font-semibold text-blue-600">Gym access with Personal Trainer</h3>
+                                        <p class="text-gray-600"
+                                           th:text="'Until ' + ${#temporals.format(user.memberships[0].endDate, 'dd MMMM YYYY')}"></p>
+                                    </div>
+                                    <div>
+                                       <span class="text-2xl font-bold"
+                                             th:text="${'€' + #numbers.formatDecimal(user.memberships[0].price, 1, 'COMMA', 2, 'POINT')}"></span>
+                                        <span class="text-lg text-gray-500"
+                                              th:text="'/' + ${#strings.capitalize(#strings.replace(#strings.toLowerCase(user.memberships[0].subscription.duration.name()), '_', ' '))}"></span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="space-y-4">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <h3 class="text-lg font-semibold text-blue-600">Premium Plan</h3>
-                                    <p class="text-gray-600">Next billing: Feb 27, 2025</p>
-                                </div>
-                                <span class="text-2xl font-bold">$49.99<span class="text-lg text-gray-500">/month</span></span>
+                        <!-- Съобщение за липса на абонамент -->
+                        <div th:unless="${!#lists.isEmpty(user.memberships)}" class="text-center py-8">
+                            <div class="mb-4">
+                                <i class="fas fa-box-open text-4xl text-gray-400"></i>
                             </div>
-                            <div class="border-t pt-4">
-                                <h4 class="font-semibold mb-2">Plan Benefits:</h4>
-                                <ul class="space-y-2">
-                                    <li class="flex items-center text-gray-600">
-                                        <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor"
-                                             viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                  d="M5 13l4 4L19 7"/>
-                                        </svg>
-                                        Unlimited gym access
-                                    </li>
-                                    <li class="flex items-center text-gray-600">
-                                        <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor"
-                                             viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                  d="M5 13l4 4L19 7"/>
-                                        </svg>
-                                        4 Personal Training sessions
-                                    </li>
-                                </ul>
-                            </div>
+                            <h3 class="text-xl font-semibold text-gray-700 mb-2">No Active Membership</h3>
+                            <p class="text-gray-500">You don't have an active subscription plan.</p>
+                            <a th:href="@{/plans}"
+                               class="mt-4 inline-block px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                Browse Plans
+                            </a>
                         </div>
                     </div>
 
@@ -134,19 +156,28 @@
                     <div class="bg-white rounded-xl shadow-md p-6">
                         <div class="flex justify-between items-center mb-4">
                             <h2 class="text-xl font-bold">Payments History</h2>
-                            <a href="#" class="text-blue-600 hover:text-blue-700">View All →</a>
+                            <a th:if="${!#lists.isEmpty(user.payments)}" th:href="@{/payments/history}"
+                               class="text-blue-600 hover:text-blue-700">View All →</a>
                         </div>
-                        <div class="space-y-4">
+                        <div th:if="${!#lists.isEmpty(user.payments)}" class="space-y-4">
                             <div class="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
                                 <div class="flex justify-between items-center mb-2">
                                     <span class="font-semibold">Last payment</span>
-                                    <span class="text-gray-500 text-sm">31.01.2025</span>
+                                    <span class="text-gray-500 text-sm"
+                                          th:text="${#temporals.format(user.payments[0].dateTime, 'dd MMMM YYYY')}"></span>
                                 </div>
                                 <div class="flex justify-between items-center">
-                                    <span class="text-gray-600">$29.99</span>
-                                    <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-sm">Workout</span>
+                                    <span class="text-gray-600"
+                                          th:text="${'€' + #numbers.formatDecimal(user.payments[0].amount, 1, 'COMMA', 2, 'POINT')}"></span>
+                                    <span class="bg-gray-100 text-gray-800 px-2 py-1 rounded-full text-sm"
+                                          th:text="${#strings.capitalize(#strings.toLowerCase(user.payments[0].type))}"></span>
                                 </div>
                             </div>
+                        </div>
+                        <div th:unless="${!#lists.isEmpty(user.payments)}" class="text-center py-8">
+                            <h3 class="text-xl font-semibold text-gray-700 mb-2">
+                                You haven't payment history yet.
+                            </h3>
                         </div>
                     </div>
                 </div>

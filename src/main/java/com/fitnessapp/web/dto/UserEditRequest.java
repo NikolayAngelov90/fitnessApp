@@ -8,7 +8,4 @@ public record UserEditRequest(
         @Size(max = 20, message = "Name must be a max 20 characters") String lastName,
         @ValidPhoneNumber String phoneNumber
 ) {
-    public static UserEditRequest empty() {
-        return new UserEditRequest("", "", "");
-    }
 }

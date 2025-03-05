@@ -74,120 +74,154 @@
     <!-- Workouts Grid -->
     <div class="pt-8 pb-8">
         <div class="max-w-7xl mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div th:each="workout : ${workouts}" class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- Workout Card 1 -->
                 <div class="workout-card bg-white rounded-xl shadow-lg hover:scale-105 overflow-hidden">
-                    <div class="card-image">
-                        <img src="/static/images/2024-Crossfit-Double-Under-Workout-Workout-Of-The-Day-768x432.jpg"
+                    <div th:switch="${workout.type}" class="card-image">
+                        <img th:case="${workout.type.CROSS_FIT}"
+                             th:src="@{../images/2024-Crossfit-Double-Under-Workout-Workout-Of-The-Day-768x432.jpg}"
                              alt="Crossfit training"
                              class="w-full h-48 object-cover">
-                        <div class="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm">
-                            8 spots left
+                        <img th:case="${workout.type.TABATA}"
+                             th:src="@{../images/metodo-tabata.jpg}"
+                             alt="Tabata Training"
+                             class="w-full h-48 object-cover">
+                        <img th:case="${workout.type.YOGA}"
+                             th:src="@{../images/asanas-banner-image66a7733537998.webp}"
+                             alt="Yoga"
+                             class="w-full h-48 object-cover">
+                        <img th:case="${workout.type.PILATES}"
+                             th:src="@{../images/Power of pilates.webp}"
+                             alt="Pilates"
+                             class="w-full h-48 object-cover">
+                        <img th:case="${workout.type.ZUMBA}"
+                             th:src="@{../images/zumba.jpg}"
+                             alt="Zumba"
+                             class="w-full h-48 object-cover">
+                        <img th:case="${workout.type.SPINNING}"
+                             th:src="@{../images/spinning.jpg}"
+                             alt="Spinning"
+                             class="w-full h-48 object-cover">
+                        <div th:if="${workout.status.name() == 'FULL'}"
+                             class="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm">
+                            The workout is full
+                        </div>
+                        <div th:unless="${workout.status.name() == 'FULL'}"
+                             class="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm"
+                             th:text="${workout.availableSpots} + ' ' + 'spots left'">
                         </div>
                     </div>
                     <div class="p-6">
                         <div class="flex items-center justify-between mb-3">
-                            <h3 class="text-xl font-bold">CrossFit</h3>
-                            <span class="text-blue-600 font-semibold">$25</span>
+                            <h3 class="text-xl font-bold"
+                                th:text="${#strings.capitalizeWords(#strings.toLowerCase(#strings.replace(workout.type, '_', ' ')), ' ')}"></h3>
+                            <span class="text-blue-600 font-semibold"
+                                  th:text="${'€' + #numbers.formatDecimal(workout.price, 1, 'COMMA', 2, 'POINT')}"></span>
+                        </div>
+                        <div class="flex items-center text-gray-600 text-sm mb-4">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2zm12-11a4 4 0 11-8 0 4 4 0 018 0zm-4 4l1.5 1.5"/>
+                            </svg>
+                            <span th:text="${#temporals.format(workout.startTime, 'dd MMMM yyyy ''at'' HH:mm')}"></span>
                         </div>
                         <div class="flex items-center text-gray-600 text-sm mb-4">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                       d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
-                            <span>Tomorrow, 10:00 AM</span>
+                            <span th:text="${workout.duration} + ' min'"></span>
                         </div>
                         <div class="flex items-center text-gray-600 text-sm mb-4">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                       d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                             </svg>
-                            <span>with Sarah Johnson</span>
+                            <span th:text="${workout.trainer.firstName} + ' ' + ${workout.trainer.lastName}"></span>
                         </div>
-                        <p class="text-gray-600 text-sm mb-4">CrossFit is a high-intensity fitness program combining
-                            strength, cardio, and functional movements to improve overall fitness. Workouts are short,
-                            intense, and adaptable for all levels.</p>
-                        <button class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">
+                        <p class="text-gray-600 text-sm mb-4" th:text="${workout.description}"></p>
+                        <a th:href="'/workouts/' + ${workout.id} + '/book'"
+                           class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
                             Book Now
-                        </button>
+                        </a>
                     </div>
                 </div>
 
                 <!-- Workout Card 2 -->
-                <div class="workout-card bg-white rounded-xl shadow-lg hover:scale-105 overflow-hidden">
-                    <div class="card-image">
-                        <img src="/static/images/metodo-tabata.jpg"
-                             alt="Tabata Training"
-                             class="w-full h-48 object-cover">
-                        <div class="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm">
-                            5 spots left
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <h3 class="text-xl font-bold">Tabata</h3>
-                            <span class="text-blue-600 font-semibold">$30</span>
-                        </div>
-                        <div class="flex items-center text-gray-600 text-sm mb-4">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            <span>Thursday, 2:00 PM</span>
-                        </div>
-                        <div class="flex items-center text-gray-600 text-sm mb-4">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                            </svg>
-                            <span>with Mike Thompson</span>
-                        </div>
-                        <p class="text-gray-600 text-sm mb-4">Tabata is a high-intensity interval training (HIIT) method
-                            involving 20 seconds of intense exercise followed by 10 seconds of rest, repeated for 4
-                            minutes. It boosts endurance and burns calories quickly.</p>
-                        <button class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">
-                            Book Now
-                        </button>
-                    </div>
-                </div>
+                <!--                <div class="workout-card bg-white rounded-xl shadow-lg hover:scale-105 overflow-hidden">-->
+                <!--                    <div class="card-image">-->
+                <!--                        <img th:src="@{../images/metodo-tabata.jpg}"-->
+                <!--                             alt="Tabata Training"-->
+                <!--                             class="w-full h-48 object-cover">-->
+                <!--                        <div class="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm">-->
+                <!--                            5 spots left-->
+                <!--                        </div>-->
+                <!--                    </div>-->
+                <!--                    <div class="p-6">-->
+                <!--                        <div class="flex items-center justify-between mb-3">-->
+                <!--                            <h3 class="text-xl font-bold">Tabata</h3>-->
+                <!--                            <span class="text-blue-600 font-semibold">$30</span>-->
+                <!--                        </div>-->
+                <!--                        <div class="flex items-center text-gray-600 text-sm mb-4">-->
+                <!--                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">-->
+                <!--                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"-->
+                <!--                                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>-->
+                <!--                            </svg>-->
+                <!--                            <span>Thursday, 2:00 PM</span>-->
+                <!--                        </div>-->
+                <!--                        <div class="flex items-center text-gray-600 text-sm mb-4">-->
+                <!--                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">-->
+                <!--                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"-->
+                <!--                                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>-->
+                <!--                            </svg>-->
+                <!--                            <span>with Mike Thompson</span>-->
+                <!--                        </div>-->
+                <!--                        <p class="text-gray-600 text-sm mb-4">Tabata is a high-intensity interval training (HIIT) method-->
+                <!--                            involving 20 seconds of intense exercise followed by 10 seconds of rest, repeated for 4-->
+                <!--                            minutes. It boosts endurance and burns calories quickly.</p>-->
+                <!--                        <button class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">-->
+                <!--                            Book Now-->
+                <!--                        </button>-->
+                <!--                    </div>-->
+                <!--                </div>-->
 
                 <!-- Workout Card 3 -->
-                <div class="workout-card bg-white rounded-xl shadow-lg hover:scale-105 overflow-hidden">
-                    <div class="card-image">
-                        <img src="/static/images/asanas-banner-image66a7733537998.webp"
-                             alt="Yoga"
-                             class="w-full h-48 object-cover">
-                        <div class="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm">
-                            12 spots left
-                        </div>
-                    </div>
-                    <div class="p-6">
-                        <div class="flex items-center justify-between mb-3">
-                            <h3 class="text-xl font-bold">Yoga</h3>
-                            <span class="text-blue-600 font-semibold">$20</span>
-                        </div>
-                        <div class="flex items-center text-gray-600 text-sm mb-4">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            <span>Friday, 9:00 AM</span>
-                        </div>
-                        <div class="flex items-center text-gray-600 text-sm mb-4">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                            </svg>
-                            <span>with Anna Williams</span>
-                        </div>
-                        <p class="text-gray-600 text-sm mb-4">Yoga is a mind-body practice combining physical poses,
-                            breathing exercises, and meditation. It improves flexibility, strength, and mental
-                            well-being, suitable for all fitness levels.</p>
-                        <button class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">
-                            Book Now
-                        </button>
-                    </div>
-                </div>
+                <!--                <div class="workout-card bg-white rounded-xl shadow-lg hover:scale-105 overflow-hidden">-->
+                <!--                    <div class="card-image">-->
+                <!--                        <img th:src="@{../images/asanas-banner-image66a7733537998.webp}"-->
+                <!--                             alt="Yoga"-->
+                <!--                             class="w-full h-48 object-cover">-->
+                <!--                        <div class="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm">-->
+                <!--                            12 spots left-->
+                <!--                        </div>-->
+                <!--                    </div>-->
+                <!--                    <div class="p-6">-->
+                <!--                        <div class="flex items-center justify-between mb-3">-->
+                <!--                            <h3 class="text-xl font-bold">Yoga</h3>-->
+                <!--                            <span class="text-blue-600 font-semibold">$20</span>-->
+                <!--                        </div>-->
+                <!--                        <div class="flex items-center text-gray-600 text-sm mb-4">-->
+                <!--                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">-->
+                <!--                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"-->
+                <!--                                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>-->
+                <!--                            </svg>-->
+                <!--                            <span>Friday, 9:00 AM</span>-->
+                <!--                        </div>-->
+                <!--                        <div class="flex items-center text-gray-600 text-sm mb-4">-->
+                <!--                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">-->
+                <!--                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"-->
+                <!--                                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>-->
+                <!--                            </svg>-->
+                <!--                            <span>with Anna Williams</span>-->
+                <!--                        </div>-->
+                <!--                        <p class="text-gray-600 text-sm mb-4">Yoga is a mind-body practice combining physical poses,-->
+                <!--                            breathing exercises, and meditation. It improves flexibility, strength, and mental-->
+                <!--                            well-being, suitable for all fitness levels.</p>-->
+                <!--                        <button class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700">-->
+                <!--                            Book Now-->
+                <!--                        </button>-->
+                <!--                    </div>-->
+                <!--                </div>-->
             </div>
         </div>
     </div>
