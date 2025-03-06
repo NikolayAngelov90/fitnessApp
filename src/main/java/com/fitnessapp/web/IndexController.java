@@ -2,7 +2,6 @@ package com.fitnessapp.web;
 
 import com.fitnessapp.security.CustomUserDetails;
 import com.fitnessapp.user.model.User;
-import com.fitnessapp.user.model.UserRole;
 import com.fitnessapp.user.service.UserService;
 import com.fitnessapp.web.dto.RegisterRequest;
 import jakarta.validation.Valid;
@@ -56,10 +55,6 @@ public class IndexController {
         }
 
         userService.register(registerRequest);
-
-        if (registerRequest.userRole() == UserRole.TRAINER) {
-            return new ModelAndView("redirect:/users/trainer-info");
-        }
 
         return new ModelAndView("redirect:/login");
     }

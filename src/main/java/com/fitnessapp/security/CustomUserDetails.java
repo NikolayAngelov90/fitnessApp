@@ -19,12 +19,11 @@ public class CustomUserDetails implements UserDetails {
     private String email;
     private String password;
     private UserRole role;
+    private boolean additionalTrainerDataCompleted;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-
         SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority("ROLE_" + role);
-
         return List.of(simpleGrantedAuthority);
     }
 

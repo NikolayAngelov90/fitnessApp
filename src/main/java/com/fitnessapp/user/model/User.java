@@ -58,6 +58,9 @@ public class User {
     @Column
     private String description;
 
+    @Column
+    private boolean additionalTrainerDataCompleted = Boolean.FALSE;
+
     @OneToMany(mappedBy = "client")
     @OrderBy("startDate DESC")
     private List<MembershipPlan> memberships = new ArrayList<>();

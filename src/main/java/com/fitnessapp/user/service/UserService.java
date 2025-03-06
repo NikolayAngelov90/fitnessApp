@@ -69,8 +69,13 @@ public class UserService implements UserDetailsService {
             throw new PhoneNumberAlreadyExistsException("User with number [%s] already exist."
                     .formatted(e164Number));
         }
-
         user.setPhoneNumber(e164Number);
+
+        if (user.getRole() == UserRole.TRAINER) {
+            user.setSpecialization(userEditRequest.specialization());
+            user.setDescription(userEditRequest.description());
+            user.setAdditionalTrainerDataCompleted(true);
+        }
     }
 
     public void uploadProfilePicture(UUID userId, MultipartFile profilePicture) {
@@ -144,16 +149,6 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-
-        User user = findByEmail(email);
-
-        log.info("Attempting to load user by email [{}].", email);
-
-        return new CustomUserDetails(user.getId(), email, user.getPassword(), user.getRole());
-    }
-
     private String getE164Number(UserEditRequest userEditRequest) {
 
         if (userEditRequest.phoneNumber().trim().isEmpty()) {
@@ -163,5 +158,20 @@ public class UserService implements UserDetailsService {
         PhoneNumber parsedNumber = phoneNumberService.parsePhoneNumber(
                 userEditRequest.phoneNumber(), "BG");
         return phoneNumberService.formatE164(parsedNumber);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
+        User user = findByEmail(email);
+
+        log.info("Attempting to load user by email [{}].", email);
+
+        return new CustomUserDetails(
+                user.getId(),
+                email,
+                user.getPassword(),
+                user.getRole(),
+                user.isAdditionalTrainerDataCompleted());
     }
 }

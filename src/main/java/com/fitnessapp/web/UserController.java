@@ -3,7 +3,6 @@ package com.fitnessapp.web;
 import com.fitnessapp.security.CustomUserDetails;
 import com.fitnessapp.user.model.User;
 import com.fitnessapp.user.service.UserService;
-import com.fitnessapp.web.dto.TrainerInfoRequest;
 import com.fitnessapp.web.dto.UserEditRequest;
 import com.fitnessapp.web.mapper.DtoMapper;
 import jakarta.validation.Valid;
@@ -64,28 +63,20 @@ public class UserController {
         userService.updateUser(user.getId(), userEditRequest);
 
         ModelAndView modelAndView = new ModelAndView("edit-menu");
+        modelAndView.addObject("user", user);
         modelAndView.addObject("message", "Profile updated successfully!");
 
         return modelAndView;
     }
 
     @GetMapping("/trainers")
-    public ModelAndView getTrainerPage() {
+    public ModelAndView getTrainersPage() {
 
         ModelAndView modelAndView = new ModelAndView("trainers");
 
         List<User> trainers = userService.getAllTrainers();
 
         modelAndView.addObject("trainers", trainers);
-
-        return modelAndView;
-    }
-
-    @GetMapping("/trainer-info")
-    public ModelAndView getTrainerInfoPage() {
-
-        ModelAndView modelAndView = new ModelAndView("trainer-info");
-        modelAndView.addObject("trainerInfoRequest", TrainerInfoRequest.empty());
 
         return modelAndView;
     }

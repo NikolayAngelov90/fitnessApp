@@ -1,5 +1,7 @@
 package com.fitnessapp.config;
 
+import com.fitnessapp.security.CustomAuthenticationSuccessHandler;
+import com.fitnessapp.security.TrainerDataCompletionFilter;
 import com.fitnessapp.security.UserInterceptor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -7,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -16,9 +19,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebMvcConfig implements WebMvcConfigurer {
 
     private final UserInterceptor userInterceptor;
+    private final CustomAuthenticationSuccessHandler customSuccessHandler;
+    private final TrainerDataCompletionFilter trainerDataCompletionFilter;
 
-    public WebMvcConfig(UserInterceptor userInterceptor) {
+    public WebMvcConfig(UserInterceptor userInterceptor,
+                        CustomAuthenticationSuccessHandler customSuccessHandler,
+                        TrainerDataCompletionFilter trainerDataCompletionFilter) {
         this.userInterceptor = userInterceptor;
+        this.customSuccessHandler = customSuccessHandler;
+        this.trainerDataCompletionFilter = trainerDataCompletionFilter;
     }
 
     @Bean
@@ -27,20 +36,21 @@ public class WebMvcConfig implements WebMvcConfigurer {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                        .requestMatchers("/", "/register", "/plans", "/users/trainers", "/workouts", "/users/trainer-info").permitAll()
+                        .requestMatchers("/", "/register", "/plans", "/users/trainers", "/workouts").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
                         .usernameParameter("email")
                         .passwordParameter("password")
-                        .defaultSuccessUrl("/home", true)
+                        .successHandler(customSuccessHandler)
                         .failureUrl("/login?error")
                         .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
-                        .logoutSuccessUrl("/"));
+                        .logoutSuccessUrl("/"))
+                .addFilterAfter(trainerDataCompletionFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
