@@ -27,7 +27,7 @@ public class WorkoutScheduler {
 
         List<Workout> completedWorkouts = workoutService.getAllWorkouts()
                 .stream()
-                .filter(w -> w.getEndTime().isAfter(now))
+                .filter(w -> w.getEndTime().isBefore(now))
                 .toList();
 
         if (completedWorkouts.isEmpty()) {

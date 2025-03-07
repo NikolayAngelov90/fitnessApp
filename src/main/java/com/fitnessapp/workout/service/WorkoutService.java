@@ -67,7 +67,7 @@ public class WorkoutService {
         }
 
         if (workout.getClients().contains(user)) {
-            throw new DuplicateRegistrationClientWorkout("You already book this workout");
+            throw new DuplicateRegistrationClientWorkout("You already book this workout", workout.getId());
         }
     }
 }

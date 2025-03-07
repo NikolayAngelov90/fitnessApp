@@ -1,7 +1,11 @@
 package com.fitnessapp.exception;
 
-public class DuplicateRegistrationClientWorkout extends RuntimeException {
-    public DuplicateRegistrationClientWorkout(String message) {
-        super(message);
+import com.fitnessapp.payment.model.PaymentProductType;
+
+import java.util.UUID;
+
+public class DuplicateRegistrationClientWorkout extends PaymentFailedException {
+    public DuplicateRegistrationClientWorkout(String message, UUID workoutsId) {
+        super(message, workoutsId, PaymentProductType.WORKOUT);
     }
 }

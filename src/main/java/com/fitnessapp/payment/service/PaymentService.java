@@ -98,10 +98,10 @@ public class PaymentService {
             processSuccessfulPayment(productType, product, price, user);
         } catch (StripeException e) {
             saveFailedPayment(productType, product, price, user, e);
-            throw new PaymentFailedException("Payment failed: " + e.getMessage(), productId);
+            throw new PaymentFailedException("Payment failed: " + e.getMessage(), productId, productType);
         } catch (IndexOutOfBoundsException e) {
             log.error("Index out of bounds error while processing payment: [{}]", e.getMessage());
-            throw new PaymentFailedException("Payment failed due to system error", productId);
+            throw new PaymentFailedException("Payment failed due to system error", productId, productType);
         }
 
     }
@@ -128,11 +128,12 @@ public class PaymentService {
         }
 
         Payment payment = paymentBuilder.build();
+
+        activateProduct(productType, product, user);
+
         paymentRepository.save(payment);
         log.info("Payment created with id: [{}], status: [{}], type: [{}]",
                 payment.getId(), payment.getStatus(), productType);
-
-        activateProduct(productType, product, user);
     }
 
     private void saveFailedPayment(PaymentProductType productType, Object product, BigDecimal price, User user, StripeException e) {

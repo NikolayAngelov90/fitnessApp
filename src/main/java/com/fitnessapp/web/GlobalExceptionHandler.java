@@ -1,6 +1,7 @@
 package com.fitnessapp.web;
 
 import com.fitnessapp.exception.*;
+import com.fitnessapp.payment.model.PaymentProductType;
 import com.fitnessapp.security.CustomUserDetails;
 import com.fitnessapp.subscription.model.Subscription;
 import com.fitnessapp.subscription.service.SubscriptionService;
@@ -8,6 +9,8 @@ import com.fitnessapp.user.model.User;
 import com.fitnessapp.user.service.UserService;
 import com.fitnessapp.web.dto.RegisterRequest;
 import com.fitnessapp.web.mapper.DtoMapper;
+import com.fitnessapp.workout.model.Workout;
+import com.fitnessapp.workout.service.WorkoutService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,23 +23,22 @@ public class GlobalExceptionHandler {
 
     private final UserService userService;
     private final SubscriptionService subscriptionService;
+    private final WorkoutService workoutService;
 
     public GlobalExceptionHandler(UserService userService,
-                                  SubscriptionService subscriptionService) {
+                                  SubscriptionService subscriptionService,
+                                  WorkoutService workoutService) {
         this.userService = userService;
         this.subscriptionService = subscriptionService;
+        this.workoutService = workoutService;
     }
 
     @ExceptionHandler(UserAlreadyExistsException.class)
-    public ModelAndView handleUserAlreadyExistsException(UserAlreadyExistsException e,
-                                                         @AuthenticationPrincipal CustomUserDetails customUserDetails) {
-
-        User user = userService.getById(customUserDetails.getUserId());
+    public ModelAndView handleUserAlreadyExistsException(UserAlreadyExistsException e) {
 
         ModelAndView modelAndView = new ModelAndView("register");
         modelAndView.addObject("error", e.getMessage());
         modelAndView.addObject("registerRequest", RegisterRequest.empty());
-        modelAndView.addObject("user", user);
 
         return modelAndView;
     }
@@ -47,7 +49,7 @@ public class GlobalExceptionHandler {
 
         User user = userService.getById(customUserDetails.getUserId());
 
-        ModelAndView modelAndView = new ModelAndView("home");
+        ModelAndView modelAndView = new ModelAndView("redirect:/home");
         modelAndView.addObject("error", e.getMessage());
         modelAndView.addObject("user", user);
 
@@ -72,13 +74,22 @@ public class GlobalExceptionHandler {
     public ModelAndView handlePaymentFailedException(PaymentFailedException e,
                                                      @AuthenticationPrincipal CustomUserDetails customUserDetails) {
 
-        UUID id = e.getSubscriptionId();
-        Subscription subscription = subscriptionService.getById(id);
+        ModelAndView modelAndView = new ModelAndView();
+
+        UUID productId = e.getProductId();
+        if (e.getProductType() == PaymentProductType.SUBSCRIPTION) {
+            Subscription subscription = subscriptionService.getById(productId);
+            modelAndView = new ModelAndView("subscription-payment");
+            modelAndView.addObject("subscription", subscription);
+        } else if (e.getProductType() == PaymentProductType.WORKOUT) {
+            Workout workout = workoutService.getById(productId);
+            modelAndView = new ModelAndView("workout-payment");
+            modelAndView.addObject("workout", workout);
+        }
+
         User user = userService.getById(customUserDetails.getUserId());
 
-        ModelAndView modelAndView = new ModelAndView("subscription-payment");
         modelAndView.addObject("error", e.getMessage());
-        modelAndView.addObject("subscription", subscription);
         modelAndView.addObject("user", user);
 
         return modelAndView;
@@ -101,7 +112,7 @@ public class GlobalExceptionHandler {
 
         User user = userService.getById(customUserDetails.getUserId());
 
-        ModelAndView modelAndView = new ModelAndView("home");
+        ModelAndView modelAndView = new ModelAndView("redirect:/home");
         modelAndView.addObject("user", user);
         modelAndView.addObject("stopMembershipError", e.getMessage());
 

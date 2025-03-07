@@ -2,6 +2,7 @@ package com.fitnessapp.web;
 
 import com.fitnessapp.security.CustomUserDetails;
 import com.fitnessapp.user.model.User;
+import com.fitnessapp.user.model.UserRole;
 import com.fitnessapp.user.service.UserService;
 import com.fitnessapp.web.dto.RegisterRequest;
 import jakarta.validation.Valid;
@@ -74,8 +75,16 @@ public class IndexController {
 
         User user = userService.getById(customUserDetails.getUserId());
 
-        ModelAndView modelAndView = new ModelAndView("home");
+        ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("user", user);
+
+        if (user.getRole() == UserRole.CLIENT) {
+            modelAndView = new ModelAndView("home-client");
+        } else if (user.getRole() == UserRole.TRAINER) {
+            modelAndView = new ModelAndView("home-trainer");
+        } else if (user.getRole() == UserRole.ADMIN) {
+            modelAndView = new ModelAndView("home-admin");
+        }
 
         return modelAndView;
     }
