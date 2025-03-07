@@ -39,6 +39,10 @@ public class Workout {
     @Column(nullable = false)
     private LocalDateTime endTime;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private RecurringType recurringType;
+
     @ManyToOne
     @JoinColumn(nullable = false)
     private User trainer;

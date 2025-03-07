@@ -60,9 +60,20 @@ public class MembershipPlanService {
         membershipPlanRepository.save(membershipPlan);
     }
 
+    public List<MembershipPlan> getPlansToExpire(LocalDate now) {
+        return membershipPlanRepository.findByEndDate(now)
+                .stream()
+                .filter(m -> m.getStatus() == MembershipPlanStatus.ACTIVE)
+                .toList();
+    }
+
     public MembershipPlan getById(UUID membershipId) {
         return membershipPlanRepository.findById(membershipId)
                 .orElseThrow(() -> new MembershipPlanNotFoundException("Membership plan not found."));
+    }
+
+    public void saveExpireMembership(MembershipPlan m) {
+        membershipPlanRepository.save(m);
     }
 
     private void initializeNewMembershipPlan(Subscription subscription, User user) {
@@ -115,16 +126,5 @@ public class MembershipPlanService {
         }
 
         plan.setRemainingPeriod(remaining);
-    }
-
-    public List<MembershipPlan> getPlansToExpire(LocalDate now) {
-        return membershipPlanRepository.findByEndDate(now)
-                .stream()
-                .filter(m -> m.getStatus() == MembershipPlanStatus.ACTIVE)
-                .toList();
-    }
-
-    public void saveExpireMembership(MembershipPlan m) {
-        membershipPlanRepository.save(m);
     }
 }

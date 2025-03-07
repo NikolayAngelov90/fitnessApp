@@ -20,10 +20,14 @@ public class MembershipExpireScheduler {
         this.membershipPlanService = membershipPlanService;
     }
 
-    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "0 59 23 * * ?")
     public void expireOldMemberships() {
 
         List<MembershipPlan> plansToExpire = membershipPlanService.getPlansToExpire(LocalDate.now());
+
+        if (plansToExpire.isEmpty()) {
+            log.info("No membership plans expired");
+        }
 
         plansToExpire.forEach(m -> {
             m.setStatus(MembershipPlanStatus.EXPIRED);

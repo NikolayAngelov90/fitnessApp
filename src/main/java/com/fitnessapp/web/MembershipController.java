@@ -36,7 +36,7 @@ public class MembershipController {
 
 
     @GetMapping("/{id}/payment")
-    public ModelAndView showSubscriptionPaymentsPage(@PathVariable UUID id) {
+    public ModelAndView showMembershipPaymentsPage(@PathVariable UUID id) {
 
         Subscription subscription = subscriptionService.getById(id);
 

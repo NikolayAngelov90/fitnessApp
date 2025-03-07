@@ -4,6 +4,7 @@ import com.fitnessapp.exception.DuplicateRegistrationClientWorkout;
 import com.fitnessapp.exception.WorkoutFullException;
 import com.fitnessapp.exception.WorkoutNotFoundException;
 import com.fitnessapp.user.model.User;
+import com.fitnessapp.workout.model.RecurringType;
 import com.fitnessapp.workout.model.Workout;
 import com.fitnessapp.workout.model.WorkoutStatus;
 import com.fitnessapp.workout.repository.WorkoutRepository;
@@ -47,6 +48,17 @@ public class WorkoutService {
 
     public Workout getById(UUID id) {
         return workoutRepository.findById(id).orElseThrow(() -> new WorkoutNotFoundException("Workout not found"));
+    }
+
+    public void saveChangeStatusWorkouts(Workout w) {
+        workoutRepository.save(w);
+    }
+
+    public List<Workout> getAllCompletedRecurringWorkouts() {
+        return workoutRepository.findAllByStatus(WorkoutStatus.COMPLETED)
+                .stream()
+                .filter(w -> w.getRecurringType() != RecurringType.NONE)
+                .toList();
     }
 
     private void validateRegistration(User user, Workout workout) {
