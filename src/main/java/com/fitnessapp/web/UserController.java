@@ -31,9 +31,7 @@ public class UserController {
                                 @AuthenticationPrincipal CustomUserDetails customUserDetails,
                                 RedirectAttributes redirectAttributes) {
 
-        User user = userService.getById(customUserDetails.getUserId());
-
-        userService.uploadProfilePicture(user.getId(), profilePicture);
+        userService.uploadProfilePicture(customUserDetails.getUserId(), profilePicture);
 
         redirectAttributes.addFlashAttribute("message", "Profile picture uploaded successfully!");
         return "redirect:/home";
@@ -59,11 +57,9 @@ public class UserController {
             return new ModelAndView("edit-menu");
         }
 
-        User user = userService.getById(customUserDetails.getUserId());
-        userService.updateUser(user.getId(), userEditRequest);
+        userService.updateUser(customUserDetails.getUserId(), userEditRequest);
 
         ModelAndView modelAndView = new ModelAndView("edit-menu");
-        modelAndView.addObject("user", user);
         modelAndView.addObject("message", "Profile updated successfully!");
 
         return modelAndView;

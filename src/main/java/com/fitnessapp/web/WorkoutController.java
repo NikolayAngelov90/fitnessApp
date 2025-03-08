@@ -2,16 +2,11 @@ package com.fitnessapp.web;
 
 import com.fitnessapp.payment.service.PaymentService;
 import com.fitnessapp.security.CustomUserDetails;
-import com.fitnessapp.user.model.User;
-import com.fitnessapp.user.service.UserService;
 import com.fitnessapp.workout.model.Workout;
 import com.fitnessapp.workout.service.WorkoutService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
@@ -22,14 +17,11 @@ import java.util.UUID;
 public class WorkoutController {
 
     private final WorkoutService workoutService;
-    private final UserService userService;
     private final PaymentService paymentService;
 
     public WorkoutController(WorkoutService workoutService,
-                             UserService userService,
                              PaymentService paymentService) {
         this.workoutService = workoutService;
-        this.userService = userService;
         this.paymentService = paymentService;
     }
 
@@ -64,11 +56,31 @@ public class WorkoutController {
         ModelAndView modelAndView = new ModelAndView("workout-payment");
         modelAndView.addObject("workout", workout);
 
-        User user = userService.getById(customUserDetails.getUserId());
-        paymentService.processWorkoutPayment(workout, user);
+        paymentService.processWorkoutPayment(workout, customUserDetails.getUserId());
 
         modelAndView.addObject("message", "Payment Successful");
 
         return modelAndView;
+    }
+
+    @GetMapping("/client-registered")
+    public ModelAndView showRegisteredClientWorkouts(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+
+        List<Workout> allRegisteredClientWorkouts = workoutService
+                .getAllRegisteredClientWorkouts(customUserDetails.getUserId());
+
+        ModelAndView modelAndView = new ModelAndView("client-workouts");
+        modelAndView.addObject("workouts", allRegisteredClientWorkouts);
+
+        return modelAndView;
+    }
+
+    @PutMapping("/{id}/cancel")
+    public String cancelBooking(@PathVariable UUID id,
+                                @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+
+        workoutService.cancelBookingWorkout(id, customUserDetails.getUserId());
+
+        return "redirect:/workouts/client-registered";
     }
 }

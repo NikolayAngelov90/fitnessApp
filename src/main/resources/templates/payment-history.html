@@ -79,7 +79,8 @@
                                     th:text="${#strings.capitalize(#strings.toLowerCase(payment.type))}"></h3>
                                 <p class="text-gray-600 text-sm">
                                     <span th:if="${payment.type?.name() == 'SUBSCRIPTION'}"
-                                          th:text="${#strings.capitalize(#strings.toLowerCase(payment.subscription.type))}">
+                                          th:text="${#strings.capitalize(#strings.toLowerCase(
+                                          #strings.replace(payment.subscription.type, '_', ' ')))}">
                                     </span>
                                     <span th:if="${payment.type?.name() == 'WORKOUT'}"
                                           th:text="${#strings.capitalizeWords(#strings.toLowerCase(

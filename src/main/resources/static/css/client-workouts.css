@@ -1,0 +1,28 @@
+.workout-item {
+    transition: all 0.2s ease;
+}
+
+.workout-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.workout-status.completed {
+    background-color: #dcfce7;
+    color: #16a34a;
+}
+
+.workout-status.upcoming {
+    background-color: #e0f2fe;
+    color: #0369a1;
+}
+
+.workout-status.cancelled {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.filter-active {
+    background-color: #eef2ff;
+    color: #4f46e5;
+}

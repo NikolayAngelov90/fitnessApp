@@ -3,6 +3,7 @@ package com.fitnessapp.scheduler;
 import com.fitnessapp.workout.model.Workout;
 import com.fitnessapp.workout.model.WorkoutStatus;
 import com.fitnessapp.workout.service.WorkoutService;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -36,30 +37,46 @@ public class WorkoutScheduler {
 
         completedWorkouts.forEach(w -> {
             w.setStatus(WorkoutStatus.COMPLETED);
-            workoutService.saveChangeStatusWorkouts(w);
+            workoutService.saveWorkouts(w);
 
             log.info("Workout [{}] has been completed", w.getId());
         });
     }
 
-    @Scheduled(cron = "0 59 23 * * ?")
+    @Scheduled(cron = "0 0 * * * ?")
+    @Transactional
     public void scheduleRecurringWorkouts() {
 
         List<Workout> recurringWorkouts = workoutService.getAllCompletedRecurringWorkouts();
 
         if (recurringWorkouts.isEmpty()) {
             log.info("No workouts for recurring");
+            return;
         }
 
-        for (Workout recurringWorkout : recurringWorkouts) {
+        recurringWorkouts.forEach(w -> {
+            Workout newWorkout = cloneWorkoutWithNewDate(w);
+            workoutService.saveWorkouts(newWorkout);
+        });
+    }
 
-            LocalDateTime newDate = calculateNextDate(recurringWorkout);
-            recurringWorkout.setStartTime(newDate);
-            recurringWorkout.setEndTime(newDate.plusMinutes(recurringWorkout.getDuration()));
-            recurringWorkout.setStatus(WorkoutStatus.UPCOMING);
+    private Workout cloneWorkoutWithNewDate(Workout originalWorkout) {
+        LocalDateTime newDate = calculateNextDate(originalWorkout);
 
-            workoutService.saveChangeStatusWorkouts(recurringWorkout);
-        }
+        return Workout.builder()
+                .type(originalWorkout.getType())
+                .duration(originalWorkout.getDuration())
+                .price(originalWorkout.getPrice())
+                .startTime(newDate)
+                .endTime(newDate.plusMinutes(originalWorkout.getDuration()))
+                .recurringType(originalWorkout.getRecurringType())
+                .trainer(originalWorkout.getTrainer())
+                .description(originalWorkout.getDescription())
+                .createdAt(originalWorkout.getCreatedAt())
+                .maxParticipants(originalWorkout.getMaxParticipants())
+                .availableSpots(originalWorkout.getAvailableSpots())
+                .status(WorkoutStatus.UPCOMING)
+                .build();
     }
 
     private LocalDateTime calculateNextDate(Workout recurringWorkout) {

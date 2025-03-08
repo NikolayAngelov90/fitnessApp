@@ -14,73 +14,7 @@
 
 <main class="pt-16">
     <!-- Hero Section -->
-    <section class="profile-hero-container">
-        <!-- Profile Info Container -->
-        <div class="filter-container">
-            <div class="bg-white rounded-lg shadow-md p-6 mx-4 mb-8">
-                <div class="flex flex-col md:flex-row items-center justify-between">
-                    <div class="flex flex-col space-x-4 mb-4 md:mb-0">
-                        <div class="messages-container">
-                            <div th:if="${message}"
-                                 class="px-2 py-1 rounded-lg border border-green-400 bg-green-100 text-green-700 shadow-sm"
-                                 th:text="${message}"></div>
-                            <div th:if="${error}"
-                                 class="px-2 py-1 rounded-lg border border-red-400 bg-red-100 text-red-700 shadow-sm"
-                                 th:text="${error}"></div>
-                        </div>
-                        <div class="flex items-center space-x-4">
-                            <a href="#upload-modal">
-                                <img th:src="${@profilePictureHelper.resolveProfilePicture(user)}"
-                                     alt="Profile Image"
-                                     class="w-20 h-20 rounded-full profile-image border-4 border-blue-100">
-                            </a>
-                            <div id="upload-modal" class="modal">
-                                <div class="modal-content">
-                                    <a href="#" class="close-modal">&times;</a>
-                                    <h3>Upload new image</h3>
-
-                                    <form th:action="@{/users/upload-image}"
-                                          method="post"
-                                          enctype="multipart/form-data">
-                                        <input type="file"
-                                               name="image"
-                                               accept="image/*">
-                                        <button type="submit" class="upload-button">
-                                            Upload Image
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                            <div>
-                                <h1 th:text="${user != null ?
-                                    (not #strings.isEmpty(user.firstName) and not #strings.isEmpty(user.lastName) ?
-                                        user.firstName + ' ' + user.lastName :
-                                        (not #strings.isEmpty(user.firstName) ?
-                                            user.firstName :
-                                            (not #strings.isEmpty(user.lastName) ? user.lastName : 'Edit your profile')))
-                                    : 'Edit your profile'}"
-                                    class="text-2xl font-bold text-gray-800"></h1>
-                                <div class="flex items-center space-x-2">
-                                   <span th:text="|Member form ${#temporals.format(user.registeredOn, 'MMMM yyyy')}|"
-                                         class="text-gray-800 text-sm"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex flex-col md:flex-row gap-4">
-                        <a th:href="@{/users/edit}"
-                           class="edit-profile-btn bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                            Edit Profile
-                        </a>
-                        <a th:href="workouts"
-                           class="bg-gray-100 text-gray-800 px-6 py-2 rounded-lg hover:bg-gray-200 transition-colors text-center">
-                            My Workouts
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    <div th:insert="~{fragments/profile-info :: profile-info}"></div>
 
     <!-- Main Content -->
     <div class="pt-8 pb-6">
@@ -125,7 +59,8 @@
                                         <h3 th:if="${user.memberships[0].subscription.type.name() == 'GYM'}"
                                             class="text-lg font-semibold text-blue-600">Gym access</h3>
                                         <h3 th:if="${user.memberships[0].subscription.type.name() == 'GYM_PLUS_TRAINER'}"
-                                            class="text-lg font-semibold text-blue-600">Gym access with Personal Trainer</h3>
+                                            class="text-lg font-semibold text-blue-600">Gym access with Personal
+                                            Trainer</h3>
                                         <p class="text-gray-600"
                                            th:text="'Until ' + ${#temporals.format(user.memberships[0].endDate, 'dd MMMM YYYY')}"></p>
                                     </div>

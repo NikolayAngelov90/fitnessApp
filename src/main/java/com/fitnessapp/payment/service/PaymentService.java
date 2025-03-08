@@ -56,11 +56,15 @@ public class PaymentService {
         this.stripeTestProperty = stripeTestProperty;
     }
 
-    public void processMembershipPayment(Subscription subscription, User user) {
+    public void processMembershipPayment(Subscription subscription, UUID userId) {
+
+        User user = userService.getById(userId);
         processPayment(PaymentProductType.SUBSCRIPTION, subscription.getId(), user);
     }
 
-    public void processWorkoutPayment(Workout workout, User user) {
+    public void processWorkoutPayment(Workout workout, UUID userId) {
+
+        User user = userService.getById(userId);
         processPayment(PaymentProductType.WORKOUT, workout.getId(), user);
     }
 

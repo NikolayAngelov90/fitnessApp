@@ -1,7 +1,9 @@
 package com.fitnessapp.workout.repository;
 
+import com.fitnessapp.user.model.User;
 import com.fitnessapp.workout.model.Workout;
 import com.fitnessapp.workout.model.WorkoutStatus;
+import org.springframework.data.domain.Limit;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,4 +14,6 @@ import java.util.UUID;
 public interface WorkoutRepository extends JpaRepository<Workout, UUID> {
 
     List<Workout> findAllByStatus(WorkoutStatus status);
+
+    List<Workout> findAllByClients(List<User> clients, Limit limit);
 }

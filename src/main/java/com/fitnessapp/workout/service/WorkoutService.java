@@ -4,10 +4,12 @@ import com.fitnessapp.exception.DuplicateRegistrationClientWorkout;
 import com.fitnessapp.exception.WorkoutFullException;
 import com.fitnessapp.exception.WorkoutNotFoundException;
 import com.fitnessapp.user.model.User;
+import com.fitnessapp.user.service.UserService;
 import com.fitnessapp.workout.model.RecurringType;
 import com.fitnessapp.workout.model.Workout;
 import com.fitnessapp.workout.model.WorkoutStatus;
 import com.fitnessapp.workout.repository.WorkoutRepository;
+import org.springframework.data.domain.Limit;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,9 +19,12 @@ import java.util.UUID;
 public class WorkoutService {
 
     private final WorkoutRepository workoutRepository;
+    private final UserService userService;
 
-    public WorkoutService(WorkoutRepository workoutRepository) {
+    public WorkoutService(WorkoutRepository workoutRepository,
+                          UserService userService) {
         this.workoutRepository = workoutRepository;
+        this.userService = userService;
     }
 
     public void registerClient(Workout workout, User user) {
@@ -36,6 +41,23 @@ public class WorkoutService {
         workoutRepository.save(workout);
     }
 
+    public void cancelBookingWorkout(UUID workoutId, UUID userId) {
+
+        Workout workout = getById(workoutId);
+        User user = userService.getById(userId);
+
+        workout.getClients().remove(user);
+        workout.setAvailableSpots(workout.getAvailableSpots() + 1);
+
+        workoutRepository.save(workout);
+    }
+
+    public List<Workout> getAllRegisteredClientWorkouts(UUID userId) {
+        User user = userService.getById(userId);
+
+        return workoutRepository.findAllByClients(List.of(user), Limit.of(1));
+    }
+
     public List<Workout> getAllWorkouts() {
 
         List<Workout> workouts = workoutRepository.findAll();
@@ -50,8 +72,8 @@ public class WorkoutService {
         return workoutRepository.findById(id).orElseThrow(() -> new WorkoutNotFoundException("Workout not found"));
     }
 
-    public void saveChangeStatusWorkouts(Workout w) {
-        workoutRepository.save(w);
+    public void saveWorkouts(Workout workout) {
+        workoutRepository.save(workout);
     }
 
     public List<Workout> getAllCompletedRecurringWorkouts() {

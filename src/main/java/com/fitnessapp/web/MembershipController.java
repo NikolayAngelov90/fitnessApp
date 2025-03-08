@@ -5,8 +5,6 @@ import com.fitnessapp.subscription.model.Subscription;
 import com.fitnessapp.membership.service.MembershipPlanService;
 import com.fitnessapp.subscription.service.SubscriptionService;
 import com.fitnessapp.payment.service.PaymentService;
-import com.fitnessapp.user.model.User;
-import com.fitnessapp.user.service.UserService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -21,17 +19,14 @@ public class MembershipController {
     private final MembershipPlanService membershipPlanService;
     private final SubscriptionService subscriptionService;
     private final PaymentService paymentService;
-    private final UserService userService;
 
 
     public MembershipController(MembershipPlanService membershipPlanService,
                                 SubscriptionService subscriptionService,
-                                PaymentService paymentService,
-                                UserService userService) {
+                                PaymentService paymentService) {
         this.membershipPlanService = membershipPlanService;
         this.subscriptionService = subscriptionService;
         this.paymentService = paymentService;
-        this.userService = userService;
     }
 
 
@@ -55,8 +50,7 @@ public class MembershipController {
         ModelAndView modelAndView = new ModelAndView("subscription-payment");
         modelAndView.addObject("subscription", subscription);
 
-        User user = userService.getById(customUserDetails.getUserId());
-        paymentService.processMembershipPayment(subscription, user);
+        paymentService.processMembershipPayment(subscription, customUserDetails.getUserId());
 
         modelAndView.addObject("message", "Payment Successful");
 
