@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Workout - FitnessPro</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="/css/common.css" rel="stylesheet">
+    <link href="/css/form.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+<!-- Navigation -->
+<div th:insert="~{fragments/navigation-bar :: navbar}"></div>
+
+<!-- Create Workout Section -->
+<section class="register-section min-h-screen flex items-center justify-center py-20">
+    <div class="container mx-auto px-4">
+        <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-xl overflow-hidden">
+            <div class="py-8 px-6">
+                <h2 class="text-3xl font-bold text-center mb-6 gradient-text">Create New Workout</h2>
+                <form class="register-form space-y-6" th:action="@{/workouts/create}" method="POST" novalidate
+                      th:object="${workoutRequest}">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Workout Type -->
+                        <div class="form-group">
+                            <label for="type" class="block text-gray-700 mb-2">Workout Type</label>
+                            <select id="type" class="form-input" th:field="*{workoutType}" required>
+                                <option value="">Select workout type</option>
+                                <option th:each="wType : ${T(com.fitnessapp.workout.model.WorkoutType).values()}"
+                                        th:value="${wType}"
+                                        th:text="${#strings.capitalize(#strings.replace(wType.name().toLowerCase(), '_', ' '))}"></option>
+                            </select>
+                            <p class="text-red-500 text-sm mt-1" th:if="${#fields.hasErrors('workoutType')}"
+                               th:errors="*{workoutType}"></p>
+                        </div>
+
+                        <!-- Date & Time -->
+                        <div class="form-group">
+                            <label for="startTime" class="block text-gray-700 mb-2">Start Time</label>
+                            <input type="datetime-local" id="startTime" class="form-input"
+                                   th:field="*{startTime}" required>
+                            <p class="text-red-500 text-sm mt-1" th:if="${#fields.hasErrors('startTime')}"
+                               th:errors="*{startTime}"></p>
+                        </div>
+
+                    </div>
+
+                    <!-- Recurring & Duration -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-group">
+                            <label for="recurringType" class="block text-gray-700 mb-2">Recurring Type</label>
+                            <select id="recurringType" class="form-input" th:field="*{recurringType}" required>
+                                <option value="">Select recurring type</option>
+                                <option th:each="rType : ${T(com.fitnessapp.workout.model.RecurringType).values()}"
+                                        th:value="${rType}"
+                                        th:text="${#strings.capitalize(rType.name().toLowerCase())}"></option>
+                            </select>
+                            <p class="text-red-500 text-sm mt-1" th:if="${#fields.hasErrors('recurringType')}"
+                               th:errors="*{recurringType}"></p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="duration" class="block text-gray-700 mb-2">Duration (minutes)</label>
+                            <input type="number" id="duration" class="form-input"
+                                   th:field="*{duration}" min="15" step="15" required>
+                            <p class="text-red-500 text-sm mt-1" th:if="${#fields.hasErrors('duration')}"
+                               th:errors="*{duration}"></p>
+                        </div>
+                    </div>
+
+                    <!-- Pricing & Capacity -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="form-group">
+                            <label for="price" class="block text-gray-700 mb-2">Price (€)</label>
+                            <input type="number" id="price" class="form-input"
+                                   th:field="*{price}" min="0" step="0.01" required>
+                            <p class="text-red-500 text-sm mt-1" th:if="${#fields.hasErrors('price')}"
+                               th:errors="*{price}"></p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="maxParticipants" class="block text-gray-700 mb-2">Max Participants</label>
+                            <input type="number" id="maxParticipants" class="form-input"
+                                   th:field="*{maxParticipants}" min="1" required>
+                            <p class="text-red-500 text-sm mt-1" th:if="${#fields.hasErrors('maxParticipants')}"
+                               th:errors="*{maxParticipants}"></p>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="form-group">
+                        <label for="description" class="block text-gray-700 mb-2">Description</label>
+                        <textarea id="description" class="form-input h-32"
+                                  th:field="*{description}" required></textarea>
+                        <p class="text-red-500 text-sm mt-1" th:if="${#fields.hasErrors('description')}"
+                           th:errors="*{description}"></p>
+                    </div>
+
+                    <!-- Form Messages -->
+                    <div th:if="${NewWorkoutMessage}"
+                         class="bg-green-100 border border-green-300 text-green-700 px-4 py-3 rounded-md">
+                        <p th:text="${NewWorkoutMessage}"></p>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button th:unless="${NewWorkoutMessage}" type="submit"
+                            class="w-full bg-blue-600 text-white py-3 rounded-md text-lg font-semibold hover:bg-blue-700 transition-colors">
+                        Create Workout
+                    </button>
+                </form>
+                <p class="text-center mt-6 text-gray-600">
+                    <a th:href="@{/home}" class="text-blue-600 hover:text-blue-700">Back to Profile</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<div th:insert="~{fragments/footer :: footer}"></div>
+</body>
+</html>

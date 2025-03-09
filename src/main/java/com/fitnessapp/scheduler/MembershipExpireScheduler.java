@@ -27,6 +27,7 @@ public class MembershipExpireScheduler {
 
         if (plansToExpire.isEmpty()) {
             log.info("No membership plans expired");
+            return;
         }
 
         plansToExpire.forEach(m -> {

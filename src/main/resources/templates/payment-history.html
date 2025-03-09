@@ -84,7 +84,7 @@
                                     </span>
                                     <span th:if="${payment.type?.name() == 'WORKOUT'}"
                                           th:text="${#strings.capitalizeWords(#strings.toLowerCase(
-                                                         #strings.replace(payment.workout.type, '_', ' ')), ' ') + ' with ' +
+                                                         #strings.replace(payment.workout.workoutType, '_', ' ')), ' ') + ' with ' +
                                                          payment.workout.trainer?.firstName + ' ' + payment.workout.trainer?.lastName}">
                                     </span>
                                 </p>

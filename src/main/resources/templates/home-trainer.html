@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trainer Dashboard - FitnessPro</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="/css/common.css" rel="stylesheet">
+    <link href="/css/home.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+<!-- Navigation -->
+<div th:insert="~{fragments/navigation-bar :: navbar}"></div>
+
+<main class="pt-16">
+    <!-- Hero Section -->
+    <div th:insert="~{fragments/profile-info :: profile-info}"></div>
+
+    <!-- Main Content -->
+    <div class="pt-8 pb-6">
+        <div class="max-w-7xl mx-auto px-4">
+            <!-- Main Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Left Column -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- My Workouts -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-xl font-bold">My Training Programs</h2>
+                            <a th:href="@{/workouts/create}"
+                               class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
+                                + New Workout
+                            </a>
+                            <div th:if="${NewWorkoutMessage}"
+                                 class="bg-green-100 border border-green-300 text-green-700 px-4 py-3 rounded-md">
+                                <p th:text="${NewWorkoutMessage}"></p>
+                            </div>
+                        </div>
+
+                        <!-- Workouts List -->
+                        <div class="space-y-4">
+                            <!-- Sample Workout Item -->
+                            <div class="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-blue-600">HIIT Advanced Program</h3>
+                                        <p class="text-gray-600">Scheduled sessions: 12</p>
+                                        <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                                            Active
+                                        </span>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <a href="/trainings/edit/123"
+                                           class="px-3 py-1 bg-yellow-500 text-white rounded-md hover:bg-yellow-600">
+                                            Edit
+                                        </a>
+                                        <button class="px-3 py-1 bg-red-600 text-white rounded-md hover:bg-red-700">
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Empty State -->
+                            <div th:unless="${hasPrograms}" class="text-center py-8">
+                                <div class="mb-4">
+                                    <i class="fas fa-dumbbell text-4xl text-gray-400"></i>
+                                </div>
+                                <h3 class="text-xl font-semibold text-gray-700 mb-2">No Training Programs</h3>
+                                <p class="text-gray-500">Start by creating your first training program</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Upcoming Sessions -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="text-xl font-bold">Scheduled Sessions</h2>
+                            <a href="/sessions" class="text-blue-600 hover:text-blue-700">View All →</a>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <h3 class="font-semibold">John Doe - HIIT Training</h3>
+                                        <p class="text-gray-600 text-sm">Duration: 60 mins</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-sm font-semibold">Tomorrow</p>
+                                        <p class="text-gray-600 text-sm">10:00 AM</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="space-y-6">
+                    <!-- Quick Actions -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Quick Actions</h2>
+                        <div class="space-y-3">
+                            <a href="/clients"
+                               class="block p-3 bg-indigo-100 text-indigo-700 rounded-lg hover:bg-indigo-200 transition-colors">
+                                View Client List
+                            </a>
+                            <a href="/availability"
+                               class="block p-3 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors">
+                                Set Availability
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Statistics -->
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <h2 class="text-xl font-bold mb-4">Monthly Stats</h2>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="text-gray-600">Completed Sessions</p>
+                                    <p class="text-2xl font-bold">24</p>
+                                </div>
+                                <div class="w-20 h-20">
+                                    <div class="radial-progress text-green-500"
+                                         style="--value:80; --thickness: 8px;">80%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Footer -->
+<div th:insert="~{fragments/footer :: footer}"></div>
+</body>
+</html>

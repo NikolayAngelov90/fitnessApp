@@ -38,7 +38,8 @@
                         th:text="${#strings.replace(subscription.duration.name(), '_', ' ')}"></h3>
                     <p class="text-4xl font-bold text-blue-600 mb-6"
                        th:text="${'€' + #numbers.formatDecimal(subscription.price, 1, 'COMMA', 2, 'POINT')}"></p>
-                    <a th:href="'/memberships/' + ${subscription.id} + '/payment'"
+                    <a th:if="${user.role.name() == 'CLIENT'}"
+                       th:href="'/memberships/' + ${subscription.id} + '/payment'"
                        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
                         Buy Subscription
                     </a>
@@ -67,7 +68,8 @@
                         th:text="${#strings.replace(subscription.duration.name(), '_', ' ')}"></h3>
                     <p class="text-4xl font-bold text-blue-600 mb-6"
                        th:text="${'€' + #numbers.formatDecimal(subscription.price, 1, 'COMMA', 2, 'POINT')}"></p>
-                    <a th:href="'/memberships/' + ${subscription.id} + '/payment'"
+                    <a th:if="${user.role.name() == 'CLIENT'}"
+                       th:href="'/memberships/' + ${subscription.id} + '/payment'"
                        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
                         Buy Subscription
                     </a>

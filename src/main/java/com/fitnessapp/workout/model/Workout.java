@@ -25,7 +25,7 @@ public class Workout {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private WorkoutType type;
+    private WorkoutType workoutType;
 
     @Column(nullable = false)
     private int duration;

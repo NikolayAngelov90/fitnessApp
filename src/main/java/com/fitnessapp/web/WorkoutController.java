@@ -2,12 +2,17 @@ package com.fitnessapp.web;
 
 import com.fitnessapp.payment.service.PaymentService;
 import com.fitnessapp.security.CustomUserDetails;
+import com.fitnessapp.web.dto.WorkoutRequest;
 import com.fitnessapp.workout.model.Workout;
 import com.fitnessapp.workout.service.WorkoutService;
+import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.UUID;
@@ -82,5 +87,32 @@ public class WorkoutController {
         workoutService.cancelBookingWorkout(id, customUserDetails.getUserId());
 
         return "redirect:/workouts/client-registered";
+    }
+
+    @GetMapping("/create")
+    @PreAuthorize("hasRole('TRAINER')")
+    public ModelAndView getCreateWorkoutPage() {
+
+        ModelAndView modelAndView = new ModelAndView("edit-workout");
+        modelAndView.addObject("workoutRequest", WorkoutRequest.empty());
+
+        return modelAndView;
+    }
+
+    @PostMapping("/create")
+    public String createNewWorkout(@Valid WorkoutRequest workoutRequest,
+                                   BindingResult bindingResult,
+                                   @AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                   RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+            return "edit-workout";
+        }
+
+        workoutService.create(workoutRequest, customUserDetails.getUserId());
+
+        redirectAttributes.addFlashAttribute("NewWorkoutMessage", "Successfully created new workout");
+
+        return "redirect:/home";
     }
 }

@@ -2,6 +2,7 @@ package com.fitnessapp.scheduler;
 
 import com.fitnessapp.workout.model.Workout;
 import com.fitnessapp.workout.model.WorkoutStatus;
+import com.fitnessapp.workout.property.WorkoutProperty;
 import com.fitnessapp.workout.service.WorkoutService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -16,9 +17,12 @@ import java.util.List;
 public class WorkoutScheduler {
 
     private final WorkoutService workoutService;
+    private final WorkoutProperty workoutProperty;
 
-    public WorkoutScheduler(WorkoutService workoutService) {
+    public WorkoutScheduler(WorkoutService workoutService,
+                            WorkoutProperty workoutProperty) {
         this.workoutService = workoutService;
+        this.workoutProperty = workoutProperty;
     }
 
     @Scheduled(fixedRate = 300000)
@@ -29,10 +33,12 @@ public class WorkoutScheduler {
         List<Workout> completedWorkouts = workoutService.getAllWorkouts()
                 .stream()
                 .filter(w -> w.getEndTime().isBefore(now))
+                .filter(w -> w.getStatus() != WorkoutStatus.COMPLETED)
                 .toList();
 
         if (completedWorkouts.isEmpty()) {
             log.info("No workouts is completed");
+            return;
         }
 
         completedWorkouts.forEach(w -> {
@@ -64,7 +70,7 @@ public class WorkoutScheduler {
         LocalDateTime newDate = calculateNextDate(originalWorkout);
 
         return Workout.builder()
-                .type(originalWorkout.getType())
+                .workoutType(originalWorkout.getWorkoutType())
                 .duration(originalWorkout.getDuration())
                 .price(originalWorkout.getPrice())
                 .startTime(newDate)
@@ -75,7 +81,7 @@ public class WorkoutScheduler {
                 .createdAt(originalWorkout.getCreatedAt())
                 .maxParticipants(originalWorkout.getMaxParticipants())
                 .availableSpots(originalWorkout.getAvailableSpots())
-                .status(WorkoutStatus.UPCOMING)
+                .status(workoutProperty.getDefaultStatus())
                 .build();
     }
 

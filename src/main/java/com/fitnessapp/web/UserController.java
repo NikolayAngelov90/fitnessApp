@@ -33,7 +33,7 @@ public class UserController {
 
         userService.uploadProfilePicture(customUserDetails.getUserId(), profilePicture);
 
-        redirectAttributes.addFlashAttribute("message", "Profile picture uploaded successfully!");
+        redirectAttributes.addFlashAttribute("picMessage", "Profile picture uploaded successfully!");
         return "redirect:/home";
     }
 
