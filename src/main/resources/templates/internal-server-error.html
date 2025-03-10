@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Error - FitnessPro</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="/css/plans.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+<!-- Navigation -->
+<div th:insert="~{fragments/navigation-bar :: navbar}"></div>
+
+<!-- Error Content -->
+<section class="plans-hero min-h-screen flex items-center justify-center py-20">
+    <div class="max-w-4xl mx-auto text-center px-4">
+        <div class="bg-white rounded-xl shadow-lg p-12">
+            <h1 class="text-9xl font-bold text-red-600 mb-8">500</h1>
+            <h2 class="text-4xl font-bold text-gray-800 mb-6">Internal Server Error</h2>
+            <p class="text-xl text-gray-600 mb-8">
+                Oops! Something went wrong on our end. Our team has been notified and we're working to fix it.
+            </p>
+
+            <!-- Display exception name if available -->
+            <div th:if="${errorMessage}" class="bg-gray-50 p-4 rounded-lg mb-6">
+                <code class="text-sm text-red-500 font-mono"
+                      th:text="${errorMessage}"></code>
+            </div>
+
+            <div class="space-x-4">
+                <a th:href="@{/}" class="bg-blue-600 text-white px-6 py-3 rounded-md text-lg hover:bg-blue-700">
+                    Return Home
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<div th:insert="~{fragments/footer :: footer}"></div>
+</body>
+</html>

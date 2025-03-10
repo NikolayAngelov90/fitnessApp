@@ -3,98 +3,82 @@ package com.fitnessapp.web;
 import com.fitnessapp.exception.*;
 import com.fitnessapp.payment.model.PaymentProductType;
 import com.fitnessapp.security.CustomUserDetails;
-import com.fitnessapp.subscription.model.Subscription;
-import com.fitnessapp.subscription.service.SubscriptionService;
 import com.fitnessapp.user.model.User;
 import com.fitnessapp.user.service.UserService;
-import com.fitnessapp.web.dto.RegisterRequest;
-import com.fitnessapp.web.mapper.DtoMapper;
-import com.fitnessapp.workout.model.Workout;
-import com.fitnessapp.workout.service.WorkoutService;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.MissingRequestValueException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import java.util.UUID;
+import java.nio.file.AccessDeniedException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
     private final UserService userService;
-    private final SubscriptionService subscriptionService;
-    private final WorkoutService workoutService;
 
-    public GlobalExceptionHandler(UserService userService,
-                                  SubscriptionService subscriptionService,
-                                  WorkoutService workoutService) {
+    public GlobalExceptionHandler(UserService userService) {
         this.userService = userService;
-        this.subscriptionService = subscriptionService;
-        this.workoutService = workoutService;
     }
 
     @ExceptionHandler(UserAlreadyExistsException.class)
-    public ModelAndView handleUserAlreadyExistsException(UserAlreadyExistsException e) {
+    public String handleUserAlreadyExistsException(UserAlreadyExistsException e,
+                                                   RedirectAttributes redirectAttributes) {
 
-        ModelAndView modelAndView = new ModelAndView("register");
-        modelAndView.addObject("error", e.getMessage());
-        modelAndView.addObject("registerRequest", RegisterRequest.empty());
+        redirectAttributes.addFlashAttribute("error", e.getMessage());
 
-        return modelAndView;
+        return "redirect:/register";
     }
 
     @ExceptionHandler(ImageUploadException.class)
-    public ModelAndView handleImageUploadException(ImageUploadException e,
-                                                   @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public String handleImageUploadException(ImageUploadException e,
+                                             RedirectAttributes redirectAttributes) {
 
-        User user = userService.getById(customUserDetails.getUserId());
+        redirectAttributes.addFlashAttribute("error", e.getMessage());
 
-        ModelAndView modelAndView = new ModelAndView("redirect:/home");
-        modelAndView.addObject("error", e.getMessage());
-        modelAndView.addObject("user", user);
-
-        return modelAndView;
+        return "redirect:/home";
     }
 
     @ExceptionHandler(PhoneNumberAlreadyExistsException.class)
-    public ModelAndView handlePhoneNumberAlreadyExistsException(PhoneNumberAlreadyExistsException e,
-                                                                @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public String handlePhoneNumberAlreadyExistsException(PhoneNumberAlreadyExistsException e,
+                                                          RedirectAttributes redirectAttributes) {
 
-        User user = userService.getById(customUserDetails.getUserId());
+        redirectAttributes.addFlashAttribute("error", e.getMessage());
 
-        ModelAndView modelAndView = new ModelAndView("edit-menu");
-        modelAndView.addObject("error", e.getMessage());
-        modelAndView.addObject("userEditRequest", DtoMapper.mapUserToUserEditRequest(user));
-        modelAndView.addObject("user", user);
-
-        return modelAndView;
+        return "redirect:/users/edit";
     }
 
     @ExceptionHandler(PaymentFailedException.class)
-    public ModelAndView handlePaymentFailedException(PaymentFailedException e,
-                                                     @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public String handlePaymentFailedException(PaymentFailedException e,
+                                               RedirectAttributes redirectAttributes) {
 
-        ModelAndView modelAndView = new ModelAndView();
-
-        UUID productId = e.getProductId();
+        String redirectPath = "";
         if (e.getProductType() == PaymentProductType.SUBSCRIPTION) {
-            Subscription subscription = subscriptionService.getById(productId);
-            modelAndView = new ModelAndView("subscription-payment");
-            modelAndView.addObject("subscription", subscription);
+            redirectPath = "redirect:/memberships/{id}/payment";
         } else if (e.getProductType() == PaymentProductType.WORKOUT) {
-            Workout workout = workoutService.getById(productId);
-            modelAndView = new ModelAndView("workout-payment");
-            modelAndView.addObject("workout", workout);
+            redirectPath = "redirect:/workouts/{id}/book";
         }
 
-        User user = userService.getById(customUserDetails.getUserId());
-
-        modelAndView.addObject("error", e.getMessage());
-        modelAndView.addObject("user", user);
-
-        return modelAndView;
+        redirectAttributes.addFlashAttribute("error", e.getMessage());
+        return redirectPath;
     }
 
+    @ExceptionHandler(BusinessException.class)
+    public String handleBusinessException(BusinessException e,
+                                          RedirectAttributes redirectAttributes) {
+
+        redirectAttributes.addFlashAttribute("stopMembershipError", e.getMessage());
+
+        return "redirect:/home";
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(PaymentNotFoundException.class)
     public ModelAndView handlePaymentNotFoundException(PaymentNotFoundException e,
                                                        @AuthenticationPrincipal CustomUserDetails customUserDetails) {
@@ -106,15 +90,34 @@ public class GlobalExceptionHandler {
         return modelAndView;
     }
 
-    @ExceptionHandler(BusinessException.class)
-    public ModelAndView handleBusinessException(BusinessException e,
-                                                @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler({
+            AccessDeniedException.class,
+            NoResourceFoundException.class,
+            MethodArgumentTypeMismatchException.class,
+            MissingRequestValueException.class
+    })
+    public ModelAndView handleNotFoundExceptions(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
 
         User user = userService.getById(customUserDetails.getUserId());
 
-        ModelAndView modelAndView = new ModelAndView("redirect:/home");
+        ModelAndView modelAndView = new ModelAndView("not-found");
         modelAndView.addObject("user", user);
-        modelAndView.addObject("stopMembershipError", e.getMessage());
+
+        return modelAndView;
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(Exception.class)
+    public ModelAndView handleAnyException(Exception e,
+                                           @AuthenticationPrincipal CustomUserDetails customUserDetails) {
+
+        User user = userService.getById(customUserDetails.getUserId());
+
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("internal-server-error");
+        modelAndView.addObject("user", user);
+        modelAndView.addObject("errorMessage", e.getClass().getSimpleName());
 
         return modelAndView;
     }

@@ -42,7 +42,7 @@ public class MembershipPlanService {
             initializeNewMembershipPlan(subscription, user);
         } else {
             throw new ClientAlreadyHaveAnActiveMembershipException(
-                    "You have already an active membership plan", subscription.getId());
+                    "You have already an active membership plan");
         }
     }
 

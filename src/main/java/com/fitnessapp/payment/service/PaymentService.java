@@ -102,10 +102,10 @@ public class PaymentService {
             processSuccessfulPayment(productType, product, price, user);
         } catch (StripeException e) {
             saveFailedPayment(productType, product, price, user, e);
-            throw new PaymentFailedException("Payment failed: " + e.getMessage(), productId, productType);
+            throw new PaymentFailedException("Payment failed: " + e.getMessage(), productType);
         } catch (IndexOutOfBoundsException e) {
             log.error("Index out of bounds error while processing payment: [{}]", e.getMessage());
-            throw new PaymentFailedException("Payment failed due to system error", productId, productType);
+            throw new PaymentFailedException("Payment failed due to system error", productType);
         }
 
     }
