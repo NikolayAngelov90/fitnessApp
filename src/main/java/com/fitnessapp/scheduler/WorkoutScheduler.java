@@ -41,15 +41,15 @@ public class WorkoutScheduler {
             return;
         }
 
-        completedWorkouts.forEach(w -> {
-            w.setStatus(WorkoutStatus.COMPLETED);
-            workoutService.saveWorkouts(w);
+        completedWorkouts.forEach(workout -> {
+            workout.setStatus(WorkoutStatus.COMPLETED);
+            workoutService.saveCompletedWorkouts(workout);
 
-            log.info("Workout [{}] has been completed", w.getId());
+            log.info("Workout [{}] has been completed", workout.getId());
         });
     }
 
-    @Scheduled(cron = "0 0 * * * ?")
+    @Scheduled(fixedRate = 300000)
     @Transactional
     public void scheduleRecurringWorkouts() {
 
@@ -60,28 +60,32 @@ public class WorkoutScheduler {
             return;
         }
 
-        recurringWorkouts.forEach(w -> {
-            Workout newWorkout = cloneWorkoutWithNewDate(w);
-            workoutService.saveWorkouts(newWorkout);
+        recurringWorkouts.forEach(workout -> {
+            Workout newWorkout = cloneWorkoutWithNewDate(workout);
+            workoutService.saveRecurringWorkouts(newWorkout);
+
+            log.info("Workout [{}] has been recurring", workout.getId());
         });
     }
 
-    private Workout cloneWorkoutWithNewDate(Workout originalWorkout) {
-        LocalDateTime newDate = calculateNextDate(originalWorkout);
+    private Workout cloneWorkoutWithNewDate(Workout recurringWorkout) {
+        LocalDateTime newDate = calculateNextDate(recurringWorkout);
 
         return Workout.builder()
-                .workoutType(originalWorkout.getWorkoutType())
-                .duration(originalWorkout.getDuration())
-                .price(originalWorkout.getPrice())
+                .workoutType(recurringWorkout.getWorkoutType())
+                .duration(recurringWorkout.getDuration())
+                .price(recurringWorkout.getPrice())
                 .startTime(newDate)
-                .endTime(newDate.plusMinutes(originalWorkout.getDuration()))
-                .recurringType(originalWorkout.getRecurringType())
-                .trainer(originalWorkout.getTrainer())
-                .description(originalWorkout.getDescription())
-                .createdAt(originalWorkout.getCreatedAt())
-                .maxParticipants(originalWorkout.getMaxParticipants())
-                .availableSpots(originalWorkout.getAvailableSpots())
+                .endTime(newDate.plusMinutes(recurringWorkout.getDuration()))
+                .recurringType(recurringWorkout.getRecurringType())
+                .trainer(recurringWorkout.getTrainer())
+                .description(recurringWorkout.getDescription())
+                .createdAt(recurringWorkout.getCreatedAt())
+                .maxParticipants(recurringWorkout.getMaxParticipants())
+                .availableSpots(recurringWorkout.getMaxParticipants())
                 .status(workoutProperty.getDefaultStatus())
+                .originalWorkout(recurringWorkout.getOriginalWorkout())
+                .completedCloneWorkoutId(recurringWorkout.getId())
                 .build();
     }
 

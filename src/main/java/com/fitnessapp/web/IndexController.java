@@ -5,6 +5,8 @@ import com.fitnessapp.user.model.User;
 import com.fitnessapp.user.model.UserRole;
 import com.fitnessapp.user.service.UserService;
 import com.fitnessapp.web.dto.RegisterRequest;
+import com.fitnessapp.workout.model.Workout;
+import com.fitnessapp.workout.service.WorkoutService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -14,14 +16,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 public class IndexController {
 
     private final UserService userService;
+    private final WorkoutService workoutService;
 
-    public IndexController(UserService userService) {
+    public IndexController(UserService userService,
+                           WorkoutService workoutService) {
         this.userService = userService;
+        this.workoutService = workoutService;
     }
 
     @GetMapping("/")
@@ -82,6 +88,8 @@ public class IndexController {
             modelAndView = new ModelAndView("home-client");
         } else if (user.getRole() == UserRole.TRAINER) {
             modelAndView = new ModelAndView("home-trainer");
+            List<Workout> trainerWorkouts = workoutService.getOriginalWorkoutsForTrainer(user);
+            modelAndView.addObject("trainerWorkouts", trainerWorkouts);
         } else if (user.getRole() == UserRole.ADMIN) {
             modelAndView = new ModelAndView("home-admin");
         }

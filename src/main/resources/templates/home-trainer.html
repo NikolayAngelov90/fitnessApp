@@ -27,27 +27,31 @@
                     <div class="bg-white rounded-xl shadow-md p-6">
                         <div class="flex justify-between items-center mb-6">
                             <h2 class="text-xl font-bold">My Training Programs</h2>
-                            <a th:href="@{/workouts/create}"
-                               class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
-                                + New Workout
-                            </a>
-                            <div th:if="${NewWorkoutMessage}"
-                                 class="bg-green-100 border border-green-300 text-green-700 px-4 py-3 rounded-md">
-                                <p th:text="${NewWorkoutMessage}"></p>
+                            <div class="flex flex-col items-end gap-2">
+                                <a th:href="@{/workouts/create}"
+                                   class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors whitespace-nowrap">
+                                    + New Workout
+                                </a>
+                                <div th:if="${NewWorkoutMessage}"
+                                     class="bg-green-100 border border-green-300 text-green-700 px-4 py-2 rounded-md text-sm w-full md:w-auto text-center">
+                                    <p th:text="${NewWorkoutMessage}"></p>
+                                </div>
                             </div>
                         </div>
 
                         <!-- Workouts List -->
                         <div class="space-y-4">
                             <!-- Sample Workout Item -->
-                            <div class="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                            <div th:each="trainerWorkout : ${trainerWorkouts}"
+                                 class="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
                                 <div class="flex justify-between items-center">
                                     <div>
-                                        <h3 class="text-lg font-semibold text-blue-600">HIIT Advanced Program</h3>
-                                        <p class="text-gray-600">Scheduled sessions: 12</p>
-                                        <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-                                            Active
-                                        </span>
+                                        <h3 class="text-lg font-semibold text-blue-600"
+                                            th:text="${#strings.capitalize(#strings.toLowerCase(#strings.replace(trainerWorkout.workoutType, '_', ' ')))}"></h3>
+                                        <p class="text-gray-600"
+                                           th:text="${#strings.capitalize(#strings.toLowerCase(trainerWorkout.recurringType))}"></p>
+<!--                                        <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full"-->
+<!--                                              th:text="${#strings.capitalize(#strings.toLowerCase(trainerWorkout.status))}"></span>-->
                                     </div>
                                     <div class="flex gap-2">
                                         <a href="/trainings/edit/123"
@@ -62,7 +66,7 @@
                             </div>
 
                             <!-- Empty State -->
-                            <div th:unless="${hasPrograms}" class="text-center py-8">
+                            <div th:if="${trainerWorkouts.isEmpty()}" class="text-center py-8">
                                 <div class="mb-4">
                                     <i class="fas fa-dumbbell text-4xl text-gray-400"></i>
                                 </div>
@@ -123,7 +127,8 @@
                                 </div>
                                 <div class="w-20 h-20">
                                     <div class="radial-progress text-green-500"
-                                         style="--value:80; --thickness: 8px;">80%</div>
+                                         style="--value:80; --thickness: 8px;">80%
+                                    </div>
                                 </div>
                             </div>
                         </div>

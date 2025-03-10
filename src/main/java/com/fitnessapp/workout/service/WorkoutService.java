@@ -11,10 +11,12 @@ import com.fitnessapp.workout.model.Workout;
 import com.fitnessapp.workout.model.WorkoutStatus;
 import com.fitnessapp.workout.property.WorkoutProperty;
 import com.fitnessapp.workout.repository.WorkoutRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Limit;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -103,19 +105,37 @@ public class WorkoutService {
         return workouts;
     }
 
+    public List<Workout> getAllDisplayedWorkouts(LocalDate today) {
+        return workoutRepository.findWorkoutsForDisplay(today);
+    }
+
     public Workout getById(UUID id) {
         return workoutRepository.findById(id).orElseThrow(() -> new WorkoutNotFoundException("Workout not found"));
     }
 
-    public void saveWorkouts(Workout workout) {
+    public void saveCompletedWorkouts(Workout workout) {
         workoutRepository.save(workout);
     }
 
     public List<Workout> getAllCompletedRecurringWorkouts() {
-        return workoutRepository.findAllByStatus(WorkoutStatus.COMPLETED)
-                .stream()
-                .filter(w -> w.getRecurringType() != RecurringType.NONE)
-                .toList();
+
+        return workoutRepository.findAllByStatusAndRecurringTypeNotAndNextRecurringCreatedFalse(
+                WorkoutStatus.COMPLETED, RecurringType.NONE);
+    }
+
+    public List<Workout> getOriginalWorkoutsForTrainer(User trainer) {
+        return workoutRepository.findAllByTrainerAndOriginalWorkoutIsNull(trainer);
+    }
+
+    @Transactional
+    public void saveRecurringWorkouts(Workout newWorkout) {
+        workoutRepository.save(newWorkout);
+
+        UUID hasGeneratedNextWorkout = newWorkout.getCompletedCloneWorkoutId();
+        Workout completedWorkout = getById(hasGeneratedNextWorkout);
+        completedWorkout.setNextRecurringCreated(true);
+        workoutRepository.save(completedWorkout);
+
     }
 
     private void validateRegistration(User client, Workout workout) {

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,10 +34,12 @@ public class WorkoutController {
     @GetMapping
     public ModelAndView getWorkoutPage() {
 
-        List<Workout> allWorkouts = workoutService.getAllWorkouts();
+        LocalDate today = LocalDate.now();
+
+        List<Workout> allDisplayedWorkouts = workoutService.getAllDisplayedWorkouts(today);
 
         ModelAndView modelAndView = new ModelAndView("workouts");
-        modelAndView.addObject("workouts", allWorkouts);
+        modelAndView.addObject("workouts", allDisplayedWorkouts);
 
         return modelAndView;
     }

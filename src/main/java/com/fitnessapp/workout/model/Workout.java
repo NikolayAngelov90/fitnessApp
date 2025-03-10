@@ -63,6 +63,15 @@ public class Workout {
     @Column(nullable = false)
     private WorkoutStatus status;
 
+    @ManyToOne
+    private Workout originalWorkout;
+
+    @Column
+    private UUID completedCloneWorkoutId;
+
+    @Column
+    private boolean nextRecurringCreated;
+
     @ManyToMany
     @JoinTable(name = "clients_workouts")
     private List<User> clients = new ArrayList<>();
