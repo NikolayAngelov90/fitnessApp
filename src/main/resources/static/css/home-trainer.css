@@ -1,0 +1,50 @@
+.modal {
+    transition: opacity 0.3s ease;
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    visibility: hidden;
+    opacity: 0;
+}
+
+.modal:target {
+    display: flex;
+    visibility: visible;
+    opacity: 1;
+}
+
+.modal-content {
+    animation: modalOpen 0.3s ease;
+}
+
+@keyframes modalOpen {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.workout-actions a,
+a[class*="bg-yellow-500"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 80px;
+    height: 36px;
+    font-size: 14px;
+    text-align: center;
+    padding: 0 12px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.flex.gap-2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}

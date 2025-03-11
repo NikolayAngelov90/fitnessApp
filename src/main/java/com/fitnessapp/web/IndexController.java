@@ -88,7 +88,7 @@ public class IndexController {
             modelAndView = new ModelAndView("home-client");
         } else if (user.getRole() == UserRole.TRAINER) {
             modelAndView = new ModelAndView("home-trainer");
-            List<Workout> trainerWorkouts = workoutService.getOriginalWorkoutsForTrainer(user);
+            List<Workout> trainerWorkouts = workoutService.getUpcomingWorkoutsByTrainer(user);
             modelAndView.addObject("trainerWorkouts", trainerWorkouts);
         } else if (user.getRole() == UserRole.ADMIN) {
             modelAndView = new ModelAndView("home-admin");

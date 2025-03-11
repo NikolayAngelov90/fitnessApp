@@ -7,7 +7,9 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link href="/css/common.css" rel="stylesheet">
     <link href="/css/home.css" rel="stylesheet">
+    <link href="/css/home-trainer.css" rel="stylesheet">
 </head>
+
 <body class="bg-gray-100">
 <!-- Navigation -->
 <div th:insert="~{fragments/navigation-bar :: navbar}"></div>
@@ -50,17 +52,20 @@
                                             th:text="${#strings.capitalize(#strings.toLowerCase(#strings.replace(trainerWorkout.workoutType, '_', ' ')))}"></h3>
                                         <p class="text-gray-600"
                                            th:text="${#strings.capitalize(#strings.toLowerCase(trainerWorkout.recurringType))}"></p>
-<!--                                        <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full"-->
-<!--                                              th:text="${#strings.capitalize(#strings.toLowerCase(trainerWorkout.status))}"></span>-->
+                                        <!--                                        <span class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full"-->
+                                        <!--                                              th:text="${#strings.capitalize(#strings.toLowerCase(trainerWorkout.status))}"></span>-->
                                     </div>
                                     <div class="flex gap-2">
-                                        <a href="/trainings/edit/123"
+                                        <a th:href="@{'/workouts/' + ${trainerWorkout.id} + '/edit'}"
                                            class="px-3 py-1 bg-yellow-500 text-white rounded-md hover:bg-yellow-600">
                                             Edit
                                         </a>
-                                        <button class="px-3 py-1 bg-red-600 text-white rounded-md hover:bg-red-700">
-                                            Delete
-                                        </button>
+                                        <div class="workout-actions">
+                                            <a th:href="@{'#delete-modal-' + ${trainerWorkout.id}}"
+                                               class="px-3 py-1 bg-red-600 text-white rounded-md hover:bg-red-700">
+                                                Delete
+                                            </a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -141,5 +146,29 @@
 
 <!-- Footer -->
 <div th:insert="~{fragments/footer :: footer}"></div>
+
+<div th:each="trainerWorkout : ${trainerWorkouts}">
+    <div th:id="'delete-modal-' + ${trainerWorkout.id}"
+         class="modal fixed inset-0 bg-black bg-opacity-50 z-50">
+        <div class="modal-content relative bg-white p-6 rounded-lg max-w-md mx-auto mt-20">
+            <h3 class="text-xl font-bold mb-4">Confirm Delete</h3>
+            <p>Are you sure you want to delete this workout?</p>
+            <div class="flex gap-3 mt-6">
+                <form th:action="@{'/workouts/' + ${trainerWorkout.id} + '/delete'}"
+                      method="post">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit"
+                            class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                        Delete
+                    </button>
+                </form>
+                <a href="#"
+                   class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
+                    Cancel
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>

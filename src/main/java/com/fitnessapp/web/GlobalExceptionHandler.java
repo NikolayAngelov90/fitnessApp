@@ -6,6 +6,7 @@ import com.fitnessapp.security.CustomUserDetails;
 import com.fitnessapp.user.model.User;
 import com.fitnessapp.user.service.UserService;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.MissingRequestValueException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -93,6 +94,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler({
             AccessDeniedException.class,
+            AuthorizationDeniedException.class,
             NoResourceFoundException.class,
             MethodArgumentTypeMismatchException.class,
             MissingRequestValueException.class

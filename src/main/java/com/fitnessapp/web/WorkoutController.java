@@ -3,6 +3,7 @@ package com.fitnessapp.web;
 import com.fitnessapp.payment.service.PaymentService;
 import com.fitnessapp.security.CustomUserDetails;
 import com.fitnessapp.web.dto.WorkoutRequest;
+import com.fitnessapp.web.mapper.DtoMapper;
 import com.fitnessapp.workout.model.Workout;
 import com.fitnessapp.workout.service.WorkoutService;
 import jakarta.validation.Valid;
@@ -45,6 +46,7 @@ public class WorkoutController {
     }
 
     @GetMapping("/{id}/book")
+    @PreAuthorize("hasRole('CLIENT')")
     public ModelAndView showWorkoutPaymentPage(@PathVariable UUID id) {
 
         Workout workout = workoutService.getById(id);
@@ -72,6 +74,7 @@ public class WorkoutController {
     }
 
     @GetMapping("/client-registered")
+    @PreAuthorize("hasRole('CLIENT')")
     public ModelAndView showRegisteredClientWorkouts(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
 
         List<Workout> allRegisteredClientWorkouts = workoutService
@@ -84,6 +87,7 @@ public class WorkoutController {
     }
 
     @PutMapping("/{id}/cancel")
+    @PreAuthorize("hasRole('CLIENT')")
     public String cancelBooking(@PathVariable UUID id,
                                 @AuthenticationPrincipal CustomUserDetails customUserDetails) {
 
@@ -96,7 +100,7 @@ public class WorkoutController {
     @PreAuthorize("hasRole('TRAINER')")
     public ModelAndView getCreateWorkoutPage() {
 
-        ModelAndView modelAndView = new ModelAndView("edit-workout");
+        ModelAndView modelAndView = new ModelAndView("create-workout");
         modelAndView.addObject("workoutRequest", WorkoutRequest.empty());
 
         return modelAndView;
@@ -109,12 +113,52 @@ public class WorkoutController {
                                    RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
-            return "edit-workout";
+            return "create-workout";
         }
 
         workoutService.create(workoutRequest, customUserDetails.getUserId());
 
         redirectAttributes.addFlashAttribute("NewWorkoutMessage", "Successfully created new workout");
+
+        return "redirect:/home";
+    }
+
+    @GetMapping("/{id}/edit")
+    @PreAuthorize("hasRole('TRAINER')")
+    public ModelAndView getEditWorkoutPage(@PathVariable UUID id) {
+
+        Workout workout = workoutService.getById(id);
+
+        ModelAndView modelAndView = new ModelAndView("edit-workout");
+        modelAndView.addObject("workout", workout);
+        modelAndView.addObject("workoutRequest", DtoMapper.mapWorkoutToWorkoutRequest(workout));
+
+        return modelAndView;
+    }
+
+    @PutMapping("/{id}/edit")
+    public ModelAndView update(@PathVariable UUID id,
+                               @Valid WorkoutRequest workoutRequest,
+                               BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return new ModelAndView("edit-workout");
+        }
+
+        Workout workout = workoutService.getById(id);
+        workoutService.edit(workout, workoutRequest);
+
+        ModelAndView modelAndView = new ModelAndView("edit-workout");
+        modelAndView.addObject("workout", workout);
+        modelAndView.addObject("message", "Successfully updated workout");
+
+        return modelAndView;
+    }
+
+    @PutMapping("/{id}/delete")
+    public String softDelete(@PathVariable UUID id) {
+
+        workoutService.changeStatusDeleted(id);
 
         return "redirect:/home";
     }

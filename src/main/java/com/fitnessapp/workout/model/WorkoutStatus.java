@@ -4,5 +4,6 @@ public enum WorkoutStatus {
 
     UPCOMING,
     COMPLETED,
-    FULL
+    FULL,
+    DELETED
 }

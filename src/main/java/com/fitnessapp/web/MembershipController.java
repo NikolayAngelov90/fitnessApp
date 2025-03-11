@@ -5,6 +5,7 @@ import com.fitnessapp.subscription.model.Subscription;
 import com.fitnessapp.membership.service.MembershipPlanService;
 import com.fitnessapp.subscription.service.SubscriptionService;
 import com.fitnessapp.payment.service.PaymentService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +32,7 @@ public class MembershipController {
 
 
     @GetMapping("/{id}/payment")
+    @PreAuthorize("hasRole('CLIENT')")
     public ModelAndView showMembershipPaymentsPage(@PathVariable UUID id) {
 
         Subscription subscription = subscriptionService.getById(id);
@@ -58,6 +60,7 @@ public class MembershipController {
     }
 
     @PutMapping("/{id}/status")
+    @PreAuthorize("hasRole('CLIENT')")
     public String switchMembershipStatus(@PathVariable UUID id) {
 
         membershipPlanService.changeStatus(id);

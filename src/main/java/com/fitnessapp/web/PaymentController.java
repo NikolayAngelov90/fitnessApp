@@ -4,6 +4,7 @@ import com.fitnessapp.payment.model.Payment;
 import com.fitnessapp.payment.model.PaymentProductType;
 import com.fitnessapp.payment.service.PaymentService;
 import com.fitnessapp.security.CustomUserDetails;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +27,7 @@ public class PaymentController {
 
 
     @GetMapping("/history")
+    @PreAuthorize("hasRole('CLIENT')")
     public ModelAndView getPaymentsHistoryPage(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                                @RequestParam(name = "type", required = false) PaymentProductType type) {
 

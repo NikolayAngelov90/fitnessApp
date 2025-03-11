@@ -3,6 +3,7 @@ package com.fitnessapp.workout.model;
 import com.fitnessapp.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@DynamicUpdate
 @Entity
 @Table(name = "workouts")
 public class Workout {
@@ -62,9 +64,6 @@ public class Workout {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private WorkoutStatus status;
-
-    @ManyToOne
-    private Workout originalWorkout;
 
     @Column
     private UUID completedCloneWorkoutId;

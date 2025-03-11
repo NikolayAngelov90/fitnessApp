@@ -49,6 +49,10 @@ public class WorkoutService {
         }
 
         workoutRepository.save(workout);
+        log.info("Client {} {} successfully registered for  workout id [{}]",
+                client.getFirstName(),
+                client.getLastName(),
+                workout.getId());
     }
 
     public void cancelBookingWorkout(UUID workoutId, UUID clientId) {
@@ -60,6 +64,10 @@ public class WorkoutService {
         workout.setAvailableSpots(workout.getAvailableSpots() + 1);
 
         workoutRepository.save(workout);
+        log.info("Client {} {} has been cancelled workout with id [{}]",
+                user.getFirstName(),
+                user.getLastName(),
+                workoutId);
     }
 
     public List<Workout> getAllRegisteredClientWorkouts(UUID clientId) {
@@ -88,11 +96,19 @@ public class WorkoutService {
                 .build();
 
         workoutRepository.save(workout);
-
         log.info("Created workout with id {} from trainer {} {}",
                 workout.getId(),
                 trainer.getFirstName(),
                 trainer.getLastName());
+    }
+
+    @Transactional
+    public void edit(Workout workout, WorkoutRequest workoutRequest) {
+
+        updatedWorkout(workoutRequest, workout);
+
+        workoutRepository.save(workout);
+        log.info("Workout with id [{}] was updated successfully", workout.getId());
     }
 
     public List<Workout> getAllWorkouts() {
@@ -118,13 +134,13 @@ public class WorkoutService {
     }
 
     public List<Workout> getAllCompletedRecurringWorkouts() {
-
         return workoutRepository.findAllByStatusAndRecurringTypeNotAndNextRecurringCreatedFalse(
-                WorkoutStatus.COMPLETED, RecurringType.NONE);
+                WorkoutStatus.COMPLETED,
+                RecurringType.NONE);
     }
 
-    public List<Workout> getOriginalWorkoutsForTrainer(User trainer) {
-        return workoutRepository.findAllByTrainerAndOriginalWorkoutIsNull(trainer);
+    public List<Workout> getUpcomingWorkoutsByTrainer(User trainer) {
+        return workoutRepository.findAllByTrainerAndStatus(trainer, WorkoutStatus.UPCOMING);
     }
 
     @Transactional
@@ -138,6 +154,13 @@ public class WorkoutService {
 
     }
 
+    public void changeStatusDeleted(UUID id) {
+        Workout workout = getById(id);
+        workout.setStatus(WorkoutStatus.DELETED);
+
+        workoutRepository.save(workout);
+    }
+
     private void validateRegistration(User client, Workout workout) {
         if (workout.getStatus() == WorkoutStatus.FULL) {
             throw new WorkoutFullException("Workout is already full");
@@ -145,6 +168,30 @@ public class WorkoutService {
 
         if (workout.getClients().contains(client)) {
             throw new DuplicateRegistrationClientWorkout("You already book this workout");
+        }
+    }
+
+    private void updatedWorkout(WorkoutRequest workoutRequest, Workout workout) {
+        workout.setWorkoutType(workoutRequest.workoutType());
+        workout.setDuration(workoutRequest.duration());
+        workout.setPrice(workoutRequest.price());
+        workout.setStartTime(workoutRequest.startTime());
+        workout.setEndTime(workoutRequest.startTime().plusMinutes(workoutRequest.duration()));
+        workout.setRecurringType(workoutRequest.recurringType());
+        workout.setDescription(workoutRequest.description());
+
+        if (workout.getMaxParticipants() != workoutRequest.maxParticipants()) {
+            int oldMaxParticipants = workout.getMaxParticipants();
+            int newMaxParticipants = workoutRequest.maxParticipants();
+            int diffCountSpots = Math.abs(newMaxParticipants - oldMaxParticipants);
+
+            workout.setMaxParticipants(newMaxParticipants);
+
+            if (newMaxParticipants > oldMaxParticipants) {
+                workout.setAvailableSpots(workout.getAvailableSpots() + diffCountSpots);
+            } else {
+                workout.setAvailableSpots(workout.getAvailableSpots() - diffCountSpots);
+            }
         }
     }
 }

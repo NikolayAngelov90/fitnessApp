@@ -26,14 +26,22 @@ public class WorkoutScheduler {
     }
 
     @Scheduled(fixedRate = 300000)
-    public void updateCompletedWorkouts() {
+    @Transactional
+    public void processWorkouts() {
 
+        updateCompletedWorkouts();
+
+        scheduleRecurringWorkouts();
+    }
+
+    private void updateCompletedWorkouts() {
         LocalDateTime now = LocalDateTime.now();
 
         List<Workout> completedWorkouts = workoutService.getAllWorkouts()
                 .stream()
                 .filter(w -> w.getEndTime().isBefore(now))
                 .filter(w -> w.getStatus() != WorkoutStatus.COMPLETED)
+                .filter(w -> w.getStatus() != WorkoutStatus.DELETED)
                 .toList();
 
         if (completedWorkouts.isEmpty()) {
@@ -49,10 +57,7 @@ public class WorkoutScheduler {
         });
     }
 
-    @Scheduled(fixedRate = 300000)
-    @Transactional
-    public void scheduleRecurringWorkouts() {
-
+    private void scheduleRecurringWorkouts() {
         List<Workout> recurringWorkouts = workoutService.getAllCompletedRecurringWorkouts();
 
         if (recurringWorkouts.isEmpty()) {
@@ -84,13 +89,11 @@ public class WorkoutScheduler {
                 .maxParticipants(recurringWorkout.getMaxParticipants())
                 .availableSpots(recurringWorkout.getMaxParticipants())
                 .status(workoutProperty.getDefaultStatus())
-                .originalWorkout(recurringWorkout.getOriginalWorkout())
                 .completedCloneWorkoutId(recurringWorkout.getId())
                 .build();
     }
 
     private LocalDateTime calculateNextDate(Workout recurringWorkout) {
-
         switch (recurringWorkout.getRecurringType()) {
             case DAILY -> {
                 return recurringWorkout.getStartTime().plusDays(1);
