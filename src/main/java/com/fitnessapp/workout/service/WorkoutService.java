@@ -134,7 +134,7 @@ public class WorkoutService {
     }
 
     public List<Workout> getUpcomingWorkoutsByTrainer(User trainer) {
-        return workoutRepository.findAllByTrainerAndStatus(trainer, WorkoutStatus.UPCOMING);
+        return workoutRepository.findAllByTrainerAndStatusOrderByStartTime(trainer, WorkoutStatus.UPCOMING);
     }
 
     @Transactional
@@ -188,5 +188,12 @@ public class WorkoutService {
                 workout.setAvailableSpots(workout.getAvailableSpots() - diffCountSpots);
             }
         }
+    }
+
+    public List<Workout> getAllWorkoutsByTrainer(UUID trainerId) {
+
+        User trainer = userService.getById(trainerId);
+
+        return workoutRepository.findAllByTrainerOrderByStartTimeDesc(trainer);
     }
 }

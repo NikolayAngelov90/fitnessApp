@@ -23,5 +23,7 @@ public interface WorkoutRepository extends JpaRepository<Workout, UUID> {
     @Query("SELECT w FROM Workout w WHERE w.status IN ('UPCOMING', 'FULL') OR (w.status = 'COMPLETED' AND function('DATE', w.endTime) = :today)")
     List<Workout> findWorkoutsForDisplay(@Param("today") LocalDate today);
 
-    List<Workout> findAllByTrainerAndStatus(User trainer, WorkoutStatus status);
+    List<Workout> findAllByTrainerAndStatusOrderByStartTime(User trainer, WorkoutStatus status);
+
+    List<Workout> findAllByTrainerOrderByStartTimeDesc(User trainer);
 }

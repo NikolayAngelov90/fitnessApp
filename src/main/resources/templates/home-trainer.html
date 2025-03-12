@@ -85,18 +85,22 @@
                     <div class="bg-white rounded-xl shadow-md p-6">
                         <div class="flex justify-between items-center mb-4">
                             <h2 class="text-xl font-bold">Scheduled Sessions</h2>
-                            <a href="/sessions" class="text-blue-600 hover:text-blue-700">View All →</a>
+                            <a th:href="@{/workouts/trainer}" class="text-blue-600 hover:text-blue-700">View All →</a>
                         </div>
                         <div class="space-y-4">
                             <div class="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
                                 <div class="flex justify-between items-center">
                                     <div>
-                                        <h3 class="font-semibold">John Doe - HIIT Training</h3>
-                                        <p class="text-gray-600 text-sm">Duration: 60 mins</p>
+                                        <h3 class="font-semibold"
+                                            th:text="${#strings.capitalize(#strings.toLowerCase(#strings.replace(trainerWorkouts[0].workoutType, '_', ' ')))}"></h3>
+                                        <p class="text-gray-600 text-sm"
+                                           th:text="${'Duration:' + trainerWorkouts[0].duration + ' min'}"></p>
                                     </div>
                                     <div class="text-right">
-                                        <p class="text-sm font-semibold">Tomorrow</p>
-                                        <p class="text-gray-600 text-sm">10:00 AM</p>
+                                        <p class="text-sm font-semibold"
+                                           th:text="${#strings.capitalize(#strings.toLowerCase(trainerWorkouts[0].startTime.dayOfWeek))}"></p>
+                                        <p class="text-gray-600 text-sm"
+                                           th:text="${#temporals.format(trainerWorkouts[0].startTime, 'HH:mm a')}"></p>
                                     </div>
                                 </div>
                             </div>

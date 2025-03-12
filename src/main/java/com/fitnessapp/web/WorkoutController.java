@@ -163,4 +163,28 @@ public class WorkoutController {
 
         return "redirect:/home";
     }
+
+    @GetMapping("/trainer")
+    @PreAuthorize("hasRole('TRAINER')")
+    public ModelAndView showTrainerWorkouts(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+
+        List<Workout> allWorkoutsByTrainer = workoutService.getAllWorkoutsByTrainer(customUserDetails.getUserId());
+
+        ModelAndView modelAndView = new ModelAndView("trainer-workouts");
+        modelAndView.addObject("trainerWorkouts", allWorkoutsByTrainer);
+
+        return modelAndView;
+    }
+
+    @GetMapping("/{id}/participants")
+    @PreAuthorize("hasRole('TRAINER')")
+    public ModelAndView showParticipantsWorkout(@PathVariable UUID id) {
+
+        Workout workout = workoutService.getById(id);
+
+        ModelAndView modelAndView = new ModelAndView("workout-participants");
+        modelAndView.addObject("workout", workout);
+
+        return modelAndView;
+    }
 }
