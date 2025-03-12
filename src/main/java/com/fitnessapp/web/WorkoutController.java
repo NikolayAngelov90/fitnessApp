@@ -86,7 +86,7 @@ public class WorkoutController {
         return modelAndView;
     }
 
-    @PutMapping("/{id}/cancel")
+    @PatchMapping("/{id}/cancel")
     @PreAuthorize("hasRole('CLIENT')")
     public String cancelBooking(@PathVariable UUID id,
                                 @AuthenticationPrincipal CustomUserDetails customUserDetails) {
@@ -155,7 +155,8 @@ public class WorkoutController {
         return modelAndView;
     }
 
-    @PutMapping("/{id}/delete")
+    @PatchMapping("/{id}/delete")
+    @PreAuthorize("hasRole('TRAINER')")
     public String softDelete(@PathVariable UUID id) {
 
         workoutService.changeStatusDeleted(id);

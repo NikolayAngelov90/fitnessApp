@@ -35,7 +35,7 @@
                                     <form th:if="${user.memberships[0].status.name() != 'EXPIRED'}"
                                           th:action="@{'/memberships/' + ${user.memberships[0].id} + '/status'}"
                                           method="post" style="display: inline;">
-                                        <input type="hidden" name="_method" value="PUT"/>
+                                        <input type="hidden" name="_method" value="PATCH"/>
                                         <button type="submit"
                                                 th:class="${user.memberships[0].status.name() == 'STOPPED'} ?
                                             'px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors' :

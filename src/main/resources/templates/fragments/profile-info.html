@@ -12,9 +12,9 @@
             <div class="flex flex-col md:flex-row items-center justify-between">
                 <div class="flex flex-col space-x-4 mb-4 md:mb-0">
                     <div class="messages-container">
-                        <div th:if="${picMassage}"
+                        <div th:if="${picMessage}"
                              class="px-2 py-1 rounded-lg border border-green-400 bg-green-100 text-green-700 shadow-sm"
-                             th:text="${picMassage}"></div>
+                             th:text="${picMessage}"></div>
                         <div th:if="${error}"
                              class="px-2 py-1 rounded-lg border border-red-400 bg-red-100 text-red-700 shadow-sm"
                              th:text="${error}"></div>
@@ -33,6 +33,7 @@
                                 <form th:action="@{/users/upload-image}"
                                       method="post"
                                       enctype="multipart/form-data">
+                                    <input type="hidden" name="_method" value="PATCH">
                                     <input type="file"
                                            name="image"
                                            accept="image/*">
@@ -40,6 +41,15 @@
                                         Upload Image
                                     </button>
                                 </form>
+                                <div class="mt-4">
+                                    <form th:action="@{/users/delete-image}" method="post">
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <button type="submit"
+                                                class="delete-button bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded">
+                                            Delete Image
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                         <div>

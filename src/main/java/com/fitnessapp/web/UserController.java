@@ -26,7 +26,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/upload-image")
+    @PatchMapping("/upload-image")
     public String uploadPicture(@RequestParam("image") MultipartFile profilePicture,
                                 @AuthenticationPrincipal CustomUserDetails customUserDetails,
                                 RedirectAttributes redirectAttributes) {
@@ -34,6 +34,16 @@ public class UserController {
         userService.uploadProfilePicture(customUserDetails.getUserId(), profilePicture);
 
         redirectAttributes.addFlashAttribute("picMessage", "Profile picture uploaded successfully!");
+        return "redirect:/home";
+    }
+
+    @DeleteMapping("/delete-image")
+    public String deletePicture(@AuthenticationPrincipal CustomUserDetails customUserDetails,
+                                RedirectAttributes redirectAttributes) {
+
+        userService.deleteProfilePicture(customUserDetails.getUserId());
+
+        redirectAttributes.addFlashAttribute("picMessage", "Profile picture deleted successfully!");
         return "redirect:/home";
     }
 
@@ -48,7 +58,7 @@ public class UserController {
         return modelAndView;
     }
 
-    @PostMapping("/edit")
+    @PatchMapping("/edit")
     public ModelAndView updateProfile(@AuthenticationPrincipal CustomUserDetails customUserDetails,
                                       @Valid UserEditRequest userEditRequest,
                                       BindingResult bindingResult) {

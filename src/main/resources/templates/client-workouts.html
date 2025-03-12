@@ -56,8 +56,9 @@
                     <div class="flex justify-between items-center mt-3 pt-3 border-t border-gray-100">
                         <span class="workout-status upcoming px-2 py-1 rounded-full text-sm"
                               th:text="${#strings.capitalize(#strings.toLowerCase(workout.status))}"></span>
-                        <form th:action="@{'/workouts/' + ${workout.id} + '/cancel'}" method="post">
-                            <input type="hidden" name="_method" value="PUT"/>
+                        <form th:if="${workout.status.name() == 'UPCOMING'}"
+                              th:action="@{'/workouts/' + ${workout.id} + '/cancel'}" method="post">
+                            <input type="hidden" name="_method" value="PATCH"/>
                             <button class="text-red-600 hover:text-red-800 text-sm">
                                 Cancel Booking
                             </button>

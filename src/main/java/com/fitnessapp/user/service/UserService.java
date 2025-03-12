@@ -8,8 +8,8 @@ import com.fitnessapp.user.repository.UserRepository;
 import com.fitnessapp.web.dto.RegisterRequest;
 import com.fitnessapp.web.dto.UserEditRequest;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,7 +17,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -54,7 +56,6 @@ public class UserService implements UserDetailsService {
                 user.getEmail(), user.getId());
     }
 
-    @Transactional
     public void updateUser(UUID userId, UserEditRequest userEditRequest) {
 
         User user = getById(userId);
@@ -76,20 +77,47 @@ public class UserService implements UserDetailsService {
             user.setDescription(userEditRequest.description());
             user.setAdditionalTrainerDataCompleted(true);
         }
+
+        userRepository.save(user);
+        log.info("Successfully updated user {} with id [{}].", user.getEmail(), user.getId());
     }
 
     public void uploadProfilePicture(UUID userId, MultipartFile profilePicture) {
 
         User user = getById(userId);
-
         validateImage(profilePicture);
 
-        try {
-            user.setProfilePicture(profilePicture.getBytes());
-            userRepository.save(user);
+        byte[] compressedImage = compressImage(profilePicture);
+        user.setProfilePicture(compressedImage);
+
+        userRepository.save(user);
+        log.info("Successfully uploaded profile picture to user [{}] with id [{}].", user.getEmail(), user.getId());
+    }
+
+    private byte[] compressImage(MultipartFile profilePicture) {
+
+        try (InputStream inputStream = profilePicture.getInputStream();
+             ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+
+            Thumbnails.of(inputStream)
+                    .size(300, 300)
+                    .outputFormat("jpg")
+                    .outputQuality(0.7)
+                    .toOutputStream(outputStream);
+
+            return outputStream.toByteArray();
         } catch (IOException e) {
-            throw new ImageUploadException("Error processing photo.");
+            throw new ImageUploadException("Error compressing image.");
         }
+    }
+
+    public void deleteProfilePicture(UUID userId) {
+
+        User user = getById(userId);
+        user.setProfilePicture(null);
+
+        userRepository.save(user);
+        log.info("Successfully delete profile pictures to user [{}] with id [{}].", user.getEmail(), user.getId());
     }
 
     public User findByEmail(String email) {
@@ -139,8 +167,8 @@ public class UserService implements UserDetailsService {
             throw new EmptyImageException("Please choice profile picture.");
         }
 
-        if (profilePicture.getSize() > 5 * 1024 * 1024) {
-            throw new InvalidImageException("Size of profile picture must be less than 5MB.");
+        if (profilePicture.getSize() > 10 * 1024 * 1024) {
+            throw new InvalidImageException("Size of profile picture must be less than 10MB.");
         }
 
         String contentType = profilePicture.getContentType();

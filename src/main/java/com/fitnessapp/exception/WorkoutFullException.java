@@ -1,7 +1,9 @@
 package com.fitnessapp.exception;
 
-public class WorkoutFullException extends RuntimeException {
+import com.fitnessapp.payment.model.PaymentProductType;
+
+public class WorkoutFullException extends PaymentFailedException {
     public WorkoutFullException(String message) {
-        super(message);
+        super(message, PaymentProductType.WORKOUT);
     }
 }

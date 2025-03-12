@@ -51,13 +51,17 @@ public class MembershipPlanService {
         MembershipPlan membershipPlan = getById(id);
         MembershipPlanStatus status = membershipPlan.getStatus();
 
+        String logInfo = "Membership plan with id [{}] for user [{}] has been ";
         if (status == MembershipPlanStatus.ACTIVE) {
             pauseMembership(membershipPlan);
+            logInfo = logInfo + "paused";
         } else if (status == MembershipPlanStatus.STOPPED) {
             resumeMembership(membershipPlan);
+            logInfo = logInfo + "resumed";
         }
 
         membershipPlanRepository.save(membershipPlan);
+        log.info(logInfo, membershipPlan.getId(), membershipPlan.getClient().getEmail());
     }
 
     public List<MembershipPlan> getPlansToExpire(LocalDate now) {

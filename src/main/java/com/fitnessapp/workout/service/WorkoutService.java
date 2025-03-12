@@ -1,5 +1,6 @@
 package com.fitnessapp.workout.service;
 
+import com.fitnessapp.exception.CancelBookedWorkoutException;
 import com.fitnessapp.exception.DuplicateRegistrationClientWorkout;
 import com.fitnessapp.exception.WorkoutFullException;
 import com.fitnessapp.exception.WorkoutNotFoundException;
@@ -13,7 +14,6 @@ import com.fitnessapp.workout.property.WorkoutProperty;
 import com.fitnessapp.workout.repository.WorkoutRepository;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Limit;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -49,31 +49,29 @@ public class WorkoutService {
         }
 
         workoutRepository.save(workout);
-        log.info("Client {} {} successfully registered for  workout id [{}]",
-                client.getFirstName(),
-                client.getLastName(),
-                workout.getId());
+        log.info("Client {} successfully registered for  workout id [{}]", client.getEmail(), workout.getId());
     }
 
     public void cancelBookingWorkout(UUID workoutId, UUID clientId) {
 
         Workout workout = getById(workoutId);
-        User user = userService.getById(clientId);
+        User client = userService.getById(clientId);
 
-        workout.getClients().remove(user);
+        if (workout.getStatus() == WorkoutStatus.COMPLETED) {
+            throw new CancelBookedWorkoutException("Can't cancel booked workout");
+        }
+
+        workout.getClients().remove(client);
         workout.setAvailableSpots(workout.getAvailableSpots() + 1);
 
         workoutRepository.save(workout);
-        log.info("Client {} {} has been cancelled workout with id [{}]",
-                user.getFirstName(),
-                user.getLastName(),
-                workoutId);
+        log.info("Client {} has been cancelled workout with id [{}]", client.getEmail(), workoutId);
     }
 
     public List<Workout> getAllRegisteredClientWorkouts(UUID clientId) {
         User user = userService.getById(clientId);
 
-        return workoutRepository.findAllByClients(List.of(user), Limit.of(1));
+        return workoutRepository.findAllByClientsOrderByEndTimeDesc(List.of(user));
     }
 
     public void create(WorkoutRequest workoutRequest, UUID trainerId) {
@@ -96,13 +94,9 @@ public class WorkoutService {
                 .build();
 
         workoutRepository.save(workout);
-        log.info("Created workout with id {} from trainer {} {}",
-                workout.getId(),
-                trainer.getFirstName(),
-                trainer.getLastName());
+        log.info("Created workout with id [{}] from trainer {}", workout.getId(), trainer.getEmail());
     }
 
-    @Transactional
     public void edit(Workout workout, WorkoutRequest workoutRequest) {
 
         updatedWorkout(workoutRequest, workout);
@@ -159,6 +153,7 @@ public class WorkoutService {
         workout.setStatus(WorkoutStatus.DELETED);
 
         workoutRepository.save(workout);
+        log.info("Workout with id [{}] was soft deleted successfully", workout.getId());
     }
 
     private void validateRegistration(User client, Workout workout) {

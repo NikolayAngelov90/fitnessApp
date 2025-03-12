@@ -97,7 +97,8 @@ public class GlobalExceptionHandler {
             AuthorizationDeniedException.class,
             NoResourceFoundException.class,
             MethodArgumentTypeMismatchException.class,
-            MissingRequestValueException.class
+            MissingRequestValueException.class,
+            CancelBookedWorkoutException.class
     })
     public ModelAndView handleNotFoundExceptions(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
 

@@ -156,7 +156,7 @@
             <div class="flex gap-3 mt-6">
                 <form th:action="@{'/workouts/' + ${trainerWorkout.id} + '/delete'}"
                       method="post">
-                    <input type="hidden" name="_method" value="DELETE">
+                    <input type="hidden" name="_method" value="PATCH">
                     <button type="submit"
                             class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
                         Delete

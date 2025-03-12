@@ -59,7 +59,7 @@ public class MembershipController {
         return modelAndView;
     }
 
-    @PutMapping("/{id}/status")
+    @PatchMapping("/{id}/status")
     @PreAuthorize("hasRole('CLIENT')")
     public String switchMembershipStatus(@PathVariable UUID id) {
 

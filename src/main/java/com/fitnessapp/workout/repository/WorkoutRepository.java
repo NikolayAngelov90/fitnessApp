@@ -4,7 +4,6 @@ import com.fitnessapp.user.model.User;
 import com.fitnessapp.workout.model.RecurringType;
 import com.fitnessapp.workout.model.Workout;
 import com.fitnessapp.workout.model.WorkoutStatus;
-import org.springframework.data.domain.Limit;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,7 +18,7 @@ public interface WorkoutRepository extends JpaRepository<Workout, UUID> {
 
     List<Workout> findAllByStatusAndRecurringTypeNotAndNextRecurringCreatedFalse(WorkoutStatus status, RecurringType recurringType);
 
-    List<Workout> findAllByClients(List<User> clients, Limit limit);
+    List<Workout> findAllByClientsOrderByEndTimeDesc(List<User> clients);
 
     @Query("SELECT w FROM Workout w WHERE w.status IN ('UPCOMING', 'FULL') OR (w.status = 'COMPLETED' AND function('DATE', w.endTime) = :today)")
     List<Workout> findWorkoutsForDisplay(@Param("today") LocalDate today);
