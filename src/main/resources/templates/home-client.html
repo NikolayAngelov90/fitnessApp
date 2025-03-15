@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - FitnessPro</title>
+    <title>Client Dashboard - FitnessPro</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link href="/css/common.css" rel="stylesheet">
     <link href="/css/home.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-50">
 <!-- Navigation -->
 <div th:insert="~{fragments/navigation-bar :: navbar}"></div>
 
@@ -20,13 +20,13 @@
     <div class="pt-8 pb-6">
         <div class="max-w-7xl mx-auto px-4">
             <!-- Main Grid -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 px-4 py-6 bg-gray-50 rounded-2xl mx-4">
                 <!-- Left Column -->
                 <div class="lg:col-span-2 space-y-6">
                     <!-- Current Subscription -->
-                    <div class="bg-white rounded-xl shadow-md p-6">
+                    <div class="bg-gray-100 rounded-xl shadow-ms p-6">
                         <div th:if="${!#lists.isEmpty(user.memberships)}" class="space-y-4">
-                            <!-- Съществуващ абонамент -->
+
                             <div class="flex justify-between items-start mb-4">
                                 <h2 class="text-xl font-bold">Current Plan</h2>
                                 <div class="status-container">
@@ -52,7 +52,7 @@
                                          th:text="${stopMembershipError}"></div>
                                 </div>
                             </div>
-                            <!-- Детайли за абонамента -->
+
                             <div class="space-y-4">
                                 <div class="flex justify-between items-center">
                                     <div>
@@ -73,7 +73,7 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- Съобщение за липса на абонамент -->
+
                         <div th:unless="${!#lists.isEmpty(user.memberships)}" class="text-center py-8">
                             <div class="mb-4">
                                 <i class="fas fa-box-open text-4xl text-gray-400"></i>
@@ -88,7 +88,7 @@
                     </div>
 
                     <!-- Past Payments -->
-                    <div class="bg-white rounded-xl shadow-md p-6">
+                    <div class="bg-gray-100 rounded-xl shadow-ms p-6">
                         <div class="flex justify-between items-center mb-4">
                             <h2 class="text-xl font-bold">Payments History</h2>
                             <a th:if="${!#lists.isEmpty(user.payments)}" th:href="@{/payments/history}"
@@ -120,37 +120,19 @@
                 <!-- Right Column -->
                 <div class="space-y-6">
                     <!-- Quick Stats -->
-                    <div class="bg-white rounded-xl shadow-md p-6">
+                    <div class="bg-gray-100 rounded-xl shadow-ms p-6">
                         <h2 class="text-xl font-bold mb-4">Activity Overview</h2>
                         <div class="space-y-4">
                             <div class="flex justify-between items-center">
                                 <div>
                                     <p class="text-gray-600">This Month's Classes</p>
-                                    <p class="text-2xl font-bold">8/12</p>
+                                    <p class="text-2xl font-bold"
+                                       th:text="${monthCompletedWorkoutsForClientCount} + '/' + ${allCompletedMonthWorkouts}"></p>
                                 </div>
                                 <div class="w-20 h-20">
                                     <div class="radial-progress text-blue-600"
-                                         style="--value:66; --thickness: 8px;">66%
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Upcoming Sessions -->
-                    <div class="bg-white rounded-xl shadow-md p-6">
-                        <h2 class="text-xl font-bold mb-4">Scheduled Sessions</h2>
-                        <div class="space-y-4">
-                            <div class="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
-                                <div class="flex justify-between items-center">
-                                    <div>
-                                        <h3 class="font-semibold">HIIT Training</h3>
-                                        <p class="text-gray-600 text-sm">with Sarah Johnson</p>
-                                    </div>
-                                    <div class="text-right">
-                                        <p class="text-sm font-semibold">Tomorrow</p>
-                                        <p class="text-gray-600 text-sm">10:00 AM</p>
-                                    </div>
+                                         style="--value:66; --thickness: 8px;"
+                                         th:text="${#numbers.formatDecimal(totalPercentage, 0, 0)} + '%'"></div>
                                 </div>
                             </div>
                         </div>

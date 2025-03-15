@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -68,18 +67,6 @@ public class PaymentService {
         processPayment(PaymentProductType.WORKOUT, workout.getId(), user);
     }
 
-    public List<Payment> getAllUserPayments(UUID userId) {
-
-        User user = userService.getById(userId);
-
-        List<Payment> allByClient = paymentRepository.findAllByClientOrderByDateTimeDesc(user);
-        if (allByClient.isEmpty()) {
-            throw new PaymentNotFoundException("Payments not found.");
-        }
-
-        return allByClient;
-    }
-
     public void processPayment(PaymentProductType productType, UUID productId, User user) {
 
         BigDecimal price;
@@ -108,6 +95,10 @@ public class PaymentService {
             throw new PaymentFailedException("Payment failed due to system error", productType);
         }
 
+    }
+
+    public Payment getById(UUID id) {
+        return paymentRepository.findById(id).orElseThrow(() -> new PaymentNotFoundException("Payment not found with id: " + id));
     }
 
     private void processSuccessfulPayment(PaymentProductType productType, Object product, BigDecimal price, User user) throws StripeException {

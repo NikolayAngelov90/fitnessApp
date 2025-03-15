@@ -17,5 +17,5 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     Optional<User> findByPhoneNumber(String phoneNumber);
 
-    List<User> findByRole(UserRole role);
+    List<User> findByRoleAndApproveTrainer(UserRole role, boolean approveTrainer);
 }

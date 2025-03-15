@@ -104,7 +104,8 @@
                         <span th:if="${payment.status == 'failed'}"
                               class="payment-status failed px-2 py-1 rounded-full text-sm"
                               th:text="${#strings.capitalize(payment.status)}"></span>
-                        <button class="text-blue-600 hover:text-blue-800 text-sm">View Receipt</button>
+                        <a th:href="@{'/payments/' + ${payment.id} + '/receipt'}"
+                           class="text-blue-600 hover:text-blue-800 text-sm">View Receipt</a>
                     </div>
                 </div>
             </div>

@@ -6,6 +6,7 @@ import com.fitnessapp.user.model.User;
 import com.fitnessapp.user.model.UserRole;
 import com.fitnessapp.user.repository.UserRepository;
 import com.fitnessapp.web.dto.RegisterRequest;
+import com.fitnessapp.web.dto.SwitchUserRoleRequest;
 import com.fitnessapp.web.dto.UserEditRequest;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import lombok.extern.slf4j.Slf4j;
@@ -134,15 +135,44 @@ public class UserService implements UserDetailsService {
                         .formatted(userId)));
     }
 
-    public List<User> getAllTrainers() {
+    public List<User> getAllApprovedTrainers() {
 
-        List<User> trainers = userRepository.findByRole(UserRole.TRAINER);
+        List<User> approvedTrainers = userRepository.findByRoleAndApproveTrainer(UserRole.TRAINER, true);
 
-        if (trainers.isEmpty()) {
+        if (approvedTrainers.isEmpty()) {
             throw new TrainerNotFoundException("Trainer not found!");
         }
 
-        return trainers;
+        return approvedTrainers;
+    }
+
+    public List<User> getPendingApproveTrainers() {
+
+        return userRepository.findByRoleAndApproveTrainer(UserRole.TRAINER, false);
+
+
+    }
+
+    public void approveTrainer(UUID id) {
+        User trainer = userRepository.findById(id).orElseThrow(
+                () -> new UserNotFoundException("User with id [%s] does not exist.".formatted(id)));
+
+        trainer.setApproveTrainer(true);
+
+        userRepository.save(trainer);
+        log.info("Successfully approved trainer [{}] with id [{}].", trainer.getEmail(), trainer.getId());
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public void switchRole(UUID id, SwitchUserRoleRequest switchUserRoleRequest) {
+        User user = getById(id);
+        user.setRole(switchUserRoleRequest.userRole());
+
+        userRepository.save(user);
+        log.info("User [{}] with id [{}] has been switched role to [{}].", user.getEmail(), user.getId(), user.getRole());
     }
 
     private User initializeNewUserAccount(RegisterRequest dto) {

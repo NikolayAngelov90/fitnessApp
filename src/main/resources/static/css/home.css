@@ -4,8 +4,8 @@ main {
 
 /* Hero Section */
 .profile-hero-container {
-    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
-    url('../images/photo-1534438327276-14e5300c3a48.jpg') center/cover fixed;
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+    url('../images/photo-1534438327276-14e5300c3a48.jpg') center/cover fixed !important;
     min-height: 57vh;
     height: auto;
     position: relative;
@@ -168,4 +168,18 @@ main {
 
 .error {
     @apply bg-red-100 text-red-800 border border-red-200;
+}
+
+.bg-gray-100 {
+    background-color: #f8fafc;
+}
+
+.bg-gray-50 {
+    background-color: #f1f5f9;
+}
+
+/* Добавете лека граница на колоните */
+.bg-gray-100 {
+    border: 1px solid rgba(203, 213, 225, 0.15);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }

@@ -2,7 +2,6 @@ package com.fitnessapp.user.model;
 
 import com.fitnessapp.membership.model.MembershipPlan;
 import com.fitnessapp.payment.model.Payment;
-import com.fitnessapp.workout.model.Workout;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
@@ -59,14 +58,14 @@ public class User {
     private String description;
 
     @Column
-    private boolean additionalTrainerDataCompleted = Boolean.FALSE;
+    private boolean additionalTrainerDataCompleted;
+
+    @Column
+    private boolean approveTrainer;
 
     @OneToMany(mappedBy = "client")
     @OrderBy("startDate DESC")
     private List<MembershipPlan> memberships = new ArrayList<>();
-
-    @OneToMany(mappedBy = "trainer")
-    private List<Workout> trainerWorkouts = new ArrayList<>();
 
     @OneToMany(mappedBy = "client")
     @OrderBy("dateTime DESC")

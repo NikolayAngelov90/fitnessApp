@@ -120,7 +120,7 @@ public class WorkoutController {
 
         redirectAttributes.addFlashAttribute("NewWorkoutMessage", "Successfully created new workout");
 
-        return "redirect:/home";
+        return "redirect:/home-trainer";
     }
 
     @GetMapping("/{id}/edit")
@@ -161,7 +161,7 @@ public class WorkoutController {
 
         workoutService.changeStatusDeleted(id);
 
-        return "redirect:/home";
+        return "redirect:/home-trainer";
     }
 
     @GetMapping("/trainer")

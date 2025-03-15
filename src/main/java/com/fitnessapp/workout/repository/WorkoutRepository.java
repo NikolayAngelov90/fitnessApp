@@ -26,4 +26,5 @@ public interface WorkoutRepository extends JpaRepository<Workout, UUID> {
     List<Workout> findAllByTrainerAndStatusOrderByStartTime(User trainer, WorkoutStatus status);
 
     List<Workout> findAllByTrainerOrderByStartTimeDesc(User trainer);
+
 }

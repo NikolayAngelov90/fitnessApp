@@ -1,5 +1,6 @@
 package com.fitnessapp.security;
 
+import com.fitnessapp.user.model.UserRole;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
@@ -16,14 +17,41 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
                                         Authentication authentication) throws IOException {
 
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        String targetUrl = request.getContextPath();
 
         if (userDetails.getAuthorities()
                 .stream()
-                .allMatch(auth -> auth.getAuthority().equals("ROLE_TRAINER")) &&
-                !userDetails.isAdditionalTrainerDataCompleted()) {
-            response.sendRedirect(request.getContextPath() + "/users/edit");
-        } else {
-            response.sendRedirect(request.getContextPath() + "/home");
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_TRAINER"))) {
+
+            if (!userDetails.isAdditionalTrainerDataCompleted()) {
+                response.sendRedirect(targetUrl + "/users/edit");
+                return;
+            }
+
+            targetUrl += "/home-trainer";
+        } else if (userDetails.getAuthorities()
+                .stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_CLIENT"))) {
+            targetUrl += "/home-client";
+        } else if (userDetails.getAuthorities()
+                .stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"))) {
+            targetUrl += "/home-admin";
         }
+
+        response.sendRedirect(targetUrl);
+    }
+
+    public static String validateRedirectEndpoint(CustomUserDetails customUserDetails) {
+        String redirectPath = "redirect:/home-";
+        if (customUserDetails.getRole() == UserRole.ADMIN) {
+            redirectPath += "admin";
+        } else if (customUserDetails.getRole() == UserRole.CLIENT) {
+            redirectPath += "client";
+        } else if (customUserDetails.getRole() == UserRole.TRAINER) {
+            redirectPath += "trainer";
+        }
+
+        return redirectPath;
     }
 }

@@ -48,3 +48,17 @@ a[class*="bg-yellow-500"] {
     align-items: center;
     gap: 8px;
 }
+
+.bg-gray-100 {
+    border: 1px solid rgba(203, 213, 225, 0.15);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    background-color: #f8fafc;
+}
+
+.rounded-xl {
+    border-radius: 1rem;
+}
+
+.hover\:bg-gray-50:hover {
+    background-color: #f9fafb;
+}

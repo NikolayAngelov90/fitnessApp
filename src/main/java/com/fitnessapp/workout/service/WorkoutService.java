@@ -1,9 +1,6 @@
 package com.fitnessapp.workout.service;
 
-import com.fitnessapp.exception.CancelBookedWorkoutException;
-import com.fitnessapp.exception.DuplicateRegistrationClientWorkout;
-import com.fitnessapp.exception.WorkoutFullException;
-import com.fitnessapp.exception.WorkoutNotFoundException;
+import com.fitnessapp.exception.*;
 import com.fitnessapp.user.model.User;
 import com.fitnessapp.user.service.UserService;
 import com.fitnessapp.web.dto.WorkoutRequest;
@@ -77,6 +74,11 @@ public class WorkoutService {
     public void create(WorkoutRequest workoutRequest, UUID trainerId) {
 
         User trainer = userService.getById(trainerId);
+
+        if (!trainer.isApproveTrainer()) {
+            throw new TrainerNotApproveException("You haven't permission to create workout");
+
+        }
 
         Workout workout = Workout.builder()
                 .workoutType(workoutRequest.workoutType())
@@ -156,6 +158,77 @@ public class WorkoutService {
         log.info("Workout with id [{}] was soft deleted successfully", workout.getId());
     }
 
+    public List<Workout> getAllWorkoutsByTrainer(UUID trainerId) {
+
+        User trainer = userService.getById(trainerId);
+
+        return workoutRepository.findAllByTrainerOrderByStartTimeDesc(trainer);
+    }
+
+    public List<Workout> getMonthCompletedWorkoutsByTrainer(User trainer) {
+
+        return workoutRepository.findAllByTrainerAndStatusOrderByStartTime(trainer, WorkoutStatus.COMPLETED)
+                .stream()
+                .filter(w -> {
+                    LocalDateTime workoutStartTime = w.getStartTime();
+                    LocalDateTime now = LocalDateTime.now();
+
+                    return workoutStartTime.getYear() == now.getYear() &&
+                            workoutStartTime.getMonth() == now.getMonth();
+                })
+                .toList();
+    }
+
+    public double calculateMonthlyAttendancePercentage(User trainer) {
+
+        List<Workout> monthCompletedWorkouts = getMonthCompletedWorkoutsByTrainer(trainer);
+
+        if (monthCompletedWorkouts.isEmpty()) {
+            return 0.0;
+        }
+
+        double totalPercentage = monthCompletedWorkouts
+                .stream()
+                .mapToDouble(w -> {
+                    int maxParticipants = w.getMaxParticipants();
+                    int registeredClients = w.getClients().size();
+
+                    return (double) registeredClients / maxParticipants * 100;
+                })
+                .sum();
+
+        return totalPercentage / monthCompletedWorkouts.size();
+    }
+
+    public int getAllCompletedMonthWorkoutsForClient(User client) {
+
+        return (int) getAllRegisteredClientWorkouts(client.getId())
+                .stream()
+                .filter(w -> w.getStatus() == WorkoutStatus.COMPLETED)
+                .filter(w -> {
+                    LocalDateTime workoutStartTime = w.getStartTime();
+                    LocalDateTime now = LocalDateTime.now();
+
+                    return workoutStartTime.getYear() == now.getYear() &&
+                            workoutStartTime.getMonth() == now.getMonth();
+                })
+                .count();
+    }
+
+    public int getAllCompletedMonthWorkouts() {
+
+        return (int) getAllWorkouts()
+                .stream()
+                .filter(w -> {
+                    LocalDateTime workoutStartTime = w.getStartTime();
+                    LocalDateTime now = LocalDateTime.now();
+
+                    return workoutStartTime.getYear() == now.getYear() &&
+                            workoutStartTime.getMonth() == now.getMonth();
+                })
+                .count();
+    }
+
     private void validateRegistration(User client, Workout workout) {
         if (workout.getStatus() == WorkoutStatus.FULL) {
             throw new WorkoutFullException("Workout is already full");
@@ -188,12 +261,5 @@ public class WorkoutService {
                 workout.setAvailableSpots(workout.getAvailableSpots() - diffCountSpots);
             }
         }
-    }
-
-    public List<Workout> getAllWorkoutsByTrainer(UUID trainerId) {
-
-        User trainer = userService.getById(trainerId);
-
-        return workoutRepository.findAllByTrainerOrderByStartTimeDesc(trainer);
     }
 }

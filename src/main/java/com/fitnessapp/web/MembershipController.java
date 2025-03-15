@@ -65,7 +65,7 @@ public class MembershipController {
 
         membershipPlanService.changeStatus(id);
 
-        return "redirect:/home";
+        return "redirect:/home-client";
     }
 
 }

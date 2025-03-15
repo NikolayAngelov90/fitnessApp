@@ -3,9 +3,11 @@ package com.fitnessapp.web;
 import com.fitnessapp.security.CustomUserDetails;
 import com.fitnessapp.user.model.User;
 import com.fitnessapp.user.service.UserService;
+import com.fitnessapp.web.dto.SwitchUserRoleRequest;
 import com.fitnessapp.web.dto.UserEditRequest;
 import com.fitnessapp.web.mapper.DtoMapper;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -15,6 +17,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.UUID;
+
+import static com.fitnessapp.security.CustomAuthenticationSuccessHandler.validateRedirectEndpoint;
 
 @Controller
 @RequestMapping("/users")
@@ -34,7 +39,8 @@ public class UserController {
         userService.uploadProfilePicture(customUserDetails.getUserId(), profilePicture);
 
         redirectAttributes.addFlashAttribute("picMessage", "Profile picture uploaded successfully!");
-        return "redirect:/home";
+
+        return validateRedirectEndpoint(customUserDetails);
     }
 
     @DeleteMapping("/delete-image")
@@ -44,7 +50,8 @@ public class UserController {
         userService.deleteProfilePicture(customUserDetails.getUserId());
 
         redirectAttributes.addFlashAttribute("picMessage", "Profile picture deleted successfully!");
-        return "redirect:/home";
+
+        return validateRedirectEndpoint(customUserDetails);
     }
 
     @GetMapping("/edit")
@@ -80,10 +87,42 @@ public class UserController {
 
         ModelAndView modelAndView = new ModelAndView("trainers");
 
-        List<User> trainers = userService.getAllTrainers();
+        List<User> trainers = userService.getAllApprovedTrainers();
 
         modelAndView.addObject("trainers", trainers);
 
         return modelAndView;
+    }
+
+    @PatchMapping("/{id}/approve-trainer")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String approveTrainer(@PathVariable UUID id) {
+
+        userService.approveTrainer(id);
+
+        return "redirect:/home-admin";
+    }
+
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ModelAndView getAllUsers() {
+
+        List<User> allUsers = userService.getAllUsers();
+
+        ModelAndView modelAndView = new ModelAndView("manage-users");
+        modelAndView.addObject("users", allUsers);
+        modelAndView.addObject("switchUserRoleRequest", SwitchUserRoleRequest.empty());
+
+        return modelAndView;
+    }
+
+    @PatchMapping("/{id}/update-role")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String switchUserRole(@PathVariable UUID id,
+                                 @ModelAttribute SwitchUserRoleRequest switchUserRoleRequest) {
+
+        userService.switchRole(id, switchUserRoleRequest);
+
+        return "redirect:/users";
     }
 }
