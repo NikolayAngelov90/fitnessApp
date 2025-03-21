@@ -123,12 +123,11 @@ public class PaymentService {
         }
 
         Payment payment = paymentBuilder.build();
-
-        activateProduct(productType, product, user);
-
         paymentRepository.save(payment);
         log.info("Payment created with id: [{}], status: [{}], type: [{}]",
                 payment.getId(), payment.getStatus(), productType);
+
+        activateProduct(productType, product, user);
     }
 
     private void saveFailedPayment(PaymentProductType productType, Object product, BigDecimal price, User user, StripeException e) {

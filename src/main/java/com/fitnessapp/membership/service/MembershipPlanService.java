@@ -7,10 +7,12 @@ import com.fitnessapp.membership.model.MembershipPlan;
 import com.fitnessapp.membership.model.MembershipPlanStatus;
 import com.fitnessapp.membership.property.MembershipPlanProperty;
 import com.fitnessapp.membership.repository.MembershipPlanRepository;
+import com.fitnessapp.membership.event.UpsertMembershipEvent;
 import com.fitnessapp.subscription.model.Subscription;
 import com.fitnessapp.subscription.model.SubscriptionDuration;
 import com.fitnessapp.user.model.User;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -24,11 +26,14 @@ public class MembershipPlanService {
 
     private final MembershipPlanRepository membershipPlanRepository;
     private final MembershipPlanProperty membershipPlanProperty;
+    private final KafkaTemplate<String, UpsertMembershipEvent> kafkaTemplate;
 
     public MembershipPlanService(MembershipPlanRepository membershipPlanRepository,
-                                 MembershipPlanProperty membershipPlanProperty) {
+                                 MembershipPlanProperty membershipPlanProperty,
+                                 KafkaTemplate<String, UpsertMembershipEvent> kafkaTemplate) {
         this.membershipPlanRepository = membershipPlanRepository;
         this.membershipPlanProperty = membershipPlanProperty;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     public void create(Subscription subscription, User user) {
@@ -95,8 +100,16 @@ public class MembershipPlanService {
                 .build();
 
         membershipPlanRepository.save(membershipPlan);
+        log.info("Membership created for client [{}]", user.getEmail());
 
-        log.info("Membership created for client [{}]", user.getFirstName() + " " + user.getLastName());
+        UpsertMembershipEvent event = UpsertMembershipEvent.builder()
+                .date(membershipPlan.getStartDate())
+                .type(membershipPlan.getStatus().toString())
+                .price(membershipPlan.getPrice())
+                .build();
+        log.info("Start - Sending MembershipEvent {} to Kafka topic membership-events", event);
+        kafkaTemplate.send("membership-events", event);
+        log.info("End - Sending MembershipEvent {} to Kafka topic membership-events", event);
     }
 
     private LocalDate calculateEndDate(LocalDate startDate, SubscriptionDuration duration) {
