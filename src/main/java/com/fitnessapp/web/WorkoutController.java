@@ -2,9 +2,12 @@ package com.fitnessapp.web;
 
 import com.fitnessapp.payment.service.PaymentService;
 import com.fitnessapp.security.CustomUserDetails;
+import com.fitnessapp.user.model.User;
+import com.fitnessapp.user.service.UserService;
 import com.fitnessapp.web.dto.WorkoutRequest;
 import com.fitnessapp.web.mapper.DtoMapper;
 import com.fitnessapp.workout.model.Workout;
+import com.fitnessapp.workout.model.WorkoutType;
 import com.fitnessapp.workout.service.WorkoutService;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,22 +28,31 @@ public class WorkoutController {
 
     private final WorkoutService workoutService;
     private final PaymentService paymentService;
+    private final UserService userService;
 
     public WorkoutController(WorkoutService workoutService,
-                             PaymentService paymentService) {
+                             PaymentService paymentService,
+                             UserService userService) {
         this.workoutService = workoutService;
         this.paymentService = paymentService;
+        this.userService = userService;
     }
 
     @GetMapping
-    public ModelAndView getWorkoutPage() {
+    public ModelAndView getWorkoutPage(@RequestParam(required = false) WorkoutType workoutType,
+                                       @RequestParam(required = false) UUID trainerId,
+                                       @RequestParam(required = false) LocalDate date,
+                                       @RequestParam(required = false) String timeRange) {
 
         LocalDate today = LocalDate.now();
+        List<Workout> allDisplayedWorkouts = workoutService.getAllDisplayedWorkouts(
+                today, workoutType, trainerId, date, timeRange);
 
-        List<Workout> allDisplayedWorkouts = workoutService.getAllDisplayedWorkouts(today);
+        List<User> trainers = userService.getAllApprovedTrainers();
 
         ModelAndView modelAndView = new ModelAndView("workouts");
         modelAndView.addObject("workouts", allDisplayedWorkouts);
+        modelAndView.addObject("trainers", trainers);
 
         return modelAndView;
     }

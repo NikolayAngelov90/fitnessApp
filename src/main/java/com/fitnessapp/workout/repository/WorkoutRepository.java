@@ -5,6 +5,7 @@ import com.fitnessapp.workout.model.RecurringType;
 import com.fitnessapp.workout.model.Workout;
 import com.fitnessapp.workout.model.WorkoutStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface WorkoutRepository extends JpaRepository<Workout, UUID> {
+public interface WorkoutRepository extends JpaRepository<Workout, UUID>, JpaSpecificationExecutor<Workout> {
 
     List<Workout> findAllByStatusAndRecurringTypeNotAndNextRecurringCreatedFalse(WorkoutStatus status, RecurringType recurringType);
 

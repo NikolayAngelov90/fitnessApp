@@ -1,11 +1,13 @@
 package com.fitnessapp.scheduler;
 
+import com.fitnessapp.workout.event.UpsertWorkoutEvent;
 import com.fitnessapp.workout.model.Workout;
 import com.fitnessapp.workout.model.WorkoutStatus;
 import com.fitnessapp.workout.property.WorkoutProperty;
 import com.fitnessapp.workout.service.WorkoutService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -18,11 +20,14 @@ public class WorkoutScheduler {
 
     private final WorkoutService workoutService;
     private final WorkoutProperty workoutProperty;
+    private final KafkaTemplate<String, UpsertWorkoutEvent> kafkaTemplate;
 
     public WorkoutScheduler(WorkoutService workoutService,
-                            WorkoutProperty workoutProperty) {
+                            WorkoutProperty workoutProperty,
+                            KafkaTemplate<String, UpsertWorkoutEvent> kafkaTemplate) {
         this.workoutService = workoutService;
         this.workoutProperty = workoutProperty;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     @Scheduled(fixedRate = 300000)
@@ -54,6 +59,18 @@ public class WorkoutScheduler {
             workoutService.saveCompletedWorkouts(workout);
 
             log.info("Workout [{}] has been completed", workout.getId());
+
+            UpsertWorkoutEvent event = UpsertWorkoutEvent.builder()
+                    .workoutType(workout.getWorkoutType())
+                    .startTime(workout.getStartTime().toLocalDate())
+                    .duration(workout.getDuration())
+                    .participants(workout.getMaxParticipants() - workout.getAvailableSpots())
+                    .trainerId(workout.getTrainer().getId())
+                    .build();
+
+            log.info("Start - Sending WorkoutEvent {} to Kafka topic workout-events", event);
+            kafkaTemplate.send("workout-events", event);
+            log.info("End - Sending WorkoutEvent {} to Kafka topic workout-events", event);
         });
     }
 

@@ -44,3 +44,7 @@ body {
     background-color: #2563EB;
 }
 
+select option:disabled {
+    @apply bg-gray-100 text-gray-400;
+}
+

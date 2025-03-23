@@ -118,11 +118,21 @@ public class UserController {
 
     @PatchMapping("/{id}/update-role")
     @PreAuthorize("hasRole('ADMIN')")
-    public String switchUserRole(@PathVariable UUID id,
-                                 @ModelAttribute SwitchUserRoleRequest switchUserRoleRequest) {
+    public ModelAndView switchUserRole(@PathVariable UUID id,
+                                       @ModelAttribute @Valid SwitchUserRoleRequest switchUserRoleRequest,
+                                       BindingResult bindingResult) {
+
+        ModelAndView modelAndView = new ModelAndView();
+
+        if (bindingResult.hasErrors()) {
+            modelAndView.addObject("users", userService.getAllUsers());
+            modelAndView.setViewName("manage-users");
+            return modelAndView;
+        }
 
         userService.switchRole(id, switchUserRoleRequest);
 
-        return "redirect:/users";
+        modelAndView.setViewName("redirect:/users");
+        return modelAndView;
     }
 }

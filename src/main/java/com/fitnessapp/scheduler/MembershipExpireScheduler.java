@@ -44,7 +44,10 @@ public class MembershipExpireScheduler {
                     .date(m.getEndDate())
                     .type(m.getStatus().toString())
                     .build();
+
+            log.info("Start - Sending MembershipEvent {} to Kafka topic membership-events", event);
             kafkaTemplate.send("membership-events", event);
+            log.info("End - Sending MembershipEvent {} to Kafka topic membership-events", event);
         });
     }
 }

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workout Reports - FitnessPro</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="/css/common.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+<div th:insert="~{fragments/navigation-bar :: navbar}"></div>
+
+<main class="hero-section pt-16 p-6">
+    <div class="max-w-7xl mx-auto space-y-8 pt-5">
+        <h1 class="text-3xl font-bold text-white">Workout Statistics</h1>
+        <!-- By Type Report -->
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-bold mb-4">By Workout Type</h2>
+            <form th:action="@{/reports/workouts/by-type}" method="GET" class="flex gap-4 items-end">
+                <div class="max-w-[300px]">
+                    <label class="block text-sm font-medium mb-1">Select Workout Type</label>
+                    <label>
+                        <select name="workoutType" required
+                                class="w-full p-2 border rounded bg-white">
+                            <option value="" disabled selected>Choose a type</option>
+                            <option th:each="type : ${workoutsType}"
+                                    th:value="${type}"
+                                    th:text="${#strings.capitalizeWords(#strings.toLowerCase(#strings.replace(type, '_', ' ')), ' ')}">
+                            </option>
+                        </select>
+                    </label>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Month</label>
+                    <input type="month" name="month" required class="p-2 border rounded">
+                </div>
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Generate</button>
+            </form>
+
+            <!-- Results-->
+            <div th:if="${workoutTypeReport}" class="mt-6">
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="bg-gray-50 p-4 rounded">
+                        <p class="text-sm text-gray-600">Type</p>
+                        <p class="text-xl"
+                           th:text="${#strings.capitalizeWords(#strings.toLowerCase(#strings.replace(workoutTypeReport.type, '_', ' ')), ' ')}"></p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded">
+                        <p class="text-sm text-gray-600">Month</p>
+                        <p class="text-xl" th:text="${#temporals.format(workoutTypeReport.month, 'MMMM yyyy')}"></p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded">
+                        <p class="text-sm text-gray-600">Total Workouts</p>
+                        <p class="text-xl" th:text="${workoutTypeReport.totalWorkouts}"></p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded">
+                        <p class="text-sm text-gray-600">Avg Duration</p>
+                        <p class="text-xl"
+                           th:text="${#numbers.formatDecimal(workoutTypeReport.averageDuration, 1, 2)} + ' min'"></p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded">
+                        <p class="text-sm text-gray-600">Total Participants</p>
+                        <p class="text-xl" th:text="${workoutTypeReport.totalParticipants}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- By Trainer Report -->
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-bold mb-4">By Trainer</h2>
+            <form th:action="@{/reports/workouts/by-trainer}" method="GET" class="flex gap-4 items-end">
+                <div class="max-w-[300px]">
+                    <label class="block text-sm font-medium mb-1">Select Trainer</label>
+                    <label>
+                        <select name="trainerId" required
+                                class="w-full p-2 border rounded bg-white">
+                            <option value="" disabled selected>Choose a trainer</option>
+                            <option th:each="trainer : ${trainers}"
+                                    th:value="${trainer.id}"
+                                    th:text="${trainer.firstName + ' ' + trainer.lastName + ' ' + trainer.email}">
+                            </option>
+                        </select>
+                    </label>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Month</label>
+                    <input type="month" name="month" required class="p-2 border rounded">
+                </div>
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Generate</button>
+            </form>
+
+            <div th:if="${workoutTrainerReport}" class="mt-6">
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="bg-gray-50 p-4 rounded">
+                            <p class="text-sm text-gray-600">Trainer Info</p>
+                            <p class="text-xl" th:text="${trainer.firstName + ' ' + trainer.lastName}"></p>
+                            <p class="text-sm" th:text="${trainer.email}"></p>
+                            <p class="text-sm" th:text="${trainer.phoneNumber}"></p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded">
+                            <p class="text-sm text-gray-600">Month</p>
+                            <p class="text-xl"
+                               th:text="${#temporals.format(workoutTrainerReport.month, 'MMMM yyyy')}"></p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded">
+                            <p class="text-sm text-gray-600">Total Workouts</p>
+                            <p class="text-xl" th:text="${workoutTrainerReport.totalWorkouts}"></p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded">
+                            <p class="text-sm text-gray-600">Avg Duration</p>
+                            <p class="text-xl"
+                               th:text="${#numbers.formatDecimal(workoutTrainerReport.averageDuration, 1, 2)} + ' min'"></p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded">
+                            <p class="text-sm text-gray-600">Total Participants</p>
+                            <p class="text-xl" th:text="${workoutTrainerReport.totalParticipants}"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- General Report -->
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-bold mb-4">General Statistics</h2>
+            <form th:action="@{/reports/workouts/general}" method="GET" class="flex gap-4 items-end">
+                <div>
+                    <label class="block text-sm font-medium mb-1">From Month</label>
+                    <input type="month" name="fromMonth" required class="p-2 border rounded">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">To Month</label>
+                    <input type="month" name="toMonth" required class="p-2 border rounded">
+                </div>
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Generate</button>
+            </form>
+
+            <div th:if="${workoutGeneralReport}" class="mt-6">
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="bg-gray-50 p-4 rounded">
+                        <p class="text-sm text-gray-600">Period</p>
+                        <p class="text-xl">
+                            <span th:text="'from ' + ${#temporals.format(workoutGeneralReport.fromMonth, 'MMMM yyyy')}"></span>
+                            <span th:text="' to ' + ${#temporals.format(workoutGeneralReport.toMonth, 'MMMM yyyy')}"></span>
+                        </p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded">
+                        <p class="text-sm text-gray-600">Total Workouts</p>
+                        <p class="text-xl" th:text="${workoutGeneralReport.totalWorkouts}"></p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded">
+                        <p class="text-sm text-gray-600">Avg Duration</p>
+                        <p class="text-xl"
+                           th:text="${#numbers.formatDecimal(workoutGeneralReport.averageDuration, 1, 2)} + ' min'"></p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded">
+                        <p class="text-sm text-gray-600">Total Participants</p>
+                        <p class="text-xl" th:text="${workoutGeneralReport.totalParticipants}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:insert="~{fragments/footer :: footer}"></div>
+</body>
+</html>

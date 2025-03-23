@@ -7,16 +7,19 @@ import com.fitnessapp.web.dto.WorkoutRequest;
 import com.fitnessapp.workout.model.RecurringType;
 import com.fitnessapp.workout.model.Workout;
 import com.fitnessapp.workout.model.WorkoutStatus;
+import com.fitnessapp.workout.model.WorkoutType;
 import com.fitnessapp.workout.property.WorkoutProperty;
 import com.fitnessapp.workout.repository.WorkoutRepository;
+import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -117,8 +120,65 @@ public class WorkoutService {
         return workouts;
     }
 
-    public List<Workout> getAllDisplayedWorkouts(LocalDate today) {
-        return workoutRepository.findWorkoutsForDisplay(today);
+    public List<Workout> getAllDisplayedWorkouts(LocalDate today,
+                                                 WorkoutType workoutType,
+                                                 UUID trainerId,
+                                                 LocalDate date,
+                                                 String timeRange) {
+
+        boolean hasFilters = workoutType != null || trainerId != null || date != null ||
+                (timeRange != null && !timeRange.isEmpty());
+
+        if (!hasFilters) {
+            return workoutRepository.findWorkoutsForDisplay(today);
+        } else {
+            Specification<Workout> spec = (root, query, criteriaBuilder) -> {
+                List<Predicate> predicates = new ArrayList<>();
+
+                Predicate statusCondition =
+                        criteriaBuilder.or(root.get("status").in(Arrays.asList("UPCOMING", "FULL")),
+                                criteriaBuilder.and(criteriaBuilder.equal(root.get("status"), "COMPLETED"),
+                                        criteriaBuilder.equal(criteriaBuilder.function("DATE", Date.class, root.get("endTime")), today.atStartOfDay())
+                                ));
+
+                predicates.add(statusCondition);
+
+                if (workoutType != null) {
+                    predicates.add(criteriaBuilder.equal(root.get("workoutType"), workoutType));
+                }
+
+                if (trainerId != null) {
+                    predicates.add(criteriaBuilder.equal(root.join("trainer").get("id"), trainerId));
+                }
+
+                if (date != null) {
+                    predicates.add(criteriaBuilder.equal(
+                            criteriaBuilder.function("DATE", Date.class, root.get("startTime")), date.atStartOfDay()));
+                }
+
+                if (timeRange != null && !timeRange.isEmpty()) {
+                    Expression<Integer> hour = criteriaBuilder.function("HOUR", Integer.class, root.get("startTime"));
+
+                    switch (timeRange) {
+                        case "MORNING":
+                            predicates.add(criteriaBuilder.between(hour, 6, 11));
+                            break;
+                        case "AFTERNOON":
+                            predicates.add(criteriaBuilder.between(hour, 12, 16));
+                            break;
+                        case "EVENING":
+                            predicates.add(criteriaBuilder.between(hour, 17, 21));
+                            break;
+                    }
+                }
+
+                return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+            };
+
+            return workoutRepository.findAll(spec);
+        }
+
+
     }
 
     public Workout getById(UUID id) {

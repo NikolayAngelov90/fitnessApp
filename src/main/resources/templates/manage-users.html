@@ -41,19 +41,24 @@
                         </td>
                         <td class="px-6 py-4">
                             <form th:action="@{'/users/' + ${user.id} + '/update-role'}" method="POST"
-                                  th:object="${switchUserRoleRequest}" class="flex gap-2">
+                                  th:object="${switchUserRoleRequest}" class="flex gap-2 items-center">
                                 <input type="hidden" name="_method" value="PATCH">
                                 <label>
-                                    <select th:field="*{userRole}" class="rounded-md border p-1">
+                                    <select th:field="*{userRole}" class="rounded-md border p-2 h-10 w-full">
                                         <option value="">Role</option>
                                         <option th:each="userRole : ${T(com.fitnessapp.user.model.UserRole).values()}"
                                                 th:value="${userRole}"
                                                 th:text="${userRole}"
-                                                th:selected="${userRole == userRole}"></option>
+                                                th:selected="${userRole == user.role}"
+                                                th:disabled="${userRole == user.role}">
+                                        </option>
                                     </select>
                                 </label>
+                                <p class="bg-red-100 border border-red-300 text-red-700 text-sm px-2 py-2 rounded-md"
+                                   th:if="${#fields.hasErrors('userRole')}"
+                                   th:errors="*{userRole}"></p>
                                 <button type="submit"
-                                        class="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                                        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 h-10 flex-shrink-0">
                                     Update
                                 </button>
                             </form>
