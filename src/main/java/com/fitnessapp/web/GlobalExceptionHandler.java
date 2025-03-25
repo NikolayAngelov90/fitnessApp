@@ -102,6 +102,24 @@ public class GlobalExceptionHandler {
         return "redirect:/home-trainer";
     }
 
+    @ExceptionHandler(WorkoutReportNotFoundException.class)
+    public String handleWorkoutReportNotFoundException(WorkoutReportNotFoundException e,
+                                                       RedirectAttributes redirectAttributes) {
+
+        redirectAttributes.addFlashAttribute("notFoundError", e.getMessage());
+
+        return "redirect:/reports/workouts";
+    }
+
+    @ExceptionHandler(MembershipReportNotFoundException.class)
+    public String handleMembershipReportNotFoundException(MembershipReportNotFoundException e,
+                                                          RedirectAttributes redirectAttributes) {
+
+        redirectAttributes.addFlashAttribute("notFoundError", e.getMessage());
+
+        return "redirect:/reports/memberships";
+    }
+
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler({
             AccessDeniedException.class,

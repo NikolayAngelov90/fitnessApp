@@ -13,6 +13,10 @@
 <main class="hero-section pt-16 p-6">
     <div class="max-w-7xl mx-auto space-y-8 pt-5">
         <h1 class="text-3xl font-bold text-white">Workout Statistics</h1>
+
+        <div th:if="${notFoundError}"
+             class="px-2 py-1 rounded-lg border border-red-400 bg-red-100 text-red-700 shadow-sm"
+             th:text="${notFoundError}"></div>
         <!-- By Type Report -->
         <div class="bg-white p-6 rounded-lg shadow">
             <h2 class="text-xl font-bold mb-4">By Workout Type</h2>

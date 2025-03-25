@@ -28,9 +28,10 @@ public class ReportService {
 
         ResponseEntity<WorkoutTypeReport> httpResponse = reportClient.getTypeReport(workoutType.toString(), month);
 
-        if (!httpResponse.getStatusCode().is2xxSuccessful()) {
-            throw new RuntimeException("Error getting workout type report");
-        }
+
+            if (!httpResponse.getStatusCode().is2xxSuccessful()) {
+                log.error("[Feign call to fitness-report-svc failed] Error getting workout type report");
+            }
 
         return httpResponse.getBody();
     }
@@ -40,7 +41,7 @@ public class ReportService {
         ResponseEntity<WorkoutTrainerReport> httpResponse = reportClient.getTrainerReport(trainerId, month);
 
         if (!httpResponse.getStatusCode().is2xxSuccessful()) {
-            throw new RuntimeException("Error getting workout trainer report");
+            log.error("[Feign call to fitness-report-svc failed] Error getting workout trainer report");
         }
 
         return httpResponse.getBody();
@@ -51,7 +52,7 @@ public class ReportService {
         ResponseEntity<WorkoutGeneralReport> httpResponse = reportClient.getWorkoutGeneralReport(fromMonth, toMonth);
 
         if (!httpResponse.getStatusCode().is2xxSuccessful()) {
-            throw new RuntimeException("Error getting workout general report");
+            log.error("[Feign call to fitness-report-svc failed] Error getting workout general report");
         }
 
         return httpResponse.getBody();
@@ -62,7 +63,7 @@ public class ReportService {
         ResponseEntity<MembershipReport> httpResponse = reportClient.getMembershipReport(month);
 
         if (!httpResponse.getStatusCode().is2xxSuccessful()) {
-            throw new RuntimeException("Error getting membership report");
+            log.error("[Feign call to fitness-report-svc failed] Error getting membership report");
         }
 
         return httpResponse.getBody();
