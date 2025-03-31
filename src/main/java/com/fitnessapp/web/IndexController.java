@@ -1,6 +1,8 @@
 package com.fitnessapp.web;
 
 import com.fitnessapp.security.CustomUserDetails;
+import com.fitnessapp.subscription.model.Subscription;
+import com.fitnessapp.subscription.service.SubscriptionService;
 import com.fitnessapp.user.model.User;
 import com.fitnessapp.user.model.UserRole;
 import com.fitnessapp.user.service.UserService;
@@ -23,11 +25,14 @@ public class IndexController {
 
     private final UserService userService;
     private final WorkoutService workoutService;
+    private final SubscriptionService subscriptionService;
 
     public IndexController(UserService userService,
-                           WorkoutService workoutService) {
+                           WorkoutService workoutService,
+                           SubscriptionService subscriptionService) {
         this.userService = userService;
         this.workoutService = workoutService;
+        this.subscriptionService = subscriptionService;
     }
 
     @GetMapping("/")
@@ -144,8 +149,11 @@ public class IndexController {
 
         List<User> pendingApproveTrainers = userService.getPendingApproveTrainers();
 
+        List<Subscription> subscriptions = subscriptionService.getAll();
+
         ModelAndView modelAndView = new ModelAndView("home-admin");
         modelAndView.addObject("pendingApproveTrainers", pendingApproveTrainers);
+        modelAndView.addObject("subscriptions", subscriptions);
 
         return modelAndView;
     }

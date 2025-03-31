@@ -14,5 +14,5 @@ public interface MembershipPlanRepository extends JpaRepository<MembershipPlan, 
 
     List<MembershipPlan> findByClient(User client);
 
-    List<MembershipPlan> findByEndDate(LocalDate endDate);
+    List<MembershipPlan> findByEndDateBefore(LocalDate endDateBefore);
 }

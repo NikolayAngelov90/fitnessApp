@@ -70,7 +70,7 @@ public class MembershipPlanService {
     }
 
     public List<MembershipPlan> getPlansToExpire(LocalDate now) {
-        return membershipPlanRepository.findByEndDate(now)
+        return membershipPlanRepository.findByEndDateBefore(now)
                 .stream()
                 .filter(m -> m.getStatus() == MembershipPlanStatus.ACTIVE)
                 .toList();

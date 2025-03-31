@@ -25,7 +25,7 @@ public class MembershipExpireScheduler {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    @Scheduled(cron = "0 59 23 * * ?")
+    @Scheduled(cron = "0 0 0 * * ?")
     public void expireOldMemberships() {
 
         List<MembershipPlan> plansToExpire = membershipPlanService.getPlansToExpire(LocalDate.now());
