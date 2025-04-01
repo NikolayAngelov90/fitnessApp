@@ -34,7 +34,7 @@ public class SubscriptionService {
     }
 
     public List<Subscription> getAll() {
-        return subscriptionRepository.findAll();
+        return subscriptionRepository.findAllByOrderByPriceAsc();
     }
 
     public void updatePrice(UUID id, BigDecimal newPrice) {

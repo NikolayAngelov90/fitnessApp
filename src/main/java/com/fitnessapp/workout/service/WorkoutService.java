@@ -289,6 +289,10 @@ public class WorkoutService {
                 .count();
     }
 
+    public void saveDefaultTrainerWorkout(Workout workout) {
+        workoutRepository.save(workout);
+    }
+
     private void validateRegistration(User client, Workout workout) {
         if (workout.getStatus() == WorkoutStatus.FULL) {
             throw new WorkoutFullException("Workout is already full");

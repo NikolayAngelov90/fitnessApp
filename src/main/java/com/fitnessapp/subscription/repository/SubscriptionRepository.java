@@ -13,4 +13,6 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, UUID
 
 
     List<Subscription> findAllByTypeOrderByPriceAsc(SubscriptionType type);
+
+    List<Subscription> findAllByOrderByPriceAsc();
 }
