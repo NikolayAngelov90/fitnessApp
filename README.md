@@ -49,3 +49,16 @@ The application allows gym members (clients and trainers) to register and log in
     - **Spring Kafka & Testcontainers:** For asynchronous messaging and integration testing.
     - **Spring Cloud OpenFeign:** To facilitate communication with external services.
 - **Java Version:** 21
+
+## Default Credentials
+
+Upon startup, the application creates default accounts for testing:
+
+- **Admin:**  
+  Email: `admin@gmail.com`  
+  Password: `ADMIN123`
+
+- **Trainer:**  
+  Email: `trainer@gmail.com`  
+  Password: `TRAINER123`
+
