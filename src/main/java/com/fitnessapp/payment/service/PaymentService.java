@@ -67,7 +67,11 @@ public class PaymentService {
         processPayment(PaymentProductType.WORKOUT, workout.getId(), user);
     }
 
-    public void processPayment(PaymentProductType productType, UUID productId, User user) {
+    public Payment getById(UUID id) {
+        return paymentRepository.findById(id).orElseThrow(() -> new PaymentNotFoundException("Payment not found with id: " + id));
+    }
+
+    private void processPayment(PaymentProductType productType, UUID productId, User user) {
 
         BigDecimal price;
         Object product;
@@ -95,10 +99,6 @@ public class PaymentService {
             throw new PaymentFailedException("Payment failed due to system error", productType);
         }
 
-    }
-
-    public Payment getById(UUID id) {
-        return paymentRepository.findById(id).orElseThrow(() -> new PaymentNotFoundException("Payment not found with id: " + id));
     }
 
     private void processSuccessfulPayment(PaymentProductType productType, Object product, BigDecimal price, User user) throws StripeException {

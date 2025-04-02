@@ -91,7 +91,7 @@ public class WorkoutService {
                 .endTime(workoutRequest.startTime().plusMinutes(workoutRequest.duration()))
                 .recurringType(workoutRequest.recurringType())
                 .trainer(trainer)
-                .description(workoutRequest.description())
+                .description(workoutRequest.description().trim().replaceAll("\\s+", " "))
                 .createdAt(LocalDateTime.now())
                 .maxParticipants(workoutRequest.maxParticipants())
                 .availableSpots(workoutRequest.maxParticipants())

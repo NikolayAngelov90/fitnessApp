@@ -64,18 +64,21 @@ public class UserService implements UserDetailsService {
         user.setFirstName(userEditRequest.firstName().trim());
         user.setLastName(userEditRequest.lastName().trim());
 
-        String e164Number = getE164Number(userEditRequest);
+        if (userEditRequest.phoneNumber() != null && !userEditRequest.phoneNumber().trim().isEmpty()) {
 
-        Optional<User> phoneNumberOptional = userRepository.findByPhoneNumber(e164Number);
-        if (phoneNumberOptional.isPresent() && !phoneNumberOptional.get().getId().equals(user.getId())) {
-            throw new PhoneNumberAlreadyExistsException("User with number [%s] already exist."
-                    .formatted(e164Number));
+            String e164Number = getE164Number(userEditRequest);
+            Optional<User> phoneNumberOptional = userRepository.findByPhoneNumber(e164Number);
+            if (phoneNumberOptional.isPresent() && !phoneNumberOptional.get().getId().equals(user.getId())) {
+                throw new PhoneNumberAlreadyExistsException("User with number [%s] already exist."
+                        .formatted(e164Number));
+            }
+
+            user.setPhoneNumber(e164Number.trim());
         }
-        user.setPhoneNumber(e164Number);
 
         if (user.getRole() == UserRole.TRAINER) {
-            user.setSpecialization(userEditRequest.specialization());
-            user.setDescription(userEditRequest.description());
+            user.setSpecialization(userEditRequest.specialization().trim().replaceAll("\\s+", " "));
+            user.setDescription(userEditRequest.description().trim().replaceAll("\\s+", " "));
             user.setAdditionalTrainerDataCompleted(true);
         }
 
@@ -184,7 +187,7 @@ public class UserService implements UserDetailsService {
         }
 
         return User.builder()
-                .email(dto.email())
+                .email(dto.email().trim())
                 .password(passwordEncoder.encode(dto.password()))
                 .role(selectedRole)
                 .registeredOn(LocalDateTime.now())
@@ -208,10 +211,6 @@ public class UserService implements UserDetailsService {
     }
 
     private String getE164Number(UserEditRequest userEditRequest) {
-
-        if (userEditRequest.phoneNumber().trim().isEmpty()) {
-            return userEditRequest.phoneNumber();
-        }
 
         PhoneNumber parsedNumber = phoneNumberService.parsePhoneNumber(
                 userEditRequest.phoneNumber(), "BG");

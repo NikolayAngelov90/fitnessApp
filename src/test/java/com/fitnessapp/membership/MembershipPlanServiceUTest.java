@@ -48,7 +48,6 @@ public class MembershipPlanServiceUTest {
     private KafkaTemplate<String, UpsertMembershipEvent> kafkaTemplate;
     @Captor
     private ArgumentCaptor<MembershipPlan> membershipPlanCaptor;
-
     @Captor
     private ArgumentCaptor<UpsertMembershipEvent> eventCaptor;
 
