@@ -111,13 +111,7 @@ public class WorkoutService {
     }
 
     public List<Workout> getAllWorkouts() {
-
-        List<Workout> workouts = workoutRepository.findAll();
-        if (workouts.isEmpty()) {
-            throw new WorkoutNotFoundException("Workout not found");
-        }
-
-        return workouts;
+        return workoutRepository.findAll();
     }
 
     public List<Workout> getAllDisplayedWorkouts(LocalDate today,

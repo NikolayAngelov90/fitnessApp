@@ -522,15 +522,6 @@ public class WorkoutServiceUTest {
     }
 
     @Test
-    void givenNoWorkouts_whenGetAllWorkouts_thenThrowException() {
-        // Given
-        when(workoutRepository.findAll()).thenReturn(Collections.emptyList());
-
-        // When & Then
-        assertThrows(WorkoutNotFoundException.class, () -> workoutService.getAllWorkouts());
-    }
-
-    @Test
     void givenTrainer_whenCalculateMonthlyAttendancePercentage_thenReturnPercentage() {
         // Given
         User trainer = User.builder()

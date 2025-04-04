@@ -71,7 +71,7 @@ public class Workout {
     @Column
     private boolean nextRecurringCreated;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "clients_workouts")
     private List<User> clients = new ArrayList<>();
 }

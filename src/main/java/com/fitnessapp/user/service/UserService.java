@@ -11,6 +11,8 @@ import com.fitnessapp.web.dto.UserEditRequest;
 import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -42,6 +44,7 @@ public class UserService implements UserDetailsService {
         this.phoneNumberService = phoneNumberService;
     }
 
+    @CacheEvict(value = "trainers", allEntries = true)
     public void register(RegisterRequest registerRequest) {
 
         Optional<User> userOptional = userRepository.findByEmail(registerRequest.email());
@@ -57,6 +60,7 @@ public class UserService implements UserDetailsService {
                 user.getEmail(), user.getId());
     }
 
+    @CacheEvict(value = "trainers", allEntries = true)
     public void updateUser(UUID userId, UserEditRequest userEditRequest) {
 
         User user = getById(userId);
@@ -86,6 +90,7 @@ public class UserService implements UserDetailsService {
         log.info("Successfully updated user {} with id [{}].", user.getEmail(), user.getId());
     }
 
+    @CacheEvict(value = "trainers", allEntries = true)
     public void uploadProfilePicture(UUID userId, MultipartFile profilePicture) {
 
         User user = getById(userId);
@@ -96,6 +101,68 @@ public class UserService implements UserDetailsService {
 
         userRepository.save(user);
         log.info("Successfully uploaded profile picture to user [{}] with id [{}].", user.getEmail(), user.getId());
+    }
+
+    @CacheEvict(value = "trainers", allEntries = true)
+    public void deleteProfilePicture(UUID userId) {
+
+        User user = getById(userId);
+        user.setProfilePicture(null);
+
+        userRepository.save(user);
+        log.info("Successfully delete profile pictures to user [{}] with id [{}].", user.getEmail(), user.getId());
+    }
+
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User with email [%s] does not exist."
+                        .formatted(email)));
+    }
+
+    public User getById(UUID userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User with id [%s] does not exist."
+                        .formatted(userId)));
+    }
+
+    @Cacheable("trainers")
+    public List<User> getAllApprovedTrainers() {
+
+        List<User> approvedTrainers = userRepository.findByRoleAndApproveTrainer(UserRole.TRAINER, true);
+
+        if (approvedTrainers.isEmpty()) {
+            throw new TrainerNotFoundException("Trainer not found!");
+        }
+
+        return approvedTrainers;
+    }
+
+    public List<User> getPendingApproveTrainers() {
+        return userRepository.findByRoleAndApproveTrainer(UserRole.TRAINER, false);
+    }
+
+    @CacheEvict(value = "trainers", allEntries = true)
+    public void approveTrainer(UUID id) {
+        User trainer = userRepository.findById(id).orElseThrow(
+                () -> new UserNotFoundException("User with id [%s] does not exist.".formatted(id)));
+
+        trainer.setApproveTrainer(true);
+
+        userRepository.save(trainer);
+        log.info("Successfully approved trainer [{}] with id [{}].", trainer.getEmail(), trainer.getId());
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    @CacheEvict(value = "trainers", allEntries = true)
+    public void switchRole(UUID id, SwitchUserRoleRequest switchUserRoleRequest) {
+        User user = getById(id);
+        user.setRole(switchUserRoleRequest.userRole());
+
+        userRepository.save(user);
+        log.info("User [{}] with id [{}] has been switched role to [{}].", user.getEmail(), user.getId(), user.getRole());
     }
 
     private byte[] compressImage(MultipartFile profilePicture) {
@@ -113,69 +180,6 @@ public class UserService implements UserDetailsService {
         } catch (IOException e) {
             throw new ImageUploadException("Error compressing image.");
         }
-    }
-
-    public void deleteProfilePicture(UUID userId) {
-
-        User user = getById(userId);
-        user.setProfilePicture(null);
-
-        userRepository.save(user);
-        log.info("Successfully delete profile pictures to user [{}] with id [{}].", user.getEmail(), user.getId());
-    }
-
-    public User findByEmail(String email) {
-
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("User with email [%s] does not exist."
-                        .formatted(email)));
-    }
-
-    public User getById(UUID userId) {
-
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User with id [%s] does not exist."
-                        .formatted(userId)));
-    }
-
-    public List<User> getAllApprovedTrainers() {
-
-        List<User> approvedTrainers = userRepository.findByRoleAndApproveTrainer(UserRole.TRAINER, true);
-
-        if (approvedTrainers.isEmpty()) {
-            throw new TrainerNotFoundException("Trainer not found!");
-        }
-
-        return approvedTrainers;
-    }
-
-    public List<User> getPendingApproveTrainers() {
-
-        return userRepository.findByRoleAndApproveTrainer(UserRole.TRAINER, false);
-
-
-    }
-
-    public void approveTrainer(UUID id) {
-        User trainer = userRepository.findById(id).orElseThrow(
-                () -> new UserNotFoundException("User with id [%s] does not exist.".formatted(id)));
-
-        trainer.setApproveTrainer(true);
-
-        userRepository.save(trainer);
-        log.info("Successfully approved trainer [{}] with id [{}].", trainer.getEmail(), trainer.getId());
-    }
-
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
-
-    public void switchRole(UUID id, SwitchUserRoleRequest switchUserRoleRequest) {
-        User user = getById(id);
-        user.setRole(switchUserRoleRequest.userRole());
-
-        userRepository.save(user);
-        log.info("User [{}] with id [{}] has been switched role to [{}].", user.getEmail(), user.getId(), user.getRole());
     }
 
     private User initializeNewUserAccount(RegisterRequest dto) {
