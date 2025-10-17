@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.fitnessapp</groupId>
     <artifactId>fitnessapp</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
     <name>fitnessApp</name>
     <description>fitnessApp</description>
     <url/>
@@ -126,7 +126,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <scope>annotationProcessor</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

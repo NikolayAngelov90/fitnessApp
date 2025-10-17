@@ -33,6 +33,7 @@ public class Subscription {
     @Column(nullable = false)
     private SubscriptionDuration duration;
 
+    @Builder.Default
     @OneToMany(mappedBy = "subscription")
     private List<MembershipPlan> subscriptions = new ArrayList<>();
 

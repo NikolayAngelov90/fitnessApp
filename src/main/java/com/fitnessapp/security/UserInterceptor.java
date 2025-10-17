@@ -5,6 +5,7 @@ import com.fitnessapp.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -24,7 +25,7 @@ public class UserInterceptor implements HandlerInterceptor {
     public void postHandle(@NonNull HttpServletRequest request,
                            @NonNull HttpServletResponse response,
                            @NonNull Object handler,
-                           ModelAndView modelAndView) {
+                           @Nullable ModelAndView modelAndView) {
 
         if (modelAndView != null) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

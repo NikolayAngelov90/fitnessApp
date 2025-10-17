@@ -63,10 +63,12 @@ public class User {
     @Column
     private boolean approveTrainer;
 
+    @Builder.Default
     @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
     @OrderBy("startDate DESC")
     private List<MembershipPlan> memberships = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "client")
     @OrderBy("dateTime DESC")
     private List<Payment> payments = new ArrayList<>();
