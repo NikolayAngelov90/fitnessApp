@@ -1,7 +1,5 @@
-FROM mcr.microsoft.com/openjdk/jdk:21
+FROM eclipse-temurin:21-jdk
 
 COPY target/fitnessapp-*.jar app.jar
 
-LABEL authors="nikit"
-
-ENTRYPOINT ["top", "-b"]
+ENTRYPOINT ["java", "-Dspring.profiles.active=prod", "-jar", "app.jar"]
