@@ -1,0 +1,35 @@
+name: Code Quality Check
+
+on:
+  push:
+    branches: [ master, main, develop ]
+  pull_request:
+    branches: [ master, main, develop ]
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Java
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Run Maven Verify
+      run: mvn verify -DskipTests
+
+    - name: Check code style (if configured)
+      run: |
+        if [ -f ".checkstyle" ]; then
+          echo "Checkstyle configuration found, running checks..."
+          mvn checkstyle:check
+        else
+          echo "No Checkstyle config found, skipping..."
+        fi
+      continue-on-error: true

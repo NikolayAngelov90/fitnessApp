@@ -199,3 +199,91 @@ docker compose down -v
 - Admin: `admin@gmail.com` / `ADMIN123`
 - Trainer: `trainer@gmail.com` / `TRAINER123`
 
+---
+
+## GitHub Actions CI/CD
+
+This repository includes GitHub Actions workflows for automated build, test, and deployment.
+
+### Workflows
+
+#### 1. CI - Build and Test (`ci.yml`)
+- **Trigger:** Push to `master`, `main`, `develop` branches or on pull requests
+- **Steps:**
+  - Checkout code
+  - Set up Java 21 with Maven caching
+  - Build application with Maven
+  - Run unit and integration tests
+  - Upload test reports as artifacts
+  - Upload built JAR file as artifact
+- **Status:** Available on all branches automatically
+
+#### 2. Docker Build and Push (`docker.yml`)
+- **Trigger:** Push to `master` or `main` branches, or on version tags (`v*`)
+- **Features:**
+  - Builds Spring Boot application with Maven
+  - Creates Docker image using `Dockerfile`
+  - Pushes to Docker Hub (if credentials configured)
+  - Pushes to GitHub Container Registry (automatic)
+  - Multi-stage caching for faster builds
+  - Semantic versioning: supports tags like `v1.0.0`, `v1.0`, etc.
+- **Prerequisites:**
+  - Configure GitHub Secrets:
+    - `DOCKER_USERNAME` - Docker Hub username
+    - `DOCKER_PASSWORD` - Docker Hub access token (not password)
+  - (Optional) If pushing to Docker Hub
+
+#### 3. Code Quality (`quality.yml`)
+- **Trigger:** Push to `master`, `main`, `develop` branches or on pull requests
+- **Steps:**
+  - Checkout code
+  - Set up Java 21 with Maven caching
+  - Run Maven verify for build validation
+  - Optional Checkstyle checks (if `.checkstyle` config exists)
+- **Status:** Available on all branches automatically
+
+### Setting Up Secrets for Docker Push
+
+To enable Docker image builds and pushes, configure GitHub repository secrets:
+
+1. Go to your repository → **Settings** → **Secrets and variables** → **Actions**
+2. Create the following secrets:
+   - `DOCKER_USERNAME`: Your Docker Hub username
+   - `DOCKER_PASSWORD`: Docker Hub personal access token (PAT), not your password
+     - Generate a PAT at https://hub.docker.com/settings/security
+
+3. Update the Docker workflow to use your Docker Hub username:
+   - Edit `.github/workflows/docker.yml`
+   - Change the `images:` section in the `Extract metadata` step:
+     ```yaml
+     images: |
+       your-docker-username/fitnessapp
+       ghcr.io/${{ github.repository }}
+     ```
+
+### Artifact Retention
+
+- Test reports and JAR files are kept for 90 days by default
+- To modify retention, update the `retention-days` parameter in the workflows
+
+### Manual Workflow Trigger
+
+You can manually trigger the Docker workflow from GitHub:
+
+1. Go to **Actions** tab → **Build and Push Docker Image**
+2. Click **Run workflow** → **Run workflow**
+
+### Example: Triggering with a Release Tag
+
+```bash
+# Create and push a version tag (will trigger docker.yml)
+git tag -a v1.0.2 -m "Release v1.0.2"
+git push origin v1.0.2
+```
+
+### Monitoring Workflow Runs
+
+- Go to **Actions** tab in your GitHub repository
+- View build logs, test results, and download artifacts
+- Review failed jobs and debug errors
+
