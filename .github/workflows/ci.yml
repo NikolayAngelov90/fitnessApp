@@ -28,8 +28,14 @@ jobs:
     - name: Build with Maven
       run: mvn clean package -DskipTests
 
-    - name: Run unit tests (skip Kafka-dependent integration tests)
-      run: mvn test -Dgroups="!integration" || mvn test -Dskip.integrationtests=true
+    - name: Start Kafka and MySQL for tests
+      run: docker compose up -d kafka mysql
+
+    - name: Wait for services
+      run: sleep 15
+
+    - name: Run tests
+      run: mvn test
       continue-on-error: true
 
     - name: Upload test reports
