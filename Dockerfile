@@ -1,5 +1,7 @@
-FROM eclipse-temurin:21-jdk
+FROM eclipse-temurin:21-jre-alpine
 
-COPY target/fitnessapp-*.jar app.jar
+WORKDIR /app
+
+COPY app/fitnessapp-*.jar app.jar
 
 ENTRYPOINT ["java", "-Dspring.profiles.active=prod", "-jar", "app.jar"]
